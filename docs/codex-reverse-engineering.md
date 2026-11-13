@@ -277,11 +277,12 @@ structuredContent
 
 ### 官方协议交叉验证
 
-OpenAI 的公开 App Server 文档与本机逆向结果一致：客户端通过 stdin/stdout 发送 newline-delimited JSON，先 `initialize`，再 `thread/start` 和 `turn/start`；客户端显示 `item/agentMessage/delta`，并以 `turn/completed` 的状态判断成功、失败或中断。`model/list` 可用于填充模型选择器，但返回的是目录，不等于用户一定有权限调用该模型。官方文档还明确说明 App Server 负责保持会话、流式事件、工具调用、沙箱和审批，而应用负责连接、生命周期和用户体验。
+OpenAI 的公开 App Server 文档与本机逆向结果一致：客户端通过 stdin/stdout 发送 newline-delimited JSON，先 `initialize`，再 `thread/start` 和 `turn/start`；客户端显示 `item/agentMessage/delta`，并以 `turn/completed` 的状态判断成功、失败或中断。`model/list` 可用于填充模型选择器，但返回的是目录，不等于用户一定有权限调用该模型。官方事件文档进一步明确了增量事件的关联键：每个事件有 `event_id`，同一持久化 Item 通过 `item_id` 关联，文本增量使用 `output_index`、`content_index` 和 `delta`，完成事件携带完整 `text`；`requires_action` 则要求应用读取 `required_actions` 并完成外部动作。官方文档还明确说明 App Server 负责保持会话、流式事件、工具调用、沙箱和审批，而应用负责连接、生命周期和用户体验。
 
 - [Codex app-server – Sign in with ChatGPT](https://developers.openai.com/siwc/token-sharing-open-source/codex-app-server)
 - [Codex as a platform: build on the open agent harness](https://developers.openai.com/blog/codex-as-a-platform)
 - [Automatic review and approvals](https://developers.openai.com/api/docs/guides/agents-api/sessions/approvals)
+- [Events and items](https://developers.openai.com/api/docs/guides/agents-api/sessions/events)
 
 官方资料列出的审批范围包括 Shell/终端输入、文件变更、额外文件系统或网络权限以及 MCP 工具调用；这与本机入口中的 `exec_approval_request`、`apply_patch_approval_request` 和 `serverRequest/resolved` 相互印证。官方资料没有公开 Windows 桌面端的全部私有 payload，因此 CodeAI 仍需以本机事件采集和 OpenCode 的公开协议作为实现依据。
 
