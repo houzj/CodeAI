@@ -1,12 +1,14 @@
-import { For, createMemo, type ParentProps } from "solid-js"
-import { useParams } from "@solidjs/router"
+import { For, Show, createMemo, type ParentProps } from "solid-js"
+import { useNavigate, useParams } from "@solidjs/router"
 import type { SessionModel } from "./model"
 import { useData, useServer } from "@/runtime/server/current"
 import { useLanguage } from "@/runtime/i18n/language"
 import { usePlatform } from "@/runtime/platform/platform"
+import { sessionHref } from "@/shell/routes/session"
 
 export function CodeAIWorkspaceFrame(props: ParentProps<{ session: SessionModel }>) {
   const platform = usePlatform()
+  const navigate = useNavigate()
   const params = useParams<{ id: string }>()
   const data = useData()
   const server = useServer()
@@ -16,6 +18,7 @@ export function CodeAIWorkspaceFrame(props: ParentProps<{ session: SessionModel 
     const session = current()
     return session ? server.ctx.projects.forSession(session) : undefined
   })
+  const projects = createMemo(() => server.ctx.projects.used())
   const worktree = createMemo(() => {
     const session = current()
     const value = project()
@@ -45,17 +48,39 @@ export function CodeAIWorkspaceFrame(props: ParentProps<{ session: SessionModel 
           <div class="mb-2 px-2 text-11-medium uppercase tracking-[0.08em] text-v2-text-text-muted">
             {language.t("command.category.project")}
           </div>
-          <div class="rounded-md bg-v2-background-bg-elevated px-2.5 py-2 text-13-medium text-v2-text-text-base">
-            {project()?.name ?? "—"}
-          </div>
-          <div class="mt-1 truncate px-2.5 py-1 text-12-regular text-v2-text-text-muted">
-            {worktree()?.directory ?? current()?.location.directory ?? "—"}
-          </div>
-          <div class="mb-2 mt-5 px-2 text-11-medium uppercase tracking-[0.08em] text-v2-text-text-muted">
-            {language.t("command.category.workspace")}
-          </div>
-          <div class="rounded-md px-2.5 py-2 text-13-regular text-v2-text-text-base">
-            {worktree()?.directory.split(/[\\/]/).filter(Boolean).at(-1) ?? "—"}
+          <div class="flex flex-col gap-1">
+            <For each={projects()}>
+              {(item) => (
+                <div
+                  class="rounded-md px-2.5 py-2 text-13-medium text-v2-text-text-base"
+                  classList={{ "bg-v2-background-bg-elevated": item.id === project()?.id }}
+                  data-project-id={item.id}
+                >
+                  <div class="truncate">{item.name}</div>
+                  <Show when={item.id === project()?.id}>
+                    <div class="mt-1 flex flex-col gap-0.5 border-s border-v2-border-border-base ps-2">
+                      <div class="mb-1 px-1 text-11-medium uppercase tracking-[0.08em] text-v2-text-text-muted">
+                        {language.t("command.category.workspace")}
+                      </div>
+                      <For each={item.worktrees}>
+                        {(directory) => (
+                          <div
+                            class="truncate rounded px-1 py-1 text-12-regular"
+                            classList={{
+                              "bg-v2-background-bg-layer-02 text-v2-text-text-base": directory.directory === worktree()?.directory,
+                              "text-v2-text-text-muted": directory.directory !== worktree()?.directory,
+                            }}
+                            title={directory.directory}
+                          >
+                            {directory.directory.split(/[\\/]/).filter(Boolean).at(-1) ?? directory.directory}
+                          </div>
+                        )}
+                      </For>
+                    </div>
+                  </Show>
+                </div>
+              )}
+            </For>
           </div>
           <div class="mb-2 mt-5 px-2 text-11-medium uppercase tracking-[0.08em] text-v2-text-text-muted">
             {language.t("command.category.session")}
@@ -63,15 +88,18 @@ export function CodeAIWorkspaceFrame(props: ParentProps<{ session: SessionModel 
           <div class="flex flex-col gap-0.5">
             <For each={sessions()}>
               {(item) => (
-                <div
-                  class="truncate rounded-md px-2.5 py-2 text-13-regular"
+                <button
+                  type="button"
+                  class="w-full truncate rounded-md px-2.5 py-2 text-start text-13-regular transition-colors hover:bg-v2-background-bg-layer-02"
                   classList={{
                     "bg-v2-background-bg-elevated text-v2-text-text-base": item.id === current()?.id,
                     "text-v2-text-text-muted": item.id !== current()?.id,
                   }}
+                  aria-current={item.id === current()?.id ? "page" : undefined}
+                  onClick={() => navigate(sessionHref(server.key, item.id))}
                 >
                   {item.title || language.t("command.session.new")}
-                </div>
+                </button>
               )}
             </For>
           </div>
