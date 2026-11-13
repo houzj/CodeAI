@@ -30,12 +30,12 @@
 
 ### G3：Composer 完成真实任务闭环
 
-- [ ] Enter 调用现有 Session prompt API。
-- [ ] Shift+Enter 保留换行行为，发送期间输入框进入运行态。
-- [ ] 停止按钮调用 Session interrupt API。
-- [ ] 模型选择使用当前 Session 的模型配置，不修改全局默认值。
+- [x] Enter 调用现有 Session prompt API。
+- [x] Shift+Enter 保留换行行为，发送期间输入框进入运行态。
+- [x] 停止按钮调用 Session interrupt API。
+- [x] 模型选择使用当前 Session 的模型配置，不修改全局默认值。
 
-**验收证据：** 完成一次真实代码任务，能看到 execution、tool 和最终结果；停止任务后 Runtime 正确收敛。
+**验收证据：** `createActiveComposerAdapter`、`createComposerSubmit` 和 `session/composer/queue` 已连接现有 Session API；仍需在 Windows 安装包中完成一次端到端任务验收。
 
 ### G4：右侧工作区由真实产物驱动
 
