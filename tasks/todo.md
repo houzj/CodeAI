@@ -343,3 +343,8 @@
 - [x] 新用户默认使用全局 `SidebarOrganized` 的 Project 分组导航。
 - [x] 现有运行时/历史投影类型检查通过；设置测试受现有 Bun/Solid `jsxDEV` 环境错误影响。
 - [ ] 仍需将全局 Sidebar 的会话拖动归属接到真实 `session.move`。
+
+### 执行记录（2026-11-14，会话移动域操作）
+
+- [x] 全局 Sidebar 会话菜单已接入真实 `session.move`，目标按 Project/Worktree 列出并在服务端确认后同步 Session。
+- [ ] 仍需把同一操作接到 Sidebar 的拖放手势，并补充拖动反馈和失败回滚。

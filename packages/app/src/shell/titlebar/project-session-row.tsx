@@ -29,6 +29,7 @@ import {
 } from "./session-rename-dialog-machine"
 import type { Project } from "@/runtime/server/types"
 import { ProjectIcon } from "@/shell/layout/project-icon"
+import { displayName } from "@opencode/ui/project-avatar"
 import "./tab-nav.css"
 
 export function ProjectSessionRow(props: {
@@ -55,6 +56,22 @@ export function ProjectSessionRow(props: {
   const connection = () => global.servers.list().find((conn) => ServerConnection.key(conn) === props.server)
 
   const ctx = () => global.serverCtx(props.server)
+
+  const moveTargets = createMemo(() =>
+    ctx()?.projects.list().flatMap((project) =>
+      project.worktrees.map((worktree) => ({ project, directory: worktree.directory })),
+    ) ?? [],
+  )
+
+  const moveTo = (directory: string) => {
+    const current = ctx()
+    if (!current || directory === props.session.location.directory) return
+
+    void current.sdk.api.session.move({ sessionID: props.session.id, directory }).then(
+      () => current.data.session.sync(props.session.id).catch(() => undefined),
+      (error) => showToast({ title: language.t("common.requestFailed"), description: errorMessage(error, language.t("common.requestFailed")) }),
+    )
+  }
 
   const exporter = createSessionExporter()
 
@@ -202,6 +219,21 @@ export function ProjectSessionRow(props: {
             {language.t("common.export")}…
           </Menu.Item>
           <SessionReadMenuItem server={props.server} session={props.session} />
+          <Menu.Sub gutter={4} overflowPadding={16} overlap>
+            <Menu.SubTrigger>{language.t("session.move.menu")}</Menu.SubTrigger>
+            <Menu.Portal>
+              <Menu.SubContent class="w-max min-w-[220px] max-w-[calc(100vw-32px)]">
+                {moveTargets().map((target) => (
+                  <Menu.Item
+                    disabled={target.directory === props.session.location.directory}
+                    onSelect={() => moveTo(target.directory)}
+                  >
+                    {displayName(target.project)} / {target.directory.split(/[\\/]/).filter(Boolean).at(-1) ?? target.directory}
+                  </Menu.Item>
+                ))}
+              </Menu.SubContent>
+            </Menu.Portal>
+          </Menu.Sub>
           <Menu.Separator />
           <Menu.Item disabled={!ctx()} onSelect={() => dialog.show(() => <DeleteDialog />)}>
             {language.t("common.delete")}…

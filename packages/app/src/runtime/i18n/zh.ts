@@ -855,6 +855,7 @@ export const dict = {
   "settings.timeline.grouped.label": "{{activity}} 已分组",
   "settings.timeline.collapsed.label": "{{activity}} 已折叠",
   "session.new.workspace.search.empty": "没有匹配的工作树",
+  "session.move.menu": "移动会话到",
   "settings.workspaces.description": "查看工作树并管理磁盘使用",
   "settings.workspaces.empty.description": "在 OpenCode 中创建的工作树将显示在此处",
   "settings.workspaces.sessions.filtered.one": "{{count}} 个会话",

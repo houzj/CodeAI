@@ -1315,6 +1315,7 @@ export const dict = {
   "session.new.workspace.trigger.tooltip": "Select where to run session",
   "session.new.workspace.search.placeholder": "Search worktrees",
   "session.new.workspace.search.empty": "No matching worktrees",
+  "session.move.menu": "Move session to",
   "session.new.location.select": "Select",
   "session.new.location.otherProjects": "Other projects",
   "session.new.location.worktrees": "Worktrees",
