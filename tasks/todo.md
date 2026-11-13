@@ -22,7 +22,7 @@
 ### G2：真实 Project → Worktree → Session 替换静态原型数据
 
 - [ ] 从 ServerSDK 读取当前项目、工作目录、会话标题和最近会话。
-- [ ] 中间标题显示真实 Session，运行状态来自 G1 投影。
+- [x] 中间标题显示真实 Session，运行状态来自 G1 投影。
 - [ ] 右侧 Context 显示真实模型、Provider、工作区和权限配置。
 - [ ] 不再从 `codex-v4.html` 读取任何演示数据。
 

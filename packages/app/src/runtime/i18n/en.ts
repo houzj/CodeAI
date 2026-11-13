@@ -359,6 +359,8 @@ export const dict = {
   "session.child.status.succeeded": "Done",
   "session.child.status.failed": "Failed",
   "session.child.status.interrupted": "Interrupted",
+  "session.runtime.empty": "No runtime events",
+  "session.runtime.idle": "Idle",
 
   "prompt.action.attachFile": "Add files",
 
