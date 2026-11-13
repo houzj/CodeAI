@@ -27,18 +27,27 @@ export function CodeAIWorkspaceFrame(props: ParentProps<{ session: SessionModel 
     if (!session || !value) return undefined
     return value.worktrees.find((item) => item.directory === session.location.directory)
   })
-  const sessions = createMemo(() => {
+  const sessionsFor = (directory: string) => {
     const session = current()
-    const value = project()
-    if (!session || !value) return []
+    if (!session) return []
     return data.session
       .list()
-      .filter((item) => item.projectID === session.projectID && item.time.archived === undefined)
+      .filter(
+        (item) =>
+          item.projectID === session.projectID &&
+          item.location.directory === directory &&
+          item.time.archived === undefined,
+      )
       .toSorted((a, b) => b.time.updated - a.time.updated)
       .slice(0, 12)
-  })
+  }
 
   const openWorkspace = (directory: string) => {
+    const next = sessionsFor(directory)[0]
+    if (next) {
+      navigate(sessionHref(server.key, next.id))
+      return
+    }
     server.ctx.projects.touch(directory)
     layout.home.setSelection({ server: server.key, directory })
     navigate("/")
@@ -78,44 +87,45 @@ export function CodeAIWorkspaceFrame(props: ParentProps<{ session: SessionModel 
                       </div>
                       <For each={item.worktrees}>
                         {(directory) => (
-                          <button
-                            type="button"
-                            class="truncate rounded px-1 py-1 text-12-regular"
-                            classList={{
-                              "bg-v2-background-bg-layer-02 text-v2-text-text-base": directory.directory === worktree()?.directory,
-                              "text-v2-text-text-muted": directory.directory !== worktree()?.directory,
-                            }}
-                            title={directory.directory}
-                            onClick={() => openWorkspace(directory.directory)}
-                          >
-                            {directory.directory.split(/[\\/]/).filter(Boolean).at(-1) ?? directory.directory}
-                          </button>
+                          <div>
+                            <button
+                              type="button"
+                              class="w-full truncate rounded px-1 py-1 text-start text-12-regular"
+                              classList={{
+                                "bg-v2-background-bg-layer-02 text-v2-text-text-base": directory.directory === worktree()?.directory,
+                                "text-v2-text-text-muted": directory.directory !== worktree()?.directory,
+                              }}
+                              title={directory.directory}
+                              onClick={() => openWorkspace(directory.directory)}
+                            >
+                              {directory.directory.split(/[\\/]/).filter(Boolean).at(-1) ?? directory.directory}
+                            </button>
+                            <Show when={directory.directory === worktree()?.directory}>
+                              <div class="ms-2 mt-0.5 flex flex-col gap-0.5 border-s border-v2-border-border-base ps-2">
+                                <For each={sessionsFor(directory.directory)}>
+                                  {(item) => (
+                                    <button
+                                      type="button"
+                                      class="w-full truncate rounded px-1 py-1 text-start text-12-regular transition-colors hover:bg-v2-background-bg-layer-02"
+                                      classList={{
+                                        "bg-v2-background-bg-elevated text-v2-text-text-base": item.id === current()?.id,
+                                        "text-v2-text-text-muted": item.id !== current()?.id,
+                                      }}
+                                      aria-current={item.id === current()?.id ? "page" : undefined}
+                                      onClick={() => navigate(sessionHref(server.key, item.id))}
+                                    >
+                                      {item.title || language.t("command.session.new")}
+                                    </button>
+                                  )}
+                                </For>
+                              </div>
+                            </Show>
+                          </div>
                         )}
                       </For>
                     </div>
                   </Show>
                 </div>
-              )}
-            </For>
-          </div>
-          <div class="mb-2 mt-5 px-2 text-11-medium uppercase tracking-[0.08em] text-v2-text-text-muted">
-            {language.t("command.category.session")}
-          </div>
-          <div class="flex flex-col gap-0.5">
-            <For each={sessions()}>
-              {(item) => (
-                <button
-                  type="button"
-                  class="w-full truncate rounded-md px-2.5 py-2 text-start text-13-regular transition-colors hover:bg-v2-background-bg-layer-02"
-                  classList={{
-                    "bg-v2-background-bg-elevated text-v2-text-text-base": item.id === current()?.id,
-                    "text-v2-text-text-muted": item.id !== current()?.id,
-                  }}
-                  aria-current={item.id === current()?.id ? "page" : undefined}
-                  onClick={() => navigate(sessionHref(server.key, item.id))}
-                >
-                  {item.title || language.t("command.session.new")}
-                </button>
               )}
             </For>
           </div>
