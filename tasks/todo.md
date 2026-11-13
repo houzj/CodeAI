@@ -309,3 +309,10 @@
 - [x] 从最新 `resources/app.asar` 解包验证，产物包含 CodeAI、Project、Worktree、Run details 和 `session.run.runtime` 文案。
 - [x] 最新 app.asar 未发现 `codex-v4` 或 `ui-prototype/codex-v4` 交付引用。
 - [x] 安装包和预打包目录均来自最新 app 构建；未启动用户桌面。
+
+### 执行记录（2026-11-14，用户桌面截图）
+
+- [x] 截图确认 CodeAI 窗口已启动，左侧显示 Project、Worktree、Session 层级。
+- [x] 截图确认生产 Run Center 显示任务状态和 Composer，模型选择器位于底部 Composer 控制栏。
+- [ ] 截图时任务仍处于 Running 且尚未产生 Runtime steps；需任务结束后再次展开运行详情确认事件。
+- [ ] 仍需打开文件/预览，确认 Artifact 右栏出现并在关闭最后一个 Tab 后隐藏。
