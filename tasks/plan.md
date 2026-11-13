@@ -534,3 +534,9 @@ ServerSDK Project/Session 数据
 | 多 provider 行为差异 | 同一任务结果不一致 | 通过 Model Gateway 统一能力声明和错误归一化 |
 | Windows 包缓存或 ACL | 包构建结果不可复现 | 固定缓存目录并保留 build/pack 日志 |
 
+### 最新验证证据
+
+- 最新便携包已启动到真实 CodeAI Session 路由，AX 树显示 Project、Worktree、Session、Run 和 Composer。
+- 真实只读任务已完成，返回项目中的 `index.html`，没有修改文件。
+- 无 Artifact Tab 时右侧区域没有渲染在生产页面中；第二个 Session 切换和 Artifact 打开/关闭仍需补充桌面交互证据。
+

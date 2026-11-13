@@ -250,3 +250,13 @@
 - [ ] Windows 安装包全新环境启动
 - [ ] 完成项目、Worktree、Session、Run、审批、变更和预览闭环
 - [ ] 交付不依赖 `ui-prototype/codex-v4.html`
+
+### 执行记录（2026-11-13，生产包冒烟）
+
+- [x] 最新 `packages/app` 通过类型检查（2,396 files）。
+- [x] 最新 Electron 渲染构建通过，生成 CodeAI 便携目录和 NSIS 安装包。
+- [x] 启动 `E:\CodeAI\.cache\codeai-prepackaged\CodeAI.exe`，窗口标题为 `CodeAI`。
+- [x] 真实新会话完成只读任务：读取项目根目录并返回 `index.html`，未修改文件。
+- [x] AX 树确认生产页面包含 `CodeAI → 项目 → 工作区 → 会话` 层级、真实项目目录、真实模型、Run 状态和 Composer。
+- [x] 无 Artifact Tab 时右侧区域未出现在生产页面 AX 树中，说明现有 SideRegion 的无 Tab 隐藏规则生效。
+- [ ] 由于窗口捕获几何在本次运行中不可用，第二个 Session 的点击切换和右侧 Artifact 打开/关闭仍需下一轮桌面操作验证。
