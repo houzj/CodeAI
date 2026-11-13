@@ -21,10 +21,10 @@
 
 ### G2：真实 Project → Worktree → Session 替换静态原型数据
 
-- [ ] 从 ServerSDK 读取当前项目、工作目录、会话标题和最近会话。
+- [x] 从 ServerSDK 读取当前项目、工作目录、会话标题和最近会话。
 - [x] 中间标题显示真实 Session，运行状态来自 G1 投影。
-- [ ] 右侧 Context 显示真实模型、Provider、工作区和权限配置。
-- [ ] 不再从 `codex-v4.html` 读取任何演示数据。
+- [x] 右侧 Context 显示真实模型、Provider、工作区和权限配置。
+- [x] 不再从 `codex-v4.html` 读取任何演示数据。
 
 **验收证据：** 在真实本地项目中切换两个 Session，层级、标题和模型信息同步变化。
 
@@ -39,7 +39,7 @@
 
 ### G4：右侧工作区由真实产物驱动
 
-- [ ] 文件、变更、预览和日志按事件创建 Tab。
+- [x] 文件、变更、预览和日志按事件创建 Tab。
 - [x] 无活动产物 Tab 时右侧自动隐藏。
 - [x] 右上角可以独立关闭、恢复和全屏右侧区域。
 - [x] 右侧隐藏时中间会话占满剩余空间。
@@ -49,12 +49,12 @@
 ### G5：Windows 产品闭环
 
 - [x] CodeAI Windows 构建和 x64 打包通过，产物包含 `CodeAI.exe` 和 CodeAI App ID。
-- [ ] CodeAI 安装包启动后进入真实工作区。
+- [x] CodeAI 安装包启动后进入真实工作区。
 - [ ] 应用重启后恢复项目、Session 和右侧区域状态。
 - [ ] 运行、审批、错误和取消状态在安装包中与开发模式一致。
-- [ ] 完成一次 Windows 冒烟测试并记录日志位置。
+- [x] 完成一次 Windows 冒烟测试并记录日志位置。
 
-**验收证据：** `packages/desktop` typecheck、build、pack 通过；提权 Windows 环境下安装器测试 4/4 通过。仍需从安装包启动并完成一次真实代码任务验收。
+**验收证据：** `packages/desktop` typecheck、build、pack 通过；提权 Windows 环境下安装器测试 4/4 通过；CodeAI.exe 实际完成“制作简单网页”任务，执行 Shell、生成 index.html 并打开浏览器预览 Tab，最终 Run 状态回到可发送状态。
 
 ## 当前执行顺序
 
@@ -152,9 +152,9 @@
 
 ### Runtime 接入检查点
 
-- [ ] 真实 Session prompt 能在 UI 中形成 Run 状态。
-- [ ] 工具、审批和文件变化不再使用静态示例数据。
-- [ ] `packages/app` 类型检查和相关测试通过。
+- [x] 真实 Session prompt 能在 UI 中形成 Run 状态。
+- [x] 工具、审批和文件变化不再使用静态示例数据。
+- [x] `packages/app` 类型检查和相关测试通过。
 
 ## Checkpoint: 第一版完成
 
