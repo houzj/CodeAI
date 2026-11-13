@@ -210,9 +210,9 @@
 
 ### Task 2：Run 中心区
 
-- [ ] 默认只显示任务、当前运行状态和 Composer
+- [x] 默认只显示任务、当前运行状态和 Composer
 - [ ] Tool、Change、Approval 默认折叠并可展开
-- [ ] Composer 支持 Enter 发送、Shift+Enter 换行和自适应高度
+- [x] Composer 支持真实 Enter 发送路径，沿用生产编辑器的 Shift+Enter 换行和自适应高度
 
 ### Task 3：会话级模型
 
