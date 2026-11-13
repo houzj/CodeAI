@@ -275,6 +275,35 @@ structuredContent
 
 这组字段与事件注册表可以形成 CodeAI 的最小事件载荷方向：命令 Item 至少需要命令、工作目录、进程和退出结果；文件变更 Item 至少需要文件路径、补丁或变更摘要；审批事件需要权限配置和沙箱策略快照；模型事件需要 Provider、模型和推理强度；工具结果需要结构化输出。精确的可选字段、枚举和嵌套结构仍需通过可控请求的 JSON-RPC 通信或官方协议源确认，不能把字符串扫描当成完整 schema。
 
+进一步扫描 Runtime 二进制中的 schema-like 字段标签，发现了与审批和变更请求直接相关的一组名称：
+
+```text
+approval_id
+approval_mode
+approvalPolicy
+approvalId
+parsedCmd
+call_id
+reason
+fileChanges
+grantRoot
+conversationId
+turnId
+threadId
+changeType
+paths
+summary
+modelProvider
+model
+effort
+sandboxPolicy
+multiAgentMode
+stdin
+process_id
+```
+
+这组标签把审批请求进一步分成三种信息：待批准动作（`parsedCmd`、`fileChanges`、`grantRoot`）、审批上下文（`approvalPolicy`、`approval_mode`、`sandboxPolicy`、`conversationId`/`threadId`/`turnId`）和结果/解释（`reason`、`summary`、`changeType`、`paths`）。它足以指导 CodeAI 的 `ApprovalRequest` 和 `ChangeSet` 字段设计，但仍不等同于完整的公开 JSON Schema。
+
 ### 官方协议交叉验证
 
 OpenAI 的公开 App Server 文档与本机逆向结果一致：客户端通过 stdin/stdout 发送 newline-delimited JSON，先 `initialize`，再 `thread/start` 和 `turn/start`；客户端显示 `item/agentMessage/delta`，并以 `turn/completed` 的状态判断成功、失败或中断。`model/list` 可用于填充模型选择器，但返回的是目录，不等于用户一定有权限调用该模型。官方事件文档进一步明确了增量事件的关联键：每个事件有 `event_id`，同一持久化 Item 通过 `item_id` 关联，文本增量使用 `output_index`、`content_index` 和 `delta`，完成事件携带完整 `text`；`requires_action` 则要求应用读取 `required_actions` 并完成外部动作。官方文档还明确说明 App Server 负责保持会话、流式事件、工具调用、沙箱和审批，而应用负责连接、生命周期和用户体验。
