@@ -37,7 +37,8 @@
 - **已确认**：事件名、控制方法、Thread/Turn/Item 分层、Runtime/IPC 边界、审批/文件变更/工具/模型/沙箱事件的存在。
 - **部分确认**：二进制字符串中的字段方向，包括 `threadId`、`turnId`、`itemId`、`command`、`cwd`、`processId`、`exitCode`、`filePath`、`patch`、`permissionProfile`、`approvalPolicy`、`sandboxPolicy`、`modelProvider`、`reasoningEffort`。
 - **新增部分确认**：审批/变更相关字段标签包括 `approval_id`、`approval_mode`、`approvalId`、`parsedCmd`、`fileChanges`、`grantRoot`、`changeType`、`paths`、`reason`、`summary`、`conversationId`、`threadId`、`turnId`、`modelProvider`、`model`、`effort`、`sandboxPolicy` 和 `multiAgentMode`。
-- **待确认**：每个通知的完整 JSON payload、可选字段、枚举值、事件重放顺序和跨版本兼容策略。
+- **已由公开协议确认**：`commandExecution`、`fileChange`、`mcpToolCall` 的终态字段，命令/文件审批请求字段、决策枚举、`serverRequest/resolved` 清理通知，以及 `turn/diff/updated`、`turn/plan/updated` 的 payload 形状。
+- **仍需在 CodeAI 中验证**：OpenCode Adapter 对这些公开 Codex 字段的归一化实现、失败/取消/恢复的回归用例，以及 Windows 私有扩展字段的兼容策略。
 
 公开事件资料还给出了增量消息的通用关联方式：事件自身有 `event_id`，持久化 Item 使用 `item_id`，内容片段使用 `output_index` 和 `content_index`，增量字段为 `delta`，完成字段为完整 `text`。CodeAI 的 `RunItemProjection` 应保留这些游标和关联键，避免多个并行工具或文本片段互相覆盖。
 

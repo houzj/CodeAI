@@ -327,6 +327,56 @@ OpenAI 的公开 App Server 文档与本机逆向结果一致：客户端通过 
 
 官方资料列出的审批范围包括 Shell/终端输入、文件变更、额外文件系统或网络权限以及 MCP 工具调用；这与本机入口中的 `exec_approval_request`、`apply_patch_approval_request` 和 `serverRequest/resolved` 相互印证。官方资料没有公开 Windows 桌面端的全部私有 payload，因此 CodeAI 仍需以本机事件采集和 OpenCode 的公开协议作为实现依据。
 
+### OpenAI Codex App Server 公开 payload
+
+继续核对 OpenAI 的公开 `codex-rs/app-server/README.md` 后，命令、文件变更和审批的完整顺序与字段已经可以确认。Windows 桌面入口使用的兼容事件名与这些稳定协议事件一一对应：
+
+```text
+Turn lifecycle:
+  turn/started        { turn: { id, items: [], status: "inProgress" } }
+  turn/completed      { turn: { status: completed | interrupted | failed, error? } }
+  turn/diff/updated   { threadId, turnId, diff }
+  turn/plan/updated   { turnId, explanation?, plan: [{ step, status }] }
+
+commandExecution item:
+  { id, command, cwd, status, commandActions, aggregatedOutput?, exitCode?, durationMs? }
+
+fileChange item:
+  { id, changes: [{ path, kind, diff }], status }
+
+mcpToolCall item:
+  { id, server, tool, status, arguments, result?, error? }
+```
+
+命令审批的协议顺序是：
+
+```text
+item/started
+item/commandExecution/requestApproval
+  { itemId, threadId, turnId, approvalId?, reason, command?, cwd?, commandActions? }
+client response
+  { decision: accept | acceptForSession | acceptWithExecpolicyAmendment |
+              applyNetworkPolicyAmendment | decline | cancel }
+serverRequest/resolved { threadId, requestId }
+item/completed          { commandExecution: ..., status: completed | failed | declined }
+```
+
+文件变更审批的协议顺序是：
+
+```text
+item/started
+item/fileChange/requestApproval
+  { itemId, threadId, turnId, reason?, grantRoot? }
+client response
+  { decision: accept | acceptForSession | decline | cancel }
+serverRequest/resolved { threadId, requestId }
+item/completed          { fileChange: ..., status: completed | failed | declined }
+```
+
+公开协议还确认 `item/commandExecution/outputDelta` 是命令 stdout/stderr 增量，`item/fileChange/outputDelta` 是底层 apply-patch 输出；客户端应以 `item/completed` 作为最终权威状态，而不是用最后一个 delta 推断成功。该协议也确认 MCP elicitation 的请求字段为 `threadId`、可空 `turnId`、`serverName` 和 form/url 模式，响应为 `accept`、`decline` 或 `cancel`。
+
+来源：[OpenAI Codex App Server protocol README](https://github.com/openai/codex/blob/main/codex-rs/app-server/README.md)。这部分是公开协议证据，不把 Windows 桌面私有日志误当成完整 schema；Windows 日志与公开协议的对应关系已通过方法名、字段标签和 MCP 实际响应交叉验证。
+
 ### REA 入口图分析结果
 
 对提取出的 `.vite/build/early-bootstrap.js` 做了单文件 REA 语义分析，避免再次扫描整个 772 MB 的 `app.asar`：
