@@ -138,6 +138,56 @@ thread-stream-following-changed
 
 CodeAI 的 `Session` 应保存 Runtime 引用和 Workspace Root。`Run` 或执行段应保存模型快照、上下文窗口、推理强度和提示哈希，确保会话恢复后可以解释当时使用的模型配置。
 
+## 运行日志证据
+
+Codex 本地日志位于：
+
+```text
+C:\Users\Administrator\AppData\Local\Codex\Logs\2026\11\13
+```
+
+日志显示 App Server 通过本地 `stdio` transport 与桌面端连接。观察到的请求方法包括：
+
+```text
+config/read
+configRequirements/read
+model/list
+thread/list
+thread/queue/list
+thread/turns/list
+thread/readState/update
+thread/attachment/list
+turn/start
+turn/steer
+permissionProfile/list
+fs/getMetadata
+fs/readDirectory
+fs/unwatch
+hooks/list
+app/installed
+app/read
+mcpServerStatus/list
+```
+
+日志中还出现了这些运行时事实：
+
+```text
+derivedApprovalPolicy=on-request
+derivedActivePermissionProfile=:workspace
+derivedSandboxPolicy={type: workspaceWrite, networkAccess: false}
+requestRuntimeWorkspaceRootCount=0
+```
+
+这证明 Codex 的桌面层通过 App Server API 管理 Thread 和 Turn，文件系统访问通过 `fs/*` 方法，模型目录通过 `model/list` 获取，权限配置通过 `permissionProfile/list` 获取。Composer 发送任务时产生 `turn/start`，后续输入通过 `turn/steer` 进入已有执行流。
+
+Git 运行日志显示桌面端启动 Git repository watcher，并对 Worktree 执行 `git status`、`git rev-parse`、`git config --worktree` 和忽略目录扫描。Codex 的 Worktree 路径形态包括：
+
+```text
+C:\Users\Administrator\.codex\worktrees\<worktree-name>\<project>
+```
+
+这为 CodeAI 的 Git Runtime Adapter 提供了运行时证据。Worktree 管理需要同时维护路径、Git 元数据、忽略目录状态和会话归属。
+
 ### IPC 线索
 
 ```text
