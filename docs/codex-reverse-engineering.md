@@ -285,6 +285,22 @@ OpenAI 的公开 App Server 文档与本机逆向结果一致：客户端通过 
 
 官方资料列出的审批范围包括 Shell/终端输入、文件变更、额外文件系统或网络权限以及 MCP 工具调用；这与本机入口中的 `exec_approval_request`、`apply_patch_approval_request` 和 `serverRequest/resolved` 相互印证。官方资料没有公开 Windows 桌面端的全部私有 payload，因此 CodeAI 仍需以本机事件采集和 OpenCode 的公开协议作为实现依据。
 
+### REA 入口图分析结果
+
+对提取出的 `.vite/build/early-bootstrap.js` 做了单文件 REA 语义分析，避免再次扫描整个 772 MB 的 `app.asar`：
+
+```text
+evidence: ev_dfd502c05f744dcf3735656e01a46c07667fe25f50f78156ff78fe36284f0399
+artifact: E:\CodeAI\.cache\codex-rea\entry-src
+parsed JavaScript files: 1
+visited AST nodes: 130,372
+findings: 710
+modules: 347
+parse failures: 0
+```
+
+分析确认入口中存在事件注册、子进程创建、配置读取、请求构造、资源生命周期和 CommonJS/ESM 绑定候选。由于入口是压缩 bundle，动态属性、调用目标和未选中的 4 个 preload 文件仍被标记为 unknown；这属于分析覆盖边界，不能解释为“没有 IPC 或没有窗口”。本报告的 IPC 结论因此继续以直接字符串证据、preload 提取和运行日志三者交叉验证为准。
+
 ## 运行日志证据
 
 Codex 本地日志位于：
