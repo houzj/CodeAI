@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 import { $ } from "bun"
-import { cp, mkdir, readdir, rm } from "node:fs/promises"
+import { cp, mkdir, readdir, rm, stat } from "node:fs/promises"
 import path from "node:path"
 import { getConfig } from "../electron-builder.config"
 import { getCurrentCli, resolveChannel } from "./utils"
@@ -33,6 +33,20 @@ await rm(out, { recursive: true, force: true })
 await mkdir(out, { recursive: true })
 
 if (app) {
+  const resources = path.join(app, "resources")
+  const cliName = cli.os === "win32" ? "opencode-cli.exe" : "opencode-cli"
+  const bundledCli = path.join(resources, cliName)
+  const bundledVersion = path.join(resources, "opencode-cli.version")
+
+  // A prepackaged directory may come from an earlier --dir build that omitted extraResources.
+  // Repair it before electron-builder assembles the installer, otherwise the installed app starts
+  // but its background server fails with spawn ENOENT.
+  await mkdir(resources, { recursive: true })
+  if (!(await stat(bundledCli).then(() => true).catch(() => false)))
+    await cp(path.join(dir, "resources", cliName), bundledCli)
+  if (!(await stat(bundledVersion).then(() => true).catch(() => false)))
+    await cp(path.join(dir, "resources", "opencode-cli.version"), bundledVersion)
+
   // The installer uses the channel's icons; the rest of the app is already built and signed.
   await $`bun ./script/copy-icons.ts ${resolveChannel()}`
   await $`bunx electron-builder ${flags} --prepackaged ${app}`

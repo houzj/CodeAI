@@ -183,11 +183,11 @@ export const dict = {
   "dialog.provider.accounts.options": "{{account}} options",
 
   "provider.connect.title": "Connect {{provider}}",
-  "provider.connect.opencode.name": "OpenCode Console",
-  "provider.connect.opencode.freeName": "OpenCode Free",
-  "provider.connect.opencode.errorTitle": "Connect to OpenCode",
-  "provider.connect.console.title": "Connecting to OpenCode Console",
-  "provider.connect.console.titleGo": "Connecting to OpenCode Go",
+  "provider.connect.opencode.name": "CodeAI Console",
+  "provider.connect.opencode.freeName": "CodeAI Free",
+  "provider.connect.opencode.errorTitle": "Connect to CodeAI",
+  "provider.connect.console.title": "Connecting to CodeAI Console",
+  "provider.connect.console.titleGo": "Connecting to CodeAI Go",
   "provider.connect.console.retry": "Try again",
   "provider.connect.console.serviceKeyDescription": "Connect using a service-account API key from OpenCode Console.",
   "provider.connect.console.instructions":
@@ -220,7 +220,7 @@ export const dict = {
   "provider.connect.chatgptUsageLimit.close": "Close",
   "provider.connect.console.refreshFailed":
     "Your account is connected, but we couldn't load your models. Try again to refresh them.",
-  "provider.connect.console.connected": "OpenCode connected",
+  "provider.connect.console.connected": "CodeAI connected",
   "provider.connect.console.noModels":
     "Your account is connected, but this Console workspace has no available models. Check its setup in Console, then refresh.",
   "provider.connect.console.modelsLoading": "Your models are still loading. Refresh to check again.",
@@ -364,6 +364,10 @@ export const dict = {
   "session.runtime.steps": "{{count}} steps",
   "session.runtime.approvals": "{{count}} approvals",
   "session.runtime.changes": "{{count}} changed files",
+  "session.run.task": "Task",
+  "session.run.result": "Result",
+  "session.run.runtime": "Run details",
+  "session.run.emptyTask": "No task has been submitted yet.",
 
   "prompt.action.attachFile": "Add files",
 
@@ -551,7 +555,7 @@ export const dict = {
   "error.page.action.checkUpdates": "Check for updates",
   "error.page.action.updateTo": "Update to {{version}}",
   "error.page.circular": "[Circular]",
-  "error.page.report.prefix": "Please report this error to the OpenCode team",
+  "error.page.report.prefix": "Please report this error to the CodeAI team",
   "error.page.report.discord": "on Discord",
   "error.page.version": "Version: {{version}}",
 

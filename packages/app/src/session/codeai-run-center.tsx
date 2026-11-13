@@ -1,0 +1,104 @@
+import { For, Show, createEffect, createMemo, createSignal, onCleanup } from "solid-js"
+import type { SessionMessageAssistant } from "@opencode/client/promise"
+import { useLanguage } from "@/runtime/i18n/language"
+import { useServerSDK } from "@/runtime/server/client"
+import { connectCodexActivity, createCodexActivityState, type CodexActivityState } from "./codex-activity"
+import type { SessionModel } from "./model"
+
+export function CodeAIRunCenter(props: { session: SessionModel }) {
+  const language = useLanguage()
+  const sdk = useServerSDK()
+  const [activity, setActivity] = createSignal<CodexActivityState>()
+  const identity = createMemo(() => {
+    const info = props.session.data.info()
+    return info ? { id: info.id, directory: info.location.directory } : undefined
+  })
+  const task = createMemo(() => props.session.history.lastUserMessage()?.text ?? language.t("session.run.emptyTask"))
+  const assistant = createMemo(() => props.session.history.messages().findLast((message) => message.type === "assistant"))
+  const result = createMemo(() => assistantText(assistant()))
+  const status = createMemo(() => {
+    const current = activity()
+    if (current?.run === "running" || props.session.data.working()) return language.t("session.child.status.running")
+    if (current?.run === "failed") return language.t("session.child.status.failed")
+    if (current?.run === "interrupted") return language.t("session.child.status.interrupted")
+    if (current?.run === "succeeded") return language.t("session.child.status.succeeded")
+    return language.t("session.runtime.idle")
+  })
+  const pending = () => activity()?.approvals.filter((item) => item.status === "pending") ?? []
+
+  createEffect(() => {
+    const current = identity()
+    if (!current) return
+    setActivity(createCodexActivityState(current.id))
+    const disconnect = connectCodexActivity({
+      sessionID: current.id,
+      directory: current.directory,
+      event: sdk.event,
+      onState: setActivity,
+    })
+    onCleanup(disconnect)
+  })
+
+  return (
+    <div class="flex min-h-0 flex-1 flex-col overflow-y-auto px-4 pb-36 pt-6 md:px-8" data-component="codeai-run-center">
+      <div class="mx-auto flex w-full max-w-[860px] flex-col gap-4">
+        <section class="rounded-[10px] border border-v2-border-border-base bg-v2-background-bg-layer-01 px-4 py-3">
+          <div class="mb-2 flex items-center justify-between gap-3 text-11-medium uppercase tracking-[0.08em] text-v2-text-text-muted">
+            <span>{language.t("session.run.task")}</span>
+            <span class="normal-case tracking-normal text-v2-text-text-faint">{status()}</span>
+          </div>
+          <p class="whitespace-pre-wrap text-14-regular leading-6 text-v2-text-text-base">{task()}</p>
+        </section>
+        <Show when={result()}>
+          {(value) => (
+            <section class="rounded-[10px] border border-v2-border-border-base bg-v2-background-bg-base px-4 py-3">
+              <div class="mb-2 text-11-medium uppercase tracking-[0.08em] text-v2-text-text-muted">{language.t("session.run.result")}</div>
+              <p class="whitespace-pre-wrap text-13-regular leading-6 text-v2-text-text-base">{value()}</p>
+            </section>
+          )}
+        </Show>
+        <details class="rounded-[10px] border border-v2-border-border-base bg-v2-background-bg-base">
+          <summary class="flex cursor-pointer list-none items-center gap-2 px-4 py-3 text-13-medium text-v2-text-text-muted hover:bg-v2-background-bg-layer-01">
+            <span>{language.t("session.run.runtime")}</span>
+            <span class="text-v2-text-text-faint">{language.t("session.runtime.steps", { count: activity()?.steps.length ?? 0 })}</span>
+            <Show when={pending().length > 0}>
+              <span class="text-v2-text-warning">{language.t("session.runtime.approvals", { count: pending().length })}</span>
+            </Show>
+            <span class="ms-auto">⌄</span>
+          </summary>
+          <div class="flex flex-col gap-2 border-t border-v2-border-border-base px-4 py-3">
+            <Show when={(activity()?.steps.length ?? 0) > 0} fallback={<div class="text-12-regular text-v2-text-text-faint">{language.t("session.runtime.empty")}</div>}>
+              <For each={activity()?.steps ?? []}>
+                {(step) => (
+                  <div class="flex items-center gap-2 text-12-regular text-v2-text-text-muted">
+                    <span class="text-v2-text-success">{step.status === "completed" ? "✓" : "·"}</span>
+                    <span class="min-w-0 flex-1 truncate">{step.name ?? step.id}</span>
+                    <span class="text-v2-text-text-faint">{step.status}</span>
+                  </div>
+                )}
+              </For>
+            </Show>
+            <Show when={pending().length > 0}>
+              <div class="border-t border-v2-border-border-base pt-2 text-12-regular text-v2-text-warning">
+                <For each={pending()}>{(item) => <div class="truncate">{item.action} · {item.resources.join(", ")}</div>}</For>
+              </div>
+            </Show>
+            <Show when={(activity()?.changedFiles.length ?? 0) > 0}>
+              <div class="border-t border-v2-border-border-base pt-2 text-12-regular text-v2-text-text-muted">
+                {language.t("session.runtime.changes", { count: activity()?.changedFiles.length ?? 0 })}
+              </div>
+            </Show>
+          </div>
+        </details>
+      </div>
+    </div>
+  )
+}
+
+function assistantText(message: SessionMessageAssistant | undefined) {
+  return message?.content
+    .filter((part): part is Extract<SessionMessageAssistant["content"][number], { type: "text" }> => part.type === "text")
+    .map((part) => part.text)
+    .join("\n")
+    .trim()
+}
