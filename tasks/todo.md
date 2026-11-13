@@ -211,7 +211,7 @@
 ### Task 2：Run 中心区
 
 - [x] 默认只显示任务、当前运行状态和 Composer
-- [ ] Tool、Change、Approval 默认折叠并可展开
+- [x] Tool、Change、Approval 默认折叠并可展开
 - [x] Composer 支持真实 Enter 发送路径，沿用生产编辑器的 Shift+Enter 换行和自适应高度
 
 ### Task 3：会话级模型
@@ -275,3 +275,11 @@
 - [x] Run Center 的折叠详情接入真实 Permission API，展开后可执行一次性批准。
 - [x] 修复安装后 `resources/opencode-cli.exe` 缺失导致的 `spawn ENOENT`；预打包流程现在会自动补齐 CLI 和版本文件。
 - [x] 错误页、Provider 图标和连接页不再渲染 OpenCode Logo；错误反馈文案改为 CodeAI。
+
+### 执行记录（2026-11-14，Run Center 收敛）
+
+- [x] 中间区从信息卡布局收敛为任务、状态、结果和折叠运行详情，减少固定边框和视觉噪音。
+- [x] 运行详情展开后显示工具步骤、待审批请求、一次性批准操作和变更文件路径。
+- [x] `packages/app` 类型检查通过，相关 Runtime/布局测试 13/13 通过。
+- [x] `packages/app` Vite 生产构建通过（5,358 modules transformed）。
+- [ ] 最新 Run Center 需要在用户本机安装包中完成一次手动视觉冒烟；当前不再自动控制用户桌面。
