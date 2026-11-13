@@ -48,12 +48,13 @@
 
 ### G5：Windows 产品闭环
 
+- [x] CodeAI Windows 构建和 x64 打包通过，产物包含 `CodeAI.exe` 和 CodeAI App ID。
 - [ ] CodeAI 安装包启动后进入真实工作区。
 - [ ] 应用重启后恢复项目、Session 和右侧区域状态。
 - [ ] 运行、审批、错误和取消状态在安装包中与开发模式一致。
 - [ ] 完成一次 Windows 冒烟测试并记录日志位置。
 
-**验收证据：** 从安装包启动，选择项目并完成一次真实任务。
+**验收证据：** `packages/desktop` typecheck、build、pack 通过；安装器测试 3/4 通过，剩余 1 项因当前沙箱禁止 HKCU 注册表访问无法完成。仍需在正常 Windows 用户环境完成安装包端到端任务验收。
 
 ## 当前执行顺序
 
