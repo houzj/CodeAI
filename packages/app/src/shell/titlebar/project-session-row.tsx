@@ -30,6 +30,7 @@ import {
 import type { Project } from "@/runtime/server/types"
 import { ProjectIcon } from "@/shell/layout/project-icon"
 import { displayName } from "@opencode/ui/project-avatar"
+import { useDraggable } from "@dnd-kit/solid"
 import "./tab-nav.css"
 
 export function ProjectSessionRow(props: {
@@ -72,6 +73,11 @@ export function ProjectSessionRow(props: {
       (error) => showToast({ title: language.t("common.requestFailed"), description: errorMessage(error, language.t("common.requestFailed")) }),
     )
   }
+
+  const draggable = useDraggable({
+    id: `session:${props.session.id}`,
+    data: { type: "session", sessionID: props.session.id },
+  })
 
   const exporter = createSessionExporter()
 
@@ -141,18 +147,20 @@ export function ProjectSessionRow(props: {
 
   return (
     <Menu.Context modal={false}>
-      <Menu.Context.Trigger
-        as="button"
-        type="button"
-        data-titlebar-tab-action
-        data-state={props.active ? "pressed" : undefined}
-        class="relative flex h-7 w-full shrink-0 items-center gap-2 rounded-[6px] ps-8 pe-2 text-start text-[13px] leading-[var(--line-height-compact)] font-medium focus-visible:outline-none"
-        classList={{ "text-v2-text-text-base": props.active, "text-v2-text-text-faint": !props.active }}
-        aria-current={props.active ? "page" : undefined}
-        title={sessionLabel(props.session)}
-        style={props.depth ? { "padding-inline-start": `calc(2rem + ${props.depth * 14}px)` } : undefined}
-        onClick={props.onOpen}
-      >
+      <div ref={draggable.ref} classList={{ "opacity-50": draggable.isDragging() }}>
+        <Menu.Context.Trigger
+          as="button"
+          type="button"
+          data-titlebar-tab-action
+          data-state={props.active ? "pressed" : undefined}
+          class="relative flex h-7 w-full shrink-0 items-center gap-2 rounded-[6px] ps-8 pe-2 text-start text-[13px] leading-[var(--line-height-compact)] font-medium focus-visible:outline-none"
+          classList={{ "text-v2-text-text-base": props.active, "text-v2-text-text-faint": !props.active }}
+          aria-current={props.active ? "page" : undefined}
+          aria-grabbed={draggable.isDragging()}
+          title={sessionLabel(props.session)}
+          style={props.depth ? { "padding-inline-start": `calc(2rem + ${props.depth * 14}px)` } : undefined}
+          onClick={props.onOpen}
+        >
         <Show when={props.project && !props.openTab ? props.project : undefined}>
           {(project) => (
             <span class="absolute start-2 top-1/2 flex size-4 -translate-y-1/2 items-center justify-center">
@@ -192,7 +200,8 @@ export function ProjectSessionRow(props: {
             <ActivityRing width={14} height={14} />
           </Show>
         </span>
-      </Menu.Context.Trigger>
+        </Menu.Context.Trigger>
+      </div>
       <Menu.Context.Portal>
         <Menu.Context.Content
           onCloseAutoFocus={(event) => {

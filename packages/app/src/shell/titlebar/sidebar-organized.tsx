@@ -3,7 +3,7 @@ import { createEffect, createMemo, Show, onCleanup, untrack, type Accessor, type
 import { Key } from "@solid-primitives/keyed"
 import { createStore } from "solid-js/store"
 import { useQuery } from "@tanstack/solid-query"
-import { DragDropProvider, PointerSensor } from "@dnd-kit/solid"
+import { DragDropProvider, PointerSensor, useDroppable } from "@dnd-kit/solid"
 import { isSortable, useSortable } from "@dnd-kit/solid/sortable"
 import { Accessibility, Feedback, PointerActivationConstraints } from "@dnd-kit/dom"
 import { RestrictToVerticalAxis } from "@dnd-kit/abstract/modifiers"
@@ -25,6 +25,8 @@ import { ServerConnection, useServers } from "@/runtime/server/registry"
 import { useGlobal, useServerCtx } from "@/runtime/server/runtime"
 import type { Project } from "@/runtime/server/types"
 import { ProjectIcon } from "@/shell/layout/project-icon"
+import { showToast } from "@/shell/notifications/toast"
+import { errorMessage } from "@/shell/layout/helpers"
 import { useLayout } from "@/shell/state/layout"
 import { createProjectSessionActions } from "@/shell/tabs/project-sessions"
 import { useTabs, type Tab } from "@/shell/tabs/tabs"
@@ -272,6 +274,29 @@ function ProjectList(props: {
             ]}
             onDragEnd={(event) => {
               const source = event.operation.source
+              const target = event.operation.target
+
+              if (
+                !event.canceled &&
+                source?.data.type === "session" &&
+                target?.data.type === "project" &&
+                typeof source.data.sessionID === "string" &&
+                typeof target.data.directory === "string"
+              ) {
+                const current = ctx()
+                if (!current) return
+
+                void current.sdk.api.session
+                  .move({ sessionID: source.data.sessionID, directory: target.data.directory })
+                  .then(() => current.data.session.sync(source.data.sessionID))
+                  .catch((error) =>
+                    showToast({
+                      title: language.t("common.requestFailed"),
+                      description: errorMessage(error, language.t("common.requestFailed")),
+                    }),
+                  )
+                return
+              }
 
               if (event.canceled || !isSortable(source) || source.initialIndex === source.index) return
               props.onReorder(
@@ -387,8 +412,20 @@ function ProjectRow(props: {
     },
   })
 
+  const droppable = useDroppable({
+    id: `project:${props.project.id}`,
+    data: { type: "project", projectID: props.project.id, directory: props.project.worktree },
+  })
+
   return (
-    <div ref={sortable.ref} class="relative shrink-0">
+    <div
+      ref={(element) => {
+        sortable.ref(element)
+        droppable.ref(element)
+      }}
+      class="relative shrink-0"
+      classList={{ "bg-v2-background-base-hover": droppable.isDropTarget() }}
+    >
       <div
         class="group/project relative flex h-7 min-w-0 shrink-0 items-center rounded-[6px] pe-1 hover:bg-v2-overlay-simple-overlay-hover has-[:focus-visible]:bg-v2-overlay-simple-overlay-hover"
         onContextMenu={(event) => {
