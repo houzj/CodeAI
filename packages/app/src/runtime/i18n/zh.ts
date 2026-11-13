@@ -3,7 +3,7 @@ import en from "./en"
 type Keys = keyof typeof en
 
 export const dict = {
-  "desktop.menu.app": "OpenCode",
+  "desktop.menu.app": "CodeAI",
   "desktop.menu.file": "文件",
   "desktop.menu.edit": "编辑",
   "desktop.menu.view": "视图",
@@ -46,15 +46,15 @@ export const dict = {
   "desktop.menu.supportForum": "支持论坛",
   "desktop.menu.shareFeedback": "提供反馈",
   "desktop.menu.reportBug": "报告错误",
-  "desktop.menu.ariaLabel": "OpenCode 菜单",
+  "desktop.menu.ariaLabel": "CodeAI 菜单",
 
   "desktop.recovery.action.relaunch": "重新启动",
   "desktop.recovery.action.exportLogs": "导出日志",
   "desktop.recovery.action.keepWaiting": "继续等待",
   "desktop.recovery.action.quit": "退出",
-  "desktop.recovery.loadFailed": "OpenCode 加载失败",
-  "desktop.recovery.terminated": "OpenCode 窗口意外终止",
-  "desktop.recovery.unresponsive": "OpenCode 未响应",
+  "desktop.recovery.loadFailed": "CodeAI 加载失败",
+  "desktop.recovery.terminated": "CodeAI 窗口意外终止",
+  "desktop.recovery.unresponsive": "CodeAI 未响应",
   "desktop.recovery.unresponsive.detail": "你可以重新启动应用、打开日志或继续等待。",
   "desktop.recovery.loadFailed.detail": "窗口：{{window}}\nURL：{{url}}\n错误：{{code}} {{description}}",
   "desktop.recovery.terminated.detail": "窗口：{{window}}\n原因：{{reason}}\n代码：{{code}}",
@@ -734,7 +734,7 @@ export const dict = {
   "settings.about.firstPublished": "首次在美国密苏里州发布",
   "settings.about.firstIllustrated": "首次在英国伦敦展出",
   "settings.about.website": "www.opencode.ai",
-  "settings.about.description": "OpenCode ，开源编码代理",
+  "settings.about.description": "CodeAI，开源编码代理",
   "settings.about.trademark": "OpenCode是Anomaly Innovations, Inc.的注册商标。",
   "settings.about.typeset": "Inter和IBM Plex Mono中的排版",
   "settings.about.tagline": "没有您，人工智能无法构建出色的软件",
