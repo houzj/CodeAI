@@ -188,6 +188,55 @@ C:\Users\Administrator\.codex\worktrees\<worktree-name>\<project>
 
 这为 CodeAI 的 Git Runtime Adapter 提供了运行时证据。Worktree 管理需要同时维护路径、Git 元数据、忽略目录状态和会话归属。
 
+### 一次实际 Turn 的事件顺序
+
+当前 Codex 日志记录了一条可验证的执行链：
+
+```text
+host-app-server-manager: turn-start config resolved
+AppServerConnection: turn/start
+AppServerConnection: fs/getMetadata
+AppServerConnection: fs/readDirectory
+AppServerConnection: hooks/list
+AppServerConnection: permissionProfile/list
+AppServerConnection: config/read
+AppServerConnection: thread/turns/list
+AppServerConnection: thread/queue/list
+AppServerConnection: thread/readState/update
+AppServerConnection: turn/steer
+AppServerConnection: fs/unwatch
+AppServerConnection: app-server transport stop
+```
+
+日志还记录了 `model/list`、`mcpServerStatus/list`、`app/installed` 和 `app/read`。这说明一次 Turn 不是单个模型请求，而是由 Thread 状态、文件索引、Hook、权限、配置和工具服务共同驱动的执行过程。
+
+Codex 当前日志中的执行配置是：
+
+```text
+approvalPolicy: on-request
+permissionProfile: :workspace
+sandbox: workspaceWrite
+networkAccess: false
+```
+
+### CodeAI 的执行状态机
+
+基于这些运行证据，CodeAI 的第一版执行状态可以定义为：
+
+```text
+SessionReady
+  → TurnStarted
+  → WorkspaceScanned
+  → PermissionsResolved
+  → ModelResolved
+  → ToolExecution
+  → ApprovalRequired
+  → ChangesProjected
+  → TurnCompleted
+```
+
+每个状态都应由运行事件驱动，文件扫描、审批、模型解析和变更投影都不能隐藏在聊天消息渲染逻辑中。
+
 ### IPC 线索
 
 ```text
