@@ -63,6 +63,40 @@
 3. G4：接入产物 Tab 和右侧独立布局。
 4. G5：安装包冒烟验证。
 
+## 新目标：CodeAI 生产 Shell（2026-11-13）
+
+**目标：** 把真实 `packages/app` 从 OpenCode 原生壳推进为 Codex 风格 CodeAI 工作区。`codex-v4.html` 只作为视觉参考，不作为交付物。
+
+### P1：生产 Workspace Frame
+
+- [x] 接入真实 Session 路由。
+- [x] 显示 Project → Worktree → Session 层级。
+- [ ] 左侧导航支持 Session 切换并保持 Runtime 状态。
+- [ ] 压缩原生 Session Header，建立 CodeAI Workspace Header。
+
+### P2：Run 中心区
+
+- [ ] Task / Run Header。
+- [ ] Tool / Approval / Changes / Reasoning 折叠步骤。
+- [ ] 默认聚焦任务和当前运行状态。
+- [ ] Composer 固定底部并接入真实 prompt / interrupt / model。
+
+### P3：Artifact 右侧区
+
+- [ ] 产物事件创建文件、Changes、Preview、Logs Tab。
+- [ ] 无产物自动隐藏右侧区域。
+- [ ] 右侧独立关闭、恢复、全屏。
+- [ ] 中间 Run 流和 Composer 状态不被右侧 Tab 打断。
+
+### P4：验证与收敛
+
+- [ ] 生产组件和事件回放测试。
+- [ ] Windows 包重新打包并验证品牌和布局。
+- [ ] 完成真实项目任务并保存运行证据。
+- [ ] 移除交付流程对静态 v4 HTML 的依赖。
+
+**当前下一步：** P2，先把真实 Session 页面中心区改成 Run Header + 折叠事件流。
+
 ## 执行记录（2026-11-13）
 
 - OpenCode 基线已落到仓库根目录，基线提交：`fb11429446`。

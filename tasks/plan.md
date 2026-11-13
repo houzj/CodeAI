@@ -387,3 +387,50 @@ v4 原型已经验证了桌面宿主的空间关系，但原型里的运行记�
 - [ ] 右侧工作区能由产物事件显示/隐藏，隐藏后中间区域自动扩展。
 - [ ] `packages/app` 类型检查和针对性测试通过。
 
+## CodeAI 生产 Shell 重构计划
+
+本计划替代静态 `ui-prototype/codex-v4.html` 作为 UI 交付主线。HTML 原型只保留为视觉参考，所有验收必须落在 `packages/app` 的真实路由和组件上。
+
+### Architecture Decisions
+
+- 保留 OpenCode 的 ServerSDK、Session 数据层、Composer 提交链和插件 SideRegion，不复制一套假 Runtime。
+- 在 Session 路由外增加 CodeAI Workspace Frame，负责 Project、Worktree、Session 层级和三栏布局。
+- 中间区以 Run 为中心：用户任务、运行状态、工具事件、审批和变更都来自 `CodexActivityState`，详情默认折叠。
+- 右侧 Artifact 区继续使用真实插件 Tab，但由当前 Session 的产物状态决定显示、隐藏、恢复和全屏。
+- 每个阶段都必须有真实页面截图或桌面包验证，静态 HTML 不作为完成证据。
+
+### Phase 1: Production workspace frame
+
+- [x] 在真实 Session 路由中接入 CodeAI Workspace Frame。
+- [x] 使用 ServerSDK 显示 Project、Worktree、Session 层级。
+- [ ] 左侧导航切换 Session 时保持当前 Worktree 和 Runtime 状态。
+- [ ] 将顶部原生 Session 标识压缩为 CodeAI 工作区 Header。
+
+### Phase 2: Run-centered conversation
+
+- [ ] 新增生产 Run Header，显示 Task、Run 状态、模型和耗时。
+- [ ] 将真实 Tool、Permission、Change、Reasoning 事件投影为可折叠 Run Step。
+- [ ] 默认只显示任务和当前状态，工具详情、变更和审批按需展开。
+- [ ] Composer 固定在中间区底部，沿用真实 prompt、interrupt 和 model selection。
+
+### Phase 3: Artifact workbench
+
+- [ ] 文件、Changes、Preview、Logs 由真实事件和 Tab 创建，不预置空面板。
+- [ ] 无活动 Artifact 时右侧自动隐藏，中间区自动扩展。
+- [ ] 支持右上角独立关闭、恢复、全屏和文件级 Tab。
+- [ ] 右侧打开时不改变中间 Run 流的滚动和 Composer 状态。
+
+### Phase 4: Product validation
+
+- [ ] 为生产 Shell 添加组件测试和 Session 事件回放测试。
+- [ ] 重新生成 CodeAI Windows 包并验证窗口标题、菜单、安装包名称。
+- [ ] 完成真实项目任务：Shell、文件修改、Preview、审批和最终 Run 收敛。
+- [ ] 删除交付流程对 `codex-v4.html` 的依赖。
+
+### Checkpoint: CodeAI production shell
+
+- [ ] 真实桌面启动后默认进入 CodeAI Workspace Frame。
+- [ ] 中间区与 Codex 任务/Run 结构一致。
+- [ ] 右侧 Artifact 区独立显示并能自动隐藏。
+- [ ] Windows 冒烟任务完成且所有事件来自 Runtime。
+
