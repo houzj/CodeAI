@@ -55,7 +55,7 @@ export const dict = {
   "command.project.open": "Open project",
   "command.project.copyID": "Copy Project ID",
   "command.provider.connect": "Connect an integration",
-  "command.provider.connect.description": "Sign in to OpenCode Go, OpenCode Console, or another model provider",
+  "command.provider.connect.description": "Sign in to CodeAI Go, CodeAI Console, or another model provider",
   "command.settings.open": "Open settings",
   "command.config.reload": "Reload configuration",
   "command.config.reload.description": "Reload agents, commands, skills, MCP servers and plugins from your config",
@@ -63,7 +63,7 @@ export const dict = {
   "command.config.reload.done": "Configuration reloaded",
   "command.config.reload.failed": "Couldn't reload configuration",
   "command.usage.view": "View usage",
-  "command.usage.view.description": "See your OpenCode Go allowance and Console budgets",
+  "command.usage.view.description": "See your CodeAI Go allowance and Console budgets",
   "command.session.location.cycle": "Cycle session location",
   "command.session.branch.choose": "Choose base branch",
   "session.location.toggle": "Toggle session location",
@@ -133,7 +133,7 @@ export const dict = {
   "palette.session.location": "{{project}} · {{server}}",
 
   "dialog.provider.title": "Integrations",
-  "dialog.provider.description": "Connect services so OpenCode can use them.",
+  "dialog.provider.description": "Connect services so CodeAI can use them.",
   "dialog.provider.search.placeholder": "Search providers",
   "dialog.provider.empty": "No providers found",
   "dialog.provider.group.popular": "Popular",
@@ -171,7 +171,7 @@ export const dict = {
   "dialog.model.favorite": "Favorite",
   "dialog.model.unfavorite": "Unfavorite",
 
-  "dialog.model.unpaid.freeModels.title": "Free models provided by OpenCode",
+  "dialog.model.unpaid.freeModels.title": "Free models provided by CodeAI",
   "dialog.model.unpaid.addMore.title": "Add more models from popular providers",
   "dialog.model.unpaid.viewMoreProviders": "See 70+ more providers",
 
@@ -189,7 +189,7 @@ export const dict = {
   "provider.connect.console.title": "Connecting to CodeAI Console",
   "provider.connect.console.titleGo": "Connecting to CodeAI Go",
   "provider.connect.console.retry": "Try again",
-  "provider.connect.console.serviceKeyDescription": "Connect using a service-account API key from OpenCode Console.",
+  "provider.connect.console.serviceKeyDescription": "Connect using a service-account API key from CodeAI Console.",
   "provider.connect.console.instructions":
     "Continue in your browser. Confirm the code shown there matches the one below.",
   "provider.connect.console.deviceCode": "Device code",
@@ -210,7 +210,7 @@ export const dict = {
   "provider.connect.models.description": "Choose a model to start with. You can switch models anytime.",
   "provider.connect.models.available": "Available models",
   "provider.connect.chatgptWelcome.title": "ChatGPT connected",
-  "provider.connect.chatgptWelcome.description": "Eligible requests in OpenCode can use your ChatGPT plan.",
+  "provider.connect.chatgptWelcome.description": "Eligible requests in CodeAI can use your ChatGPT plan.",
   "provider.connect.chatgptWelcome.usage": "Manage usage in ChatGPT settings",
   "provider.connect.chatgptWelcome.confirm": "Got it",
   "provider.connect.models.list": "Models available from {{provider}}",
@@ -228,7 +228,7 @@ export const dict = {
   "provider.connect.console.openingBrowser": "Opening browser…",
   "provider.connect.remote.title": "Connecting on “{{server}}”",
   "provider.connect.remote.description":
-    "Your OpenCode credentials will be stored on this server. Models will be available through this server.",
+    "Your CodeAI credentials will be stored on this server. Models will be available through this server.",
   "provider.connect.title.anthropicProMax": "Login with Anthropic",
   "provider.connect.claudeAgent.description":
     "Use your Claude plan or another Claude Code login. Install Claude Code and sign in first.",
@@ -259,7 +259,7 @@ export const dict = {
   "provider.connect.status.waiting": "Waiting for authorization…",
   "provider.connect.status.failed": "Authorization failed: {{error}}",
   "provider.connect.apiKey.description":
-    "Enter your {{provider}} API key to connect your account and use {{provider}} models in OpenCode.",
+    "Enter your {{provider}} API key to connect your account and use {{provider}} models in CodeAI.",
   "provider.connect.apiKey.label": "{{provider}} API key",
   "provider.connect.apiKey.placeholder": "API key",
   "provider.connect.apiKey.required": "API key is required",
@@ -273,7 +273,7 @@ export const dict = {
   "provider.connect.oauth.auto.description":
     "Your browser opens so you can sign in to {{provider}}. Come back here when you are done.",
   "provider.connect.oauth.auto.paste.description":
-    "Your browser opens so you can sign in to {{provider}}. If it can't reach the machine running OpenCode, paste the URL it was redirected to below.",
+    "Your browser opens so you can sign in to {{provider}}. If it can't reach the machine running CodeAI, paste the URL it was redirected to below.",
   "provider.connect.oauth.code.description":
     "Your browser opens so you can sign in to {{provider}}. Paste the authorization code it gives you below.",
   "provider.connect.oauth.openBrowser": "Open browser",
@@ -401,7 +401,7 @@ export const dict = {
   "dialog.mcp.signIn": "Sign in",
   "dialog.mcp.signIn.open": "Sign in to {{name}}",
   "dialog.mcp.signIn.description":
-    "Your browser opens so you can sign in to {{name}}. If it can't reach the machine running OpenCode, paste the URL it was redirected to below.",
+    "Your browser opens so you can sign in to {{name}}. If it can't reach the machine running CodeAI, paste the URL it was redirected to below.",
   "dialog.mcp.signIn.syncFailed": "Signed in, but couldn't refresh {{name}}: {{error}}",
   "dialog.mcp.error.details":
     "MCP server: {{name}}\nStatus: failed\nConfiguration: mcp.servers.{{name}}\nError: {{error}}",
@@ -491,7 +491,7 @@ export const dict = {
   "dialog.server.menu.show": "Show in project list",
 
   "server.row.incompatible":
-    "This server is running OpenCode {{version}}, which isn't compatible with this app. Upgrade it to OpenCode V2 to continue.",
+    "This server is running CodeAI {{version}}, which isn't compatible with this app. Upgrade it to CodeAI V2 to continue.",
 
   "dialog.project.edit.title": "Edit project",
   "dialog.project.edit.icon": "Icon",
@@ -580,7 +580,7 @@ export const dict = {
   "error.chain.didYouMean": "Did you mean: {{suggestions}}",
   "error.chain.modelNotFound": "Model not found: {{provider}}/{{model}}",
   "error.chain.checkConfig": "Check your config (opencode.json) provider/model names",
-  "error.chain.mcpFailed": 'MCP server "{{name}}" failed. Note, OpenCode does not support MCP authentication yet.',
+  "error.chain.mcpFailed": 'MCP server "{{name}}" failed. Note, CodeAI does not support MCP authentication yet.',
   "error.chain.providerAuthFailed": "Provider authentication failed ({{provider}}): {{message}}",
   "error.chain.providerInitFailed":
     'Failed to initialize provider "{{provider}}". Check credentials and configuration.',
@@ -624,7 +624,7 @@ export const dict = {
   "home.sessions.group.older": "Older",
   "home.providerTip": "Connect to 75+ providers to use other models, including Claude, GPT, Gemini, etc",
   "tips.browse.title": "Control your browser",
-  "tips.browse.description": "Let OpenCode work in your browser with your tabs, logins, and extensions.",
+  "tips.browse.description": "Let CodeAI work in your browser with your tabs, logins, and extensions.",
   "tips.browse.install": "Install",
   "tips.hex.title": "Use your voice",
   "tips.hex.description": "Hold a key and speak your prompts. Runs locally and works across your whole computer.",
@@ -653,7 +653,7 @@ export const dict = {
   "session.error.notFound.closeTab": "Close Tab",
   "session.error.incompatible": "This server version isn't supported",
   "session.error.incompatible.description":
-    "{{server}} is running OpenCode {{version}}, which isn't compatible with this app. Upgrade the server to OpenCode V2 to continue.",
+    "{{server}} is running CodeAI {{version}}, which isn't compatible with this app. Upgrade the server to CodeAI V2 to continue.",
   "session.error.unreachable": "Can't reach this server",
   "session.error.unreachable.description":
     "{{server}} isn't responding, so this session can't load. It will open automatically once the server is reachable again.",
@@ -968,10 +968,10 @@ export const dict = {
   "settings.about.firstIllustrated": "First illustrated in London, England",
   "settings.about.website": "www.opencode.ai",
   "settings.about.description": "CodeAI, the open source coding agent",
-  "settings.about.trademark": "OpenCode is a registered trademark of Anomaly Innovations, Inc.",
+  "settings.about.trademark": "CodeAI is a registered trademark of Anomaly Innovations, Inc.",
   "settings.about.typeset": "Typeset in Inter and IBM Plex Mono",
   "settings.about.notices.title": "Third-party notices",
-  "settings.about.notices.description": "OpenCode includes the following open source software.",
+  "settings.about.notices.description": "CodeAI includes the following open source software.",
   "settings.about.notices.license": "License text",
   "settings.about.notices.fonts.title": "Fonts in the Office previews",
   "settings.about.notices.fonts.description":
@@ -1038,7 +1038,7 @@ export const dict = {
   "settings.extensions.sources.loadFailed": "Could not load extension sources",
   "settings.extensions.console.temporary":
     "Switches temporarily control MCP connections for the current project, not your Console preferences. Server configuration changes can reconnect them.",
-  "settings.extensions.console.replaced": "Replaces OpenCode Console",
+  "settings.extensions.console.replaced": "Replaces CodeAI Console",
   "settings.extensions.console.connect": "Connect {{name}} in Console",
   "settings.extensions.console.manage": "Manage {{name}} in Console",
   "project.settings.title": "Edit project",
@@ -1048,7 +1048,7 @@ export const dict = {
   "project.settings.autoAccept.on": "On",
   "project.settings.autoAccept.off": "Off",
   "project.settings.name.title": "Project name",
-  "project.settings.name.description": "The name shown for this project throughout OpenCode",
+  "project.settings.name.description": "The name shown for this project throughout CodeAI",
   "project.settings.icon.description": "Recommended: 128×128px. Click or drag to upload an image.",
   "project.settings.color.description": "Used for the project icon when no custom image is set",
   "project.settings.worktree.startup.description": "Runs once after creating a new worktree",
@@ -1061,11 +1061,11 @@ export const dict = {
   "project.settings.extensions.added": "Added to this project",
   "project.settings.extensions.shared": "Shared with all projects",
   "project.settings.extensions.empty.mcps.title": "No MCPs yet",
-  "project.settings.extensions.empty.mcps.description": "MCPs available to OpenCode will appear here",
+  "project.settings.extensions.empty.mcps.description": "MCPs available to CodeAI will appear here",
   "project.settings.extensions.empty.plugins.title": "No plugins yet",
-  "project.settings.extensions.empty.plugins.description": "Plugins available to OpenCode will appear here",
+  "project.settings.extensions.empty.plugins.description": "Plugins available to CodeAI will appear here",
   "project.settings.extensions.empty.skills.title": "No skills yet",
-  "project.settings.extensions.empty.skills.description": "Skills available to OpenCode will appear here",
+  "project.settings.extensions.empty.skills.description": "Skills available to CodeAI will appear here",
   "project.settings.extensions.lsp.description": "Auto-detected from file types",
   "project.settings.extensions.lsp.configured": "Configured language servers",
   "project.settings.extensions.lsp.status.enabled": "Enabled in config",
@@ -1130,15 +1130,15 @@ export const dict = {
   "settings.timeline.category.commentary": "Commentary",
 
   "settings.general.row.language.title": "Language",
-  "settings.general.row.language.description": "Change the display language for OpenCode",
+  "settings.general.row.language.description": "Change the display language for CodeAI",
   "settings.general.row.shell.title": "Terminal shell",
   "settings.general.row.shell.description": "Shell used by the terminal and agent tools",
   "settings.general.row.shell.autoDefault": "Auto (Default)",
   "settings.general.row.shell.terminalOnly": "terminal only",
   "settings.general.row.colorScheme.title": "Color scheme",
-  "settings.general.row.colorScheme.description": "Choose whether OpenCode follows the system, light, or dark theme",
+  "settings.general.row.colorScheme.description": "Choose whether CodeAI follows the system, light, or dark theme",
   "settings.general.row.theme.title": "Theme",
-  "settings.general.row.theme.description": "Customise how OpenCode is themed.",
+  "settings.general.row.theme.description": "Customise how CodeAI is themed.",
   "settings.general.row.font.title": "Code Font",
   "settings.general.row.font.description": "Customise the font used in code blocks",
   "settings.general.row.terminalFont.title": "Terminal Font",
@@ -1328,7 +1328,7 @@ export const dict = {
   "settings.workspaces.description": "Review worktrees and manage disk usage",
   "settings.workspaces.filter.all": "All projects",
   "settings.workspaces.empty": "No worktrees yet",
-  "settings.workspaces.empty.description": "Worktrees created in OpenCode will appear here",
+  "settings.workspaces.empty.description": "Worktrees created in CodeAI will appear here",
   "settings.workspaces.count.one": "{{count}} worktree",
   "settings.workspaces.count.other": "{{count}} worktrees",
   "settings.workspaces.sessions.one": "{{count}} session in {{project}}",
@@ -1391,8 +1391,8 @@ export const dict = {
   "lab.grid": "Grid",
 
   "usage.title": "Usage",
-  "usage.section.go": "OpenCode Go",
-  "usage.section.console": "OpenCode Console",
+  "usage.section.go": "CodeAI Go",
+  "usage.section.console": "CodeAI Console",
   "usage.workspace.fallback": "your workspace",
   "usage.time": "{{date}} at {{time}} ({{zone}})",
   "usage.go.rolling": "Rolling",
@@ -1454,8 +1454,8 @@ export const dict = {
   "usage.footer.budgetsReset": "Budgets reset {{time}}",
   "usage.footer.creditsOnly": "Spend is limited only by {{workspace}}'s credits",
   "usage.footer.details": "View details",
-  "usage.signedOut.title": "Not signed in to OpenCode Console",
-  "usage.signedOut.body": "Connect OpenCode Console to see your workspace's budgets and Go usage.",
+  "usage.signedOut.title": "Not signed in to CodeAI Console",
+  "usage.signedOut.body": "Connect CodeAI Console to see your workspace's budgets and Go usage.",
   "usage.error": "Usage limits couldn't be loaded.",
   "usage.retry": "Try again",
 }

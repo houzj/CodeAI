@@ -14,12 +14,10 @@ export function GlobalRail(props: {
     >
       <div class="flex w-full flex-col items-center gap-1">
         <RailButton icon="grid-plus" label="Home" onClick={props.home} />
-        <RailButton icon="workspace" label="Projects" onClick={props.toggleSidebar} active />
-        <RailButton icon="outline-list-changelog" label="Sessions" onClick={props.search} />
+        <RailButton icon="search" label="Search sessions" onClick={props.search} />
+        <RailButton icon="workspace" label="Projects and sessions" onClick={props.toggleSidebar} active />
       </div>
       <div class="mt-auto flex w-full flex-col items-center gap-1">
-        <RailButton icon="branch" label="Worktrees" onClick={props.toggleSidebar} />
-        <RailButton icon="layout-left" label="Panels" onClick={props.toggleSidebar} />
         <RailButton icon="settings-gear" label="Settings" onClick={props.settings} />
       </div>
     </nav>

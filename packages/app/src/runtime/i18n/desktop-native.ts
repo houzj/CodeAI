@@ -232,16 +232,16 @@ function locale(value: string) {
 const normalizeScript = (script?: string) => (script === "Aran" ? "Arab" : script)
 
 export const DESKTOP_NATIVE_ENGLISH = {
-  "desktop.microphoneUsage": "OpenCode uses your microphone for voice calls.",
+  "desktop.microphoneUsage": "CodeAI uses your microphone for voice calls.",
   "desktop.documentsFolderUsage":
-    "OpenCode uses files in your Documents folder for projects you open and commands you run there.",
-  "desktop.desktopFolderUsage": "OpenCode uses files on your Desktop for projects you open and commands you run there.",
+    "CodeAI uses files in your Documents folder for projects you open and commands you run there.",
+  "desktop.desktopFolderUsage": "CodeAI uses files on your Desktop for projects you open and commands you run there.",
   "desktop.downloadsFolderUsage":
-    "OpenCode uses files in your Downloads folder for projects you open and commands you run there.",
+    "CodeAI uses files in your Downloads folder for projects you open and commands you run there.",
   "desktop.networkVolumesUsage":
-    "OpenCode uses files on network volumes for projects you open and commands you run there.",
+    "CodeAI uses files on network volumes for projects you open and commands you run there.",
   "desktop.removableVolumesUsage":
-    "OpenCode uses files on removable volumes for projects you open and commands you run there.",
+    "CodeAI uses files on removable volumes for projects you open and commands you run there.",
   "desktop.menu.app": "CodeAI",
   "desktop.menu.file": "File",
   "desktop.menu.edit": "Edit",
@@ -282,14 +282,14 @@ export const DESKTOP_NATIVE_ENGLISH = {
   "desktop.menu.nextProject": "Next Project",
   "desktop.menu.minimize": "Minimize",
   "desktop.menu.maximize": "Maximize",
-  "desktop.menu.documentation": "OpenCode Documentation",
+  "desktop.menu.documentation": "CodeAI Documentation",
   "desktop.menu.supportForum": "Support Forum",
   "desktop.menu.shareFeedback": "Share Feedback",
   "desktop.menu.reportBug": "Report a Bug",
   "desktop.menu.ariaLabel": "CodeAI menu",
 
   "desktop.cli.installed.title": "CLI Installed",
-  "desktop.cli.installed.message": "CLI installed to {{path}}\n\nRestart your terminal to use the 'opencode' command.",
+  "desktop.cli.installed.message": "CLI installed to {{path}}\n\nRestart your terminal to use the 'codeai' command.",
   "desktop.cli.failed.title": "Installation Failed",
   "desktop.cli.failed.message": "Failed to install CLI: {{error}}",
 

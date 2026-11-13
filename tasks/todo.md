@@ -420,9 +420,9 @@
 
 ### 执行记录（2026-11-14，Codex 全局导航 Rail）
 
-- [x] 在项目侧栏之外增加独立的窄版 Global Rail，分离 Home、Projects、History、Remote sessions、Worktrees、Panels 和 Settings 入口。
-- [x] Rail 与项目/Worktree/Session 树保持独立显示和独立折叠，不再把 Codex 的全局导航误当成项目列表。
-- [x] Rail 入口接入现有 Home、Session Search、Sidebar Toggle 和 Settings commands。
+- [x] 在项目侧栏之外增加独立的窄版 Global Rail，保留当前 OpenCode Runtime 可达的 Home、会话搜索、Projects/Sessions 和 Settings 入口。
+- [x] 不再放置无法独立路由的 Worktrees、Panels、History 或 Remote sessions；Worktree 继续作为 Project 下的层级，Artifact/Preview 继续由真实 Tab 驱动。
+- [x] Rail 与项目/Worktree/Session 树保持独立显示和独立折叠，不把 Codex 的全局导航硬映射成空壳功能。
 - [x] `packages/app` 类型检查通过（2,397 files）。
 - [ ] 需要在 Web 开发服务器刷新后确认 Rail 与现有 vertical sidebar 的宽度、悬停和折叠状态。
 
@@ -432,3 +432,11 @@
 - [x] 新增 `docs/codex-opencode-ui-evidence.md`，区分 shipped evidence、OpenCode 可复用能力和必须新增的 CodeAI 契约。
 - [x] 移除 Global Rail 中无法由当前 OpenCode Runtime 支撑的 “Remote sessions” 和泛化 “More” 入口，避免把 Codex 专属能力伪装成 CodeAI 已有功能。
 - [ ] 继续把 Goal、Schedule、跨会话协作和本地权限/沙盒边界落到实验性 Server/Protocol 契约，再接入主导航。
+
+### 执行记录（2026-11-14，CodeAI 品牌与 Windows 产物）
+
+- [x] 更新桌面原生权限说明、菜单、CLI 提示和中英文及其他语言包中的用户可见品牌文案为 CodeAI。
+- [x] 保留 `@opencode/*`、`opencode-cli.exe`、协议字段和配置键作为底座兼容标识，不把实现依赖误改成 UI 品牌。
+- [x] `packages/app` 类型检查通过（2,397 files）；Desktop production build 通过。
+- [x] 重新生成 `packages/desktop/dist/codeai-desktop-win-x64.exe`，NSIS 打包退出码为 0；unpacked `CodeAI.exe` 启动冒烟保持运行 8 秒无立即退出。
+- [ ] 发布前仍需在 Web 开发服务器验证真实 Project → Worktree → Session、Composer 连续发送、Artifact Tab 显隐和悬停交互。
