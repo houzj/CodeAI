@@ -249,7 +249,7 @@
 
 - [ ] Windows 安装包全新环境启动
 - [ ] 完成项目、Worktree、Session、Run、审批、变更和预览闭环
-- [ ] 交付不依赖 `ui-prototype/codex-v4.html`
+- [x] 交付不依赖 `ui-prototype/codex-v4.html`
 
 ### 执行记录（2026-11-13，生产包冒烟）
 

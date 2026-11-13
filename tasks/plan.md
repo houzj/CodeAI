@@ -425,7 +425,7 @@ v4 原型已经验证了桌面宿主的空间关系，但原型里的运行记�
 - [ ] 为生产 Shell 添加组件测试和 Session 事件回放测试。
 - [ ] 重新生成 CodeAI Windows 包并验证窗口标题、菜单、安装包名称。
 - [ ] 完成真实项目任务：Shell、文件修改、Preview、审批和最终 Run 收敛。
-- [ ] 删除交付流程对 `codex-v4.html` 的依赖。
+- [x] 删除交付流程对 `codex-v4.html` 的依赖。
 
 ### Checkpoint: CodeAI production shell
 
@@ -513,7 +513,7 @@ ServerSDK Project/Session 数据
 - [ ] 窗口标题、菜单、图标、应用 ID、可执行文件和安装包名称均为 CodeAI。
 - [ ] 全新安装环境可启动并进入真实 Workspace Frame。
 - [ ] 完成“创建项目/进入 Worktree/新建 Session/执行命令/审批/查看变更/打开预览”的闭环。
-- [ ] 不依赖 `codex-v4.html`，不包含测试密钥或开发配置。
+- [x] 不依赖 `codex-v4.html`，不包含测试密钥或开发配置。
 
 **验证：** `bun run check`；`packages/desktop` build/pack；全新安装启动；桌面冒烟录像或截图留档。
 
