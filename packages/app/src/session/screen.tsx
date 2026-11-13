@@ -12,6 +12,7 @@ import {
   onCleanup,
   untrack,
   type Accessor,
+  type ParentProps,
 } from "solid-js"
 import { createStore } from "solid-js/store"
 import { ResizeHandle } from "@opencode/ui/resize-handle"
@@ -424,7 +425,7 @@ function SessionScreenContent(props: {
               <SessionIdentityHeader sessionID={session.identity.params.id ?? ""} session={session.data.info()} />
             </Show>
             <Show when={messagesReady() && session.identity.params.id}>
-              {timelineView()}
+              <CodeAIRunCenter>{timelineView()}</CodeAIRunCenter>
             </Show>
           </Match>
         </Switch>
@@ -599,6 +600,18 @@ function SessionScreenContent(props: {
       </div>
       <drag.Layer />
     </>
+  )
+}
+
+/**
+ * The desktop Run center is a layout boundary, not a second transcript implementation. The production MessageTimeline
+ * remains the source of truth for durable messages, tool events, approvals, changes, compaction and results.
+ */
+function CodeAIRunCenter(props: ParentProps) {
+  return (
+    <div data-component="codeai-run-center" class="relative flex min-h-0 flex-1 flex-col">
+      {props.children}
+    </div>
   )
 }
 
