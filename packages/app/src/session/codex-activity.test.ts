@@ -1,6 +1,6 @@
-import type { OpenCodeEvent } from "@opencode/client/promise"
+import type { OpenCodeEvent, SessionMessageInfo } from "@opencode/client/promise"
 import { describe, expect, test } from "bun:test"
-import { applyCodexFilesystemChange, connectCodexActivity, createCodexActivityState, reduceCodexActivity } from "./codex-activity"
+import { applyCodexFilesystemChange, connectCodexActivity, createCodexActivityState, projectCodexActivityFromHistory, reduceCodexActivity } from "./codex-activity"
 
 const event = (value: Record<string, unknown>) => value as OpenCodeEvent
 
@@ -45,5 +45,34 @@ describe("Codex activity projection", () => {
     expect(states.at(-1)).toMatchObject({ run: "running", changedFiles: ["src/main.ts"] })
     dispose()
     expect(listener).toBeUndefined()
+  })
+
+  test("rebuilds completed Run steps from durable assistant history", () => {
+    const history = [
+      {
+        id: "message-a",
+        type: "assistant",
+        time: { created: 1, completed: 3 },
+        agent: "build",
+        model: { id: "model", providerID: "provider" },
+        cost: 0,
+        tokens: { input: 0, output: 0, reasoning: 0, cache: { read: 0, write: 0 } },
+        content: [
+          {
+            type: "tool",
+            id: "tool-a",
+            name: "shell",
+            state: { status: "completed", input: { command: "pwd" }, content: [{ type: "text", text: "E:/CodeAI" }] },
+            time: { created: 1, completed: 2 },
+          },
+          { type: "text", text: "Done" },
+        ],
+      },
+    ] as SessionMessageInfo[]
+
+    const state = projectCodexActivityFromHistory("session-a", history)
+    expect(state.run).toBe("succeeded")
+    expect(state.steps).toEqual([{ id: "tool-a", name: "shell", status: "completed", input: '{"command":"pwd"}', output: "E:/CodeAI" }])
+    expect(state.assistantText).toBe("Done")
   })
 })

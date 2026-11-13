@@ -2,7 +2,7 @@ import { For, Show, createEffect, createMemo, createSignal, onCleanup } from "so
 import type { SessionMessageAssistant } from "@opencode/client/promise"
 import { useLanguage } from "@/runtime/i18n/language"
 import { useServerSDK } from "@/runtime/server/client"
-import { connectCodexActivity, createCodexActivityState, type CodexActivityState } from "./codex-activity"
+import { connectCodexActivity, projectCodexActivityFromHistory, type CodexActivityState } from "./codex-activity"
 import type { SessionModel } from "./model"
 
 export function CodeAIRunCenter(props: { session: SessionModel }) {
@@ -38,7 +38,7 @@ export function CodeAIRunCenter(props: { session: SessionModel }) {
   createEffect(() => {
     const current = identity()
     if (!current) return
-    setActivity(createCodexActivityState(current.id))
+    setActivity(projectCodexActivityFromHistory(current.id, props.session.history.messages()))
     const disconnect = connectCodexActivity({
       sessionID: current.id,
       directory: current.directory,

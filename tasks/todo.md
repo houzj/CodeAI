@@ -322,3 +322,10 @@
 - [x] 截图确认 Run Center 已接收真实 Runtime 事件：6 个步骤显示 `edit`、`write`、`shell`。
 - [x] 已完成步骤显示 `completed`，当前步骤显示 `running`，说明工具事件投影和状态更新生效。
 - [ ] 等当前 shell 步骤结束后，再确认最终 Run 状态和 Result。
+
+### 执行记录（2026-11-14，会话中心修正）
+
+- [x] Run Center 现在从 durable Session assistant history 重建已完成的工具步骤和结果，不会在任务结束或重新进入会话后退回 `Idle / 0 steps`。
+- [x] 顶部会话上下文移除重复的 Provider/Model 文案；模型选择统一保留在 Composer。
+- [x] `packages/app` 类型检查通过，Runtime history projection 测试 4/4 通过。
+- [ ] 需要重新生成 Windows 包并补一张任务结束后的 Run Center 截图。

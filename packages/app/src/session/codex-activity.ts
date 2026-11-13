@@ -1,4 +1,4 @@
-import type { OpenCodeEvent, PermissionReply } from "@opencode/client/promise"
+import type { OpenCodeEvent, PermissionReply, SessionMessageAssistant, SessionMessageInfo } from "@opencode/client/promise"
 import type { OpenCodeEventStream } from "@/runtime/server/client"
 
 export type CodexRunStatus = "idle" | "running" | "succeeded" | "failed" | "interrupted"
@@ -42,6 +42,42 @@ export function createCodexActivityState(sessionID: string): CodexActivityState 
     assistantText: "",
     reasoningText: "",
     changedFiles: [],
+  }
+}
+
+/** Rebuilds durable Run steps when the live event stream is no longer attached. */
+export function projectCodexActivityFromHistory(
+  sessionID: string,
+  messages: readonly SessionMessageInfo[],
+): CodexActivityState {
+  const assistants = messages.filter((message): message is SessionMessageAssistant => message.type === "assistant")
+  const latest = assistants.at(-1)
+  const steps = assistants.flatMap((message) =>
+    message.content.flatMap((part) => {
+      if (part.type !== "tool") return []
+
+      const state = part.state
+      const status: CodexStepStatus = state.status === "completed" ? "completed" : state.status === "error" ? "failed" : "running"
+      const output = state.status === "completed" || state.status === "error"
+        ? state.content?.filter((item): item is Extract<typeof state.content[number], { type: "text" }> => item.type === "text").map((item) => item.text).join("\n")
+        : undefined
+
+      return [{
+        id: part.id,
+        name: part.name,
+        status,
+        input: "input" in state ? JSON.stringify(state.input) : undefined,
+        output,
+        error: state.status === "error" ? state.error.message : undefined,
+      }]
+    }),
+  )
+
+  return {
+    ...createCodexActivityState(sessionID),
+    run: latest?.error ? "failed" : latest?.time.completed ? "succeeded" : latest ? "running" : "idle",
+    steps,
+    assistantText: latest ? assistantTextFromMessage(latest) : "",
   }
 }
 
@@ -150,4 +186,12 @@ function updateStep(
   const base = existing ?? { id, status: "running" as const }
   const steps = existing ? state.steps.map((step) => step.id === id ? update(step) : step) : [...state.steps, update(base)]
   return { ...state, steps }
+}
+
+function assistantTextFromMessage(message: SessionMessageAssistant) {
+  return message.content
+    .filter((part): part is Extract<SessionMessageAssistant["content"][number], { type: "text" }> => part.type === "text")
+    .map((part) => part.text)
+    .join("\n")
+    .trim()
 }
