@@ -54,7 +54,7 @@
 - [ ] 运行、审批、错误和取消状态在安装包中与开发模式一致。
 - [ ] 完成一次 Windows 冒烟测试并记录日志位置。
 
-**验收证据：** `packages/desktop` typecheck、build、pack 通过；安装器测试 3/4 通过，剩余 1 项因当前沙箱禁止 HKCU 注册表访问无法完成。仍需在正常 Windows 用户环境完成安装包端到端任务验收。
+**验收证据：** `packages/desktop` typecheck、build、pack 通过；提权 Windows 环境下安装器测试 4/4 通过。仍需从安装包启动并完成一次真实代码任务验收。
 
 ## 当前执行顺序
 
