@@ -5,10 +5,12 @@ import { useData, useServer } from "@/runtime/server/current"
 import { useLanguage } from "@/runtime/i18n/language"
 import { usePlatform } from "@/runtime/platform/platform"
 import { sessionHref } from "@/shell/routes/session"
+import { useLayout } from "@/shell/state/layout"
 
 export function CodeAIWorkspaceFrame(props: ParentProps<{ session: SessionModel }>) {
   const platform = usePlatform()
   const navigate = useNavigate()
+  const layout = useLayout()
   const params = useParams<{ id: string }>()
   const data = useData()
   const server = useServer()
@@ -36,6 +38,12 @@ export function CodeAIWorkspaceFrame(props: ParentProps<{ session: SessionModel 
       .slice(0, 12)
   })
 
+  const openWorkspace = (directory: string) => {
+    server.ctx.projects.touch(directory)
+    layout.home.setSelection({ server: server.key, directory })
+    navigate("/")
+  }
+
   if (platform.platform !== "desktop") return <>{props.children}</>
 
   return (
@@ -56,7 +64,13 @@ export function CodeAIWorkspaceFrame(props: ParentProps<{ session: SessionModel 
                   classList={{ "bg-v2-background-bg-elevated": item.id === project()?.id }}
                   data-project-id={item.id}
                 >
-                  <div class="truncate">{item.name}</div>
+                  <button
+                    type="button"
+                    class="w-full truncate text-start hover:text-v2-text-text-base"
+                    onClick={() => openWorkspace(item.worktree)}
+                  >
+                    {item.name}
+                  </button>
                   <Show when={item.id === project()?.id}>
                     <div class="mt-1 flex flex-col gap-0.5 border-s border-v2-border-border-base ps-2">
                       <div class="mb-1 px-1 text-11-medium uppercase tracking-[0.08em] text-v2-text-text-muted">
@@ -64,16 +78,18 @@ export function CodeAIWorkspaceFrame(props: ParentProps<{ session: SessionModel 
                       </div>
                       <For each={item.worktrees}>
                         {(directory) => (
-                          <div
+                          <button
+                            type="button"
                             class="truncate rounded px-1 py-1 text-12-regular"
                             classList={{
                               "bg-v2-background-bg-layer-02 text-v2-text-text-base": directory.directory === worktree()?.directory,
                               "text-v2-text-text-muted": directory.directory !== worktree()?.directory,
                             }}
                             title={directory.directory}
+                            onClick={() => openWorkspace(directory.directory)}
                           >
                             {directory.directory.split(/[\\/]/).filter(Boolean).at(-1) ?? directory.directory}
-                          </div>
+                          </button>
                         )}
                       </For>
                     </div>
