@@ -76,8 +76,8 @@
 
 ### P2：Run 中心区
 
-- [ ] Task / Run Header。
-- [ ] Tool / Approval / Changes / Reasoning 折叠步骤。
+- [x] Task / Run Header。
+- [x] Tool / Approval / Changes / Reasoning 折叠步骤。
 - [ ] 默认聚焦任务和当前运行状态。
 - [ ] Composer 固定底部并接入真实 prompt / interrupt / model。
 
