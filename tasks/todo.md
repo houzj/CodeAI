@@ -272,3 +272,5 @@
 - [x] Composer provider label 和远程连接品牌入口不再显示用户可见的 OpenCode/Wordmark。
 - [x] 终端验证最新便携目录包含 `CodeAI.exe` 和 `resources/app.asar`，NSIS 包已重新生成：`packages/desktop/dist/codeai-desktop-win-x64.exe`。
 - [x] 桌面 Session 中间区切换为真实 `CodeAIRunCenter`：任务和结果默认显示，Runtime 详情折叠，Composer 仍使用真实 prompt/interrupt/model 链路。
+- [x] 修复安装后 `resources/opencode-cli.exe` 缺失导致的 `spawn ENOENT`；预打包流程现在会自动补齐 CLI 和版本文件。
+- [x] 错误页、Provider 图标和连接页不再渲染 OpenCode Logo；错误反馈文案改为 CodeAI。
