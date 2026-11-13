@@ -2,6 +2,66 @@
 
 > 产品级系统总设计见 [docs/product-architecture.md](../docs/product-architecture.md)。以下清单先完成基础模块和接口，再进入 UI。
 
+## 当前目标
+
+**目标：** 把 Codex 风格桌面壳从静态原型推进为 OpenCode Runtime 驱动的产品工作区。
+
+**完成定义：** 用户从真实 Project 进入 Worktree 和 Session，提交一次任务后，中间区能显示真实 Run、工具事件和审批状态；右侧工作区只在真实文件、变更、预览或日志产物出现时显示；隐藏后中间会话自动扩展；应用重启后仍能恢复当前 Session。
+
+## 目标驱动任务
+
+### G1：真实事件能驱动 Codex 工作流状态
+
+- [x] 建立 `CodexActivityState`，按 Session ID 隔离运行状态。
+- [x] 投影 execution、tool、permission、文本流、reasoning 流和文件变化事件。
+- [x] 通过 `connectCodexActivity` 连接现有 OpenCodeEvent 流。
+- [x] 覆盖成功、失败、拒绝、跨 Session 和文件变化测试。
+
+**验收证据：** `packages/app/src/session/codex-activity.test.ts` 通过，`packages/app` typecheck 通过。
+
+### G2：真实 Project → Worktree → Session 替换静态原型数据
+
+- [ ] 从 ServerSDK 读取当前项目、工作目录、会话标题和最近会话。
+- [ ] 中间标题显示真实 Session，运行状态来自 G1 投影。
+- [ ] 右侧 Context 显示真实模型、Provider、工作区和权限配置。
+- [ ] 不再从 `codex-v4.html` 读取任何演示数据。
+
+**验收证据：** 在真实本地项目中切换两个 Session，层级、标题和模型信息同步变化。
+
+### G3：Composer 完成真实任务闭环
+
+- [ ] Enter 调用现有 Session prompt API。
+- [ ] Shift+Enter 保留换行行为，发送期间输入框进入运行态。
+- [ ] 停止按钮调用 Session interrupt API。
+- [ ] 模型选择使用当前 Session 的模型配置，不修改全局默认值。
+
+**验收证据：** 完成一次真实代码任务，能看到 execution、tool 和最终结果；停止任务后 Runtime 正确收敛。
+
+### G4：右侧工作区由真实产物驱动
+
+- [ ] 文件、变更、预览和日志按事件创建 Tab。
+- [ ] 无活动产物 Tab 时右侧自动隐藏。
+- [ ] 右上角可以独立关闭、恢复和全屏右侧区域。
+- [ ] 右侧隐藏时中间会话占满剩余空间。
+
+**验收证据：** 修改文件、查看 diff、打开预览、关闭 Tab 四条路径均可重复操作。
+
+### G5：Windows 产品闭环
+
+- [ ] CodeAI 安装包启动后进入真实工作区。
+- [ ] 应用重启后恢复项目、Session 和右侧区域状态。
+- [ ] 运行、审批、错误和取消状态在安装包中与开发模式一致。
+- [ ] 完成一次 Windows 冒烟测试并记录日志位置。
+
+**验收证据：** 从安装包启动，选择项目并完成一次真实任务。
+
+## 当前执行顺序
+
+1. G2：接入真实 Project/Worktree/Session 数据。
+2. G3：把 Composer 接到 Session prompt/interrupt。
+3. G4：接入产物 Tab 和右侧独立布局。
+4. G5：安装包冒烟验证。
+
 ## 执行记录（2026-11-13）
 
 - OpenCode 基线已落到仓库根目录，基线提交：`fb11429446`。
