@@ -26,6 +26,20 @@ Codex 的“目标运行一天以上”不是把一个 HTTP 请求挂住，而�
 
 可以直接复用 Session、SessionExecution、Permission、Compaction、Shell/Tool 事件和 Git/Worktree API。Goal、Plan、Schedule、Checkpoint、lease/recovery 需要在 Schema、Server、Client 和桌面 UI 中新增契约。第一版应先做 `Goal` 和 `Plan` 的只读投影，再接入后台恢复，避免用前端定时器伪造长任务。
 
+## 沙盒结论
+
+Codex Cloud 的环境运行在 OpenAI 管理的计算机上，每个任务拥有独立工作区；Codex 本地模式则使用本机的沙盒实现。CodeAI 不应把两者混为一个能力：
+
+- Local Worker：使用 OpenCode Worktree 作为文件边界，再叠加 Windows 原生沙盒或 WSL/容器隔离。
+- Remote Worker：在公司服务器上的容器/VM 中运行，桌面只订阅状态和审批。
+- Hybrid：Goal 在远程 Worker 持久运行，用户可以从桌面切换到任意 Session 继续操作。
+
+官方资料：
+
+- https://help.openai.com/en/articles/20001545-using-codex-cloud
+- https://openai.com/index/building-codex-windows-sandbox/
+- https://developers.openai.com/api/docs/guides/agents-api/environments/self-hosted
+
 ## UI 约束
 
 - 侧边栏显示 Project → Worktree → Goal/Session 层级；Goal 与 Session 是两个不同对象。

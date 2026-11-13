@@ -12,6 +12,7 @@ Codex 的优势不只是会话渲染，而是把“会话操作”做成稳定�
 - Session 分支/复制、移动到 Project/Worktree
 - 中断当前执行、重新运行、继续执行
 - 上下文压缩（由 Runtime 负责，UI 只显示状态和触发入口）
+- 连续发送：工作中的 Session 支持 `steer` 立即引导当前执行，也支持 `queue` 排队后续任务；不要求停止当前 Run。
 - Permission 请求、一次性批准、拒绝和永久规则
 - Git 状态、变更预览、提交前检查和 Worktree 切换
 
@@ -35,6 +36,8 @@ Codex 的优势不只是会话渲染，而是把“会话操作”做成稳定�
 3. 破坏性命令（删除、写入、网络、提交、推送）必须复用同一套 Permission/Approval 状态。
 4. 目标、计划、定时任务是 Project/Worktree 级对象；Session 只显示当前快照和执行记录。
 5. 所有命令都要有悬停说明、快捷键提示、禁用原因和失败反馈；没有 Runtime 能力时显示“暂未支持”，不能伪装成功。
+
+OpenCode 当前已经提供了这项底层机制：Composer 的 delivery 有 `steer` / `queue` 两种模式，输入通过 Session inbox 持久化后再交给执行协调器。CodeAI 的 UI 需要把这两个状态清晰显示出来，不能在运行中禁用输入框，也不能把连续发送退化成“停止后再发送”。
 
 ## 当前落地顺序
 

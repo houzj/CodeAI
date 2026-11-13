@@ -374,3 +374,15 @@
 - [x] 新增 `docs/codeai-long-running-goals.md`，定义 Goal → Plan → Run → Step → ToolEvent/Approval/Change/Checkpoint 的持久化关系。
 - [x] 明确后台调度、心跳租约、恢复、权限持久化、沙盒边界、上下文压缩和 Git 检查点是长目标闭环的基础能力。
 - [ ] 基于 OpenCode SessionExecution/Permission/Compaction/Git API 设计 Goal、Plan、Schedule、Checkpoint 的实验性 Schema/Server 契约。
+
+### 执行记录（2026-11-14，多会话协作与沙盒边界）
+
+- [x] 根据 Codex 官方公开资料补充 Local / Remote / Hybrid 三种执行环境边界：Codex Cloud 使用 OpenAI 管理的隔离机器，本地模式仍可使用 Windows 原生或 WSL 沙盒。
+- [x] 新增 `docs/codeai-session-collaboration.md`，定义 Coordinator/Worker/Reviewer/Observer 会话角色、持久化消息协议、幂等投递和跨 Worktree 变更审批。
+- [ ] 为多会话协作增加 durable inbox、任务租约、子任务恢复和 Artifact/Change 引用的实验性 Server 契约。
+
+### 执行记录（2026-11-14，连续发送）
+
+- [x] 从 OpenCode Composer/Session inbox 实现确认当前底层已支持工作中连续发送：`steer` 立即引导当前 Run，`queue` 排队后续输入，不需要停止当前执行。
+- [x] 将连续发送约束写入命令面设计：CodeAI 输入框在运行中不能被禁用，必须显示当前 delivery 状态和队列反馈。
+- [ ] 桌面冒烟时验证运行中的 Enter、Shift+Enter、Steer/Queue 切换和队列编辑行为。
