@@ -12,6 +12,8 @@
 - Windows x64 便携目录打包通过：`packages/desktop/dist/win-unpacked/`。
 - NSIS 安装包已生成：`packages/desktop/dist/opencode-desktop-win-x64.exe`；静默安装到工作区临时目录后，默认 sandbox 启动探测通过。直接运行未安装的便携目录仍受当前沙箱目录 ACL 影响，因此开发/便携验证需优先使用安装包。
 - 右侧产物区规则已确定：按当前会话实际生成的文件/预览/变更/日志动态创建入口并自动切换，没有产物时不展示空类别；打开多个文件时按文件创建预览 tab。
+- CodeAI 品牌基线已落地：桌面名称、窗口标题、应用 ID、协议、图标、Windows 可执行文件和 NSIS 安装包已替换。
+- 品牌验证：桌面类型检查、构建通过；`codeai-desktop-win-x64.exe` 安装包生成并安装，安装目录中的 `CodeAI.exe` 可启动。
 
 ## Phase 0: 产品级基础
 
