@@ -69,7 +69,14 @@ Global Shell
 
 日常 UI 开发不依赖 Windows 安装包。验证顺序固定为：
 
-1. **Web 开发服务器**：在 `packages/app` 运行 `bun run dev --host 0.0.0.0`，验证 Project → Worktree → Session 导航、时间线、Composer、折叠事件和右侧 Artifact pane。桌面内置浏览器优先使用终端显示的 Network 地址；只绑定 `127.0.0.1` 时，隔离浏览器可能无法访问。
+1. **Web 开发服务器**：在 `packages/app` 运行 `bun run dev --host 0.0.0.0`，验证 Project → Worktree → Session 导航、时间线、Composer、折叠事件和右侧 Artifact pane。桌面内置浏览器优先使用终端显示的 Network 地址；只绑定 `127.0.0.1` 时，隔离浏览器可能无法访问。若 Runtime 以密码启动，浏览器必须使用带 `auth_token` 的地址：
+
+   ```powershell
+   $token = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes("opencode:$password"))
+   Start-Process "http://127.0.0.1:3000/?auth_token=$([uri]::EscapeDataString($token))"
+   ```
+
+   `$password` 只从当前 Runtime 启动日志或本机服务配置读取，不写入仓库、截图或产品构建。认证成功后，应用会清理地址栏中的 token。
 2. **Electron 开发模式**：运行 `packages/desktop` 的 `bun run dev`，验证窗口、IPC、内置 CLI 和独立 pane；这一步不生成安装包。
 3. **发布构建**：只有发布候选版本才运行 `packages/desktop` 的 `bun run build` / `bun run pack`，检查安装后的资源路径、品牌和 CLI 启动。
 

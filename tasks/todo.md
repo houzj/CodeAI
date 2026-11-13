@@ -323,6 +323,14 @@
 - [x] 已完成步骤显示 `completed`，当前步骤显示 `running`，说明工具事件投影和状态更新生效。
 - [ ] 等当前 shell 步骤结束后，再确认最终 Run 状态和 Result。
 
+### 执行记录（2026-11-14，Web 验证链路）
+
+- [x] Vite Web 开发服务器监听 `0.0.0.0:3000`，Runtime 监听 `0.0.0.0:4096`。
+- [x] 未认证请求返回 `401`，带当前 Runtime Basic token 的 `/api/project` 请求返回 `200`，证明服务端和 SDK 链路可用。
+- [x] app 类型检查通过（2,396 files）。
+- [ ] 浏览器仍需使用带 `auth_token` 的本地地址完成一次真实页面截图；未把开发密码写入源码或构建产物。
+- [ ] 根目录 `bun run check` 仍被仓库既有 lint/grey 规则阻断，未将这些与本轮 UI 改动无关的告警伪装成通过。
+
 ### 执行记录（2026-11-14，会话中心修正）
 
 - [x] Run Center 现在从 durable Session assistant history 重建已完成的工具步骤和结果，不会在任务结束或重新进入会话后退回 `Idle / 0 steps`。
