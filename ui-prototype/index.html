@@ -1,0 +1,679 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Forge · Desktop Agent</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0b0d10;
+        --panel: #111419;
+        --panel-raised: #171b21;
+        --panel-soft: #1b2027;
+        --line: #282d35;
+        --line-strong: #343b46;
+        --text: #eef1f5;
+        --muted: #8e98a7;
+        --faint: #5c6572;
+        --accent: #b9f55f;
+        --accent-ink: #11180b;
+        --blue: #82aaff;
+        --orange: #f2ad70;
+        --red: #f47d8f;
+        --shadow: 0 22px 60px rgba(0, 0, 0, 0.32);
+        --radius: 12px;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        min-width: 1040px;
+        height: 100vh;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 13px;
+        letter-spacing: -0.01em;
+      }
+
+      button, textarea { font: inherit; }
+      button { color: inherit; }
+
+      .app-shell {
+        display: grid;
+        grid-template-columns: 52px 272px minmax(0, 1fr) 310px;
+        grid-template-rows: 54px minmax(0, 1fr) 26px;
+        height: 100vh;
+        background: var(--bg);
+      }
+
+      .topbar {
+        grid-column: 1 / -1;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 16px 0 18px;
+        border-bottom: 1px solid var(--line);
+        background: rgba(11, 13, 16, 0.95);
+      }
+
+      .brand, .topbar-actions, .breadcrumb, .model-button, .project-row, .session-row,
+      .composer-tools, .composer-actions, .status-line, .meta-line, .tool-title,
+      .diff-title, .panel-title, .context-value, .step-row, .file-row, .footer-left,
+      .footer-right {
+        display: flex;
+        align-items: center;
+      }
+
+      .brand { gap: 10px; min-width: 252px; }
+      .brand-mark {
+        display: grid;
+        place-items: center;
+        width: 25px;
+        height: 25px;
+        border-radius: 7px;
+        background: var(--accent);
+        color: var(--accent-ink);
+        font-size: 11px;
+        font-weight: 850;
+        letter-spacing: -0.08em;
+      }
+
+      .brand-name { font-weight: 720; letter-spacing: 0.08em; font-size: 11px; }
+      .brand-subtitle { color: var(--faint); font-size: 11px; margin-left: 2px; }
+
+      .breadcrumb { gap: 8px; color: var(--muted); }
+      .breadcrumb strong { color: var(--text); font-weight: 600; }
+      .crumb-separator { color: var(--faint); }
+
+      .topbar-actions { gap: 8px; }
+      .icon-button, .small-button, .model-button, .build-button, .send-button, .approve-button,
+      .tab-button, .outline-button {
+        border: 1px solid transparent;
+        border-radius: 8px;
+        background: transparent;
+        cursor: pointer;
+        transition: border-color .16s ease, background .16s ease, color .16s ease;
+      }
+
+      .icon-button { width: 30px; height: 30px; color: var(--muted); }
+      .icon-button:hover, .small-button:hover, .tab-button:hover, .outline-button:hover { border-color: var(--line-strong); background: var(--panel-soft); color: var(--text); }
+      .icon { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+      .sidebar, .inspector {
+        min-height: 0;
+        background: var(--panel);
+      }
+
+      .app-rail { grid-column: 1; grid-row: 2; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 10px 7px; border-right: 1px solid var(--line); background: #0a0c0f; }
+      .rail-brand { display: grid; place-items: center; width: 30px; height: 30px; margin-bottom: 8px; border-radius: 8px; background: var(--accent); color: var(--accent-ink); font-size: 11px; font-weight: 850; }
+      .rail-button { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid transparent; border-radius: 8px; background: transparent; color: var(--faint); cursor: pointer; }
+      .rail-button:hover, .rail-button.active { border-color: var(--line); background: var(--panel-raised); color: var(--text); }
+      .rail-button.active { color: var(--accent); }
+      .rail-spacer { flex: 1; }
+      .rail-avatar { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #464b55; color: var(--text); font-size: 9px; font-weight: 800; }
+      .sidebar { grid-column: 2; grid-row: 2; display: flex; flex-direction: column; border-right: 1px solid var(--line); }
+      .inspector { grid-column: 4; grid-row: 2; border-left: 1px solid var(--line); overflow-y: auto; }
+
+      .sidebar-inner { padding: 14px 12px; overflow: auto; }
+      .section-label { margin: 8px 8px 7px; color: var(--faint); font-size: 10px; font-weight: 750; letter-spacing: .1em; }
+      .project-row { gap: 9px; padding: 9px 9px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel-raised); }
+      .project-icon { display: grid; place-items: center; width: 27px; height: 27px; border-radius: 7px; background: #252b34; color: var(--blue); font-weight: 800; }
+      .project-name { font-weight: 650; font-size: 12px; }
+      .project-path { margin-top: 3px; color: var(--muted); font-size: 11px; }
+      .chevron { margin-left: auto; color: var(--faint); }
+      .project-meta { display: flex; gap: 6px; margin-top: 4px; color: var(--faint); font-size: 10px; }
+      .branch-badge { padding: 2px 5px; border-radius: 4px; background: #252b34; color: var(--muted); font-family: "SFMono-Regular", Consolas, monospace; }
+      .worktree-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding: 8px 9px; border: 1px solid var(--line); border-radius: 8px; background: #0e1115; color: var(--muted); cursor: pointer; }
+      .worktree-row:hover { border-color: var(--line-strong); color: var(--text); }
+      .worktree-icon { color: var(--accent); font-size: 11px; }
+      .worktree-name { color: var(--text); font-size: 11px; font-weight: 620; }
+      .worktree-status { margin-left: auto; color: var(--faint); font-size: 10px; }
+      .project-list { display: grid; gap: 2px; margin: 0 0 13px; }
+      .project-switch-row { display: flex; align-items: center; gap: 8px; width: 100%; padding: 7px 8px; border: 1px solid transparent; border-radius: 7px; background: transparent; color: var(--muted); text-align: left; cursor: pointer; }
+      .project-switch-row:hover { background: var(--panel-raised); color: var(--text); }
+      .project-switch-row.active { border-color: var(--line); background: #20262e; color: var(--text); }
+      .project-switch-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--faint); }
+      .project-switch-row.active .project-switch-dot { background: var(--accent); }
+      .project-switch-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .project-switch-branch { margin-left: auto; color: var(--faint); font-family: "SFMono-Regular", Consolas, monospace; font-size: 9px; }
+      .project-tools-button { display: flex; align-items: center; justify-content: space-between; width: 100%; margin: 13px 0 11px; padding: 7px 8px; border: 1px solid var(--line); border-radius: 7px; background: #0e1115; color: var(--muted); font-size: 10px; cursor: pointer; }
+      .project-tools-button:hover { border-color: var(--line-strong); color: var(--text); }
+      .project-tools-menu { display: grid; gap: 2px; margin: -4px 0 12px; padding: 5px; border: 1px solid var(--line); border-radius: 8px; background: #15191f; }
+      .project-tools-menu.hidden { display: none; }
+
+      .system-nav { display: grid; gap: 2px; margin: 16px 0 18px; }
+      .nav-item { display: flex; align-items: center; gap: 9px; width: 100%; padding: 8px 9px; border: 1px solid transparent; border-radius: 8px; background: transparent; color: var(--muted); text-align: left; cursor: pointer; }
+      .nav-item:hover { background: var(--panel-raised); color: var(--text); }
+      .nav-item.active { border-color: var(--line); background: #20262e; color: var(--text); }
+      .nav-icon { display: grid; place-items: center; width: 17px; height: 17px; color: var(--faint); font-size: 11px; }
+      .nav-item.active .nav-icon { color: var(--accent); }
+      .nav-label { font-size: 11px; font-weight: 620; }
+      .nav-count { margin-left: auto; padding: 2px 5px; border-radius: 5px; background: #252b34; color: var(--muted); font-size: 9px; }
+
+      .new-session { display: flex; align-items: center; gap: 8px; width: 100%; margin: 14px 0 18px; padding: 9px 10px; border: 1px solid var(--line-strong); border-radius: 9px; background: var(--panel-soft); cursor: pointer; }
+      .new-session:hover { background: #232932; }
+      .new-session .plus { color: var(--accent); font-size: 17px; line-height: 0; }
+      .new-session span:last-child { color: var(--text); font-weight: 650; }
+      .shortcut { margin-left: auto; color: var(--faint); font-size: 10px; }
+
+      .session-list { display: grid; gap: 3px; }
+      .session-row { position: relative; gap: 9px; padding: 9px; border-radius: 8px; color: var(--muted); cursor: pointer; }
+      .session-row:hover { background: var(--panel-raised); color: var(--text); }
+      .session-row.active { background: #20262e; color: var(--text); }
+      .session-row.active::before { position: absolute; left: -12px; width: 2px; height: 18px; border-radius: 2px; background: var(--accent); content: ""; }
+      .session-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--faint); }
+      .session-row.active .session-dot { background: var(--accent); }
+      .session-copy { min-width: 0; display: grid; gap: 3px; }
+      .session-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .session-model { overflow: hidden; color: var(--faint); font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+      .session-row.active .session-model { color: #9ea994; }
+      .session-time { margin-left: auto; color: var(--faint); font-size: 10px; }
+
+      .sidebar-footer { margin-top: auto; padding: 12px; border-top: 1px solid var(--line); }
+      .user-row { display: flex; align-items: center; gap: 9px; padding: 8px; border-radius: 8px; }
+      .avatar { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: #464b55; color: var(--text); font-size: 10px; font-weight: 800; }
+      .user-name { font-weight: 650; font-size: 12px; }
+      .user-state { margin-top: 2px; color: var(--muted); font-size: 10px; }
+      .settings-link { margin-left: auto; color: var(--muted); }
+
+      .main { grid-column: 3; grid-row: 2; min-width: 0; display: flex; flex-direction: column; background: #0e1115; }
+      .main > .hidden { display: none !important; }
+      .main-head { display: flex; align-items: center; justify-content: space-between; height: 54px; padding: 0 22px; border-bottom: 1px solid var(--line); }
+      .main-title { font-weight: 680; }
+      .session-scope { margin-bottom: 3px; color: var(--faint); font-size: 9px; font-weight: 750; letter-spacing: .1em; text-transform: uppercase; }
+      .status-line { gap: 7px; color: var(--muted); font-size: 11px; }
+      .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px rgba(185, 245, 95, .08); }
+      .main-head-actions { display: flex; align-items: center; gap: 7px; }
+      .small-button { padding: 6px 8px; color: var(--muted); font-size: 11px; }
+      .model-button { position: relative; gap: 8px; padding: 7px 9px; border-color: var(--line); background: var(--panel); color: var(--text); font-size: 11px; }
+      .model-button:hover { border-color: var(--line-strong); background: var(--panel-soft); }
+      .model-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--blue); }
+      .dropdown { position: absolute; z-index: 5; top: 38px; right: 0; display: none; width: 220px; padding: 6px; border: 1px solid var(--line-strong); border-radius: 10px; background: #161a20; box-shadow: var(--shadow); }
+      .dropdown.open { display: block; }
+      .dropdown-option { display: flex; align-items: center; gap: 8px; width: 100%; padding: 9px; border: 0; border-radius: 7px; background: transparent; color: var(--muted); text-align: left; cursor: pointer; }
+      .dropdown-option:hover { background: var(--panel-soft); color: var(--text); }
+      .dropdown-option strong { color: inherit; font-size: 11px; }
+      .dropdown-option small { display: block; margin-top: 2px; color: var(--faint); }
+
+      .conversation { flex: 1; min-height: 0; overflow-y: auto; padding: 26px 9%; }
+      .conversation-inner { max-width: 760px; margin: 0 auto; }
+      .date-divider { display: flex; align-items: center; gap: 10px; margin: 3px 0 24px; color: var(--faint); font-size: 10px; text-transform: uppercase; letter-spacing: .11em; }
+      .date-divider::before, .date-divider::after { height: 1px; flex: 1; background: var(--line); content: ""; }
+      .message { display: grid; grid-template-columns: 29px minmax(0, 1fr); gap: 12px; margin-bottom: 24px; }
+      .message-avatar { display: grid; place-items: center; width: 29px; height: 29px; border-radius: 9px; background: #252b34; color: var(--blue); font-size: 10px; font-weight: 800; }
+      .message.user .message-avatar { background: #2b2c27; color: var(--accent); }
+      .message-head { display: flex; align-items: center; gap: 8px; margin: 2px 0 7px; }
+      .message-name { font-size: 11px; font-weight: 720; }
+      .message-time { color: var(--faint); font-size: 10px; }
+      .message-body { color: #d4d9e1; line-height: 1.65; }
+      .message-body p { margin: 0 0 10px; }
+      .message-body p:last-child { margin-bottom: 0; }
+      .message-body code { padding: 2px 5px; border-radius: 4px; background: #191e25; color: #c4d1ee; font-family: "SFMono-Regular", Consolas, monospace; font-size: 11px; }
+      .plan-list { display: grid; gap: 8px; margin: 13px 0 0; padding: 13px 14px; border: 1px solid var(--line); border-radius: 10px; background: rgba(23, 27, 33, .7); }
+      .step-row { gap: 9px; color: var(--muted); font-size: 12px; }
+      .step-number { display: grid; place-items: center; width: 18px; height: 18px; border: 1px solid var(--line-strong); border-radius: 50%; color: var(--faint); font-size: 10px; }
+      .step-row.done { color: #b9c4b0; }
+      .step-row.done .step-number { border-color: rgba(185, 245, 95, .45); background: rgba(185, 245, 95, .1); color: var(--accent); }
+      .step-row.current { color: var(--text); }
+      .step-row.current .step-number { border-color: var(--accent); color: var(--accent); }
+
+      .tool-card { margin-top: 12px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: #12161b; }
+      .tool-title { gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 11px; }
+      .tool-icon { color: var(--orange); }
+      .tool-title strong { color: var(--text); font-weight: 620; }
+      .tool-state { margin-left: auto; color: var(--accent); font-size: 10px; }
+      .terminal { padding: 12px; color: #aeb9c7; font-family: "SFMono-Regular", Consolas, monospace; font-size: 11px; line-height: 1.7; }
+      .terminal .prompt { color: var(--accent); }
+      .terminal .dim { color: var(--faint); }
+      .diff-card { margin-top: 12px; border: 1px solid var(--line); border-radius: 10px; background: #12161b; overflow: hidden; }
+      .diff-title { gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 11px; }
+      .diff-title strong { color: var(--text); font-weight: 620; }
+      .file-badge { margin-left: auto; color: var(--accent); font-family: "SFMono-Regular", Consolas, monospace; font-size: 10px; }
+      .diff-lines { padding: 9px 12px; font-family: "SFMono-Regular", Consolas, monospace; font-size: 11px; line-height: 1.75; }
+      .diff-line { white-space: pre; }
+      .diff-line.add { color: #bde59b; }
+      .diff-line.remove { color: #e99ca6; }
+      .diff-line.context { color: var(--faint); }
+
+      .composer-wrap { padding: 10px 9% 16px; }
+      .composer { max-width: 760px; margin: 0 auto; border: 1px solid var(--line-strong); border-radius: 12px; background: #15191f; box-shadow: 0 12px 32px rgba(0, 0, 0, .18); }
+      .composer:focus-within { border-color: #4e5c3d; box-shadow: 0 0 0 3px rgba(185, 245, 95, .06); }
+      textarea { display: block; width: 100%; min-height: 59px; max-height: 120px; resize: none; padding: 13px 14px 7px; border: 0; outline: 0; background: transparent; color: var(--text); line-height: 1.5; }
+      textarea::placeholder { color: var(--faint); }
+      .composer-tools { justify-content: space-between; padding: 5px 8px 8px 10px; }
+      .composer-left, .composer-right { display: flex; align-items: center; gap: 5px; }
+      .build-button { display: flex; align-items: center; gap: 6px; padding: 6px 8px; color: var(--muted); font-size: 11px; }
+      .build-button:hover { background: var(--panel-soft); color: var(--text); }
+      .build-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+      .composer-icon { display: grid; place-items: center; width: 27px; height: 27px; border: 0; border-radius: 7px; background: transparent; color: var(--muted); cursor: pointer; }
+      .composer-icon:hover { background: var(--panel-soft); color: var(--text); }
+      .send-button { display: grid; place-items: center; width: 29px; height: 29px; background: var(--accent); color: var(--accent-ink); }
+      .send-button:hover { background: #cdfb7f; }
+
+      .inspector-head { display: flex; align-items: center; justify-content: space-between; padding: 0 16px; height: 54px; border-bottom: 1px solid var(--line); }
+      .panel-title { gap: 8px; font-weight: 680; }
+      .panel-title .icon { color: var(--muted); }
+      .inspector-body { padding: 15px; }
+      .tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; margin-bottom: 17px; padding: 3px; border-radius: 8px; background: #0c0f12; }
+      .tab-button { padding: 7px; color: var(--faint); font-size: 11px; }
+      .tab-button.active { background: var(--panel-soft); color: var(--text); }
+      .context-section { margin-bottom: 20px; }
+      .context-label { margin-bottom: 9px; color: var(--faint); font-size: 10px; font-weight: 750; letter-spacing: .1em; text-transform: uppercase; }
+      .context-card { border: 1px solid var(--line); border-radius: 9px; background: var(--panel-raised); overflow: hidden; }
+      .context-row { display: grid; grid-template-columns: 78px minmax(0, 1fr); gap: 10px; padding: 10px; border-bottom: 1px solid var(--line); }
+      .context-row:last-child { border-bottom: 0; }
+      .context-key { color: var(--faint); font-size: 11px; }
+      .context-value { gap: 6px; min-width: 0; color: var(--muted); font-size: 11px; }
+      .context-value strong { overflow: hidden; color: var(--text); font-weight: 580; text-overflow: ellipsis; white-space: nowrap; }
+      .provider-dot { width: 7px; height: 7px; flex: 0 0 auto; border-radius: 50%; background: var(--blue); }
+      .provider-dot.green { background: var(--accent); }
+      .permission-badge { padding: 3px 6px; border-radius: 5px; background: rgba(185, 245, 95, .1); color: var(--accent); font-size: 10px; }
+      .file-list { display: grid; gap: 3px; }
+      .file-row { gap: 8px; padding: 7px 8px; border-radius: 7px; color: var(--muted); }
+      .file-row:hover { background: var(--panel-raised); color: var(--text); }
+      .file-icon { color: var(--blue); }
+      .file-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .file-change { margin-left: auto; color: var(--accent); font-family: "SFMono-Regular", Consolas, monospace; font-size: 10px; }
+      .approval-card { padding: 11px; border: 1px solid rgba(242, 173, 112, .35); border-radius: 9px; background: rgba(242, 173, 112, .06); }
+      .approval-title { display: flex; align-items: center; gap: 7px; color: var(--orange); font-size: 11px; font-weight: 680; }
+      .approval-copy { margin: 8px 0 10px; color: var(--muted); font-size: 11px; line-height: 1.55; }
+      .approval-command { display: block; margin-bottom: 10px; padding: 8px; border-radius: 6px; background: #101317; color: #ccd3dc; font-family: "SFMono-Regular", Consolas, monospace; font-size: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .approval-actions { display: flex; gap: 6px; }
+      .approve-button { flex: 1; padding: 7px; border-color: rgba(185, 245, 95, .45); background: rgba(185, 245, 95, .12); color: var(--accent); font-size: 11px; font-weight: 650; }
+      .approve-button:hover { background: rgba(185, 245, 95, .2); }
+      .outline-button { flex: 1; padding: 7px; border-color: var(--line-strong); color: var(--muted); font-size: 11px; }
+
+      .placeholder-view { flex: 1; min-height: 0; overflow-y: auto; padding: 30px 5%; }
+      .placeholder-inner { max-width: 980px; margin: 0 auto; }
+      .view-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; margin-bottom: 24px; }
+      .view-kicker { margin-bottom: 7px; color: var(--accent); font-size: 10px; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; }
+      .view-title { font-size: 24px; font-weight: 720; letter-spacing: -.04em; }
+      .view-subtitle { max-width: 650px; margin-top: 7px; color: var(--muted); line-height: 1.55; }
+      .view-actions { display: flex; align-items: center; gap: 8px; }
+      .primary-button { padding: 8px 11px; border: 0; border-radius: 8px; background: var(--accent); color: var(--accent-ink); font-size: 11px; font-weight: 720; cursor: pointer; }
+      .primary-button:hover { background: #cdfb7f; }
+      .surface-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 12px; }
+      .surface-card { grid-column: span 4; padding: 15px; border: 1px solid var(--line); border-radius: 11px; background: var(--panel); }
+      .surface-card.wide { grid-column: span 8; }
+      .surface-card.full { grid-column: 1 / -1; }
+      .surface-card.placeholder { border-style: dashed; background: rgba(17, 20, 25, .45); }
+      .surface-card-title { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-weight: 680; }
+      .surface-card-copy { color: var(--muted); font-size: 11px; line-height: 1.55; }
+      .surface-card-meta { display: flex; align-items: center; gap: 6px; margin-top: 14px; color: var(--faint); font-size: 10px; }
+      .surface-icon { display: grid; place-items: center; width: 25px; height: 25px; border-radius: 7px; background: #242a33; color: var(--blue); font-size: 11px; font-weight: 800; }
+      .surface-icon.green { background: rgba(185, 245, 95, .1); color: var(--accent); }
+      .surface-icon.orange { background: rgba(242, 173, 112, .1); color: var(--orange); }
+      .surface-icon.red { background: rgba(244, 125, 143, .1); color: var(--red); }
+      .metric { margin-top: 9px; font-size: 25px; font-weight: 700; letter-spacing: -.04em; }
+      .metric-label { color: var(--faint); font-size: 10px; }
+      .surface-list { display: grid; gap: 2px; margin-top: 12px; }
+      .surface-list-row { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; }
+      .surface-list-row strong { color: var(--text); font-weight: 580; }
+      .surface-list-row > span:last-child { margin-left: auto; color: var(--faint); }
+      .surface-table { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 11px; }
+      .surface-table th { padding: 9px 8px; border-bottom: 1px solid var(--line-strong); color: var(--faint); font-size: 9px; font-weight: 750; letter-spacing: .09em; text-align: left; text-transform: uppercase; }
+      .surface-table td { padding: 10px 8px; border-bottom: 1px solid var(--line); color: var(--muted); }
+      .surface-table td strong { color: var(--text); font-weight: 580; }
+      .state-pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 6px; border-radius: 5px; background: rgba(185, 245, 95, .1); color: var(--accent); font-size: 10px; }
+      .state-pill.pending { background: rgba(242, 173, 112, .1); color: var(--orange); }
+      .state-pill.off { background: #22272f; color: var(--faint); }
+      .empty-box { display: grid; place-items: center; min-height: 145px; padding: 18px; border: 1px dashed var(--line-strong); border-radius: 9px; color: var(--muted); text-align: center; }
+      .empty-box strong { display: block; margin-bottom: 5px; color: var(--text); }
+      .empty-box span { max-width: 360px; line-height: 1.55; }
+
+      .footer { grid-column: 1 / -1; grid-row: 3; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; border-top: 1px solid var(--line); color: var(--faint); background: #0a0c0f; font-size: 10px; }
+      .footer-left, .footer-right { gap: 12px; }
+      .footer-key { padding: 2px 4px; border: 1px solid var(--line); border-radius: 3px; color: var(--muted); font-family: "SFMono-Regular", Consolas, monospace; font-size: 9px; }
+      .hidden { display: none !important; }
+
+      @media (max-width: 1180px) {
+        .app-shell { grid-template-columns: 48px 220px minmax(0, 1fr) 260px; }
+        .brand { min-width: 220px; }
+        .conversation { padding-left: 5%; padding-right: 5%; }
+        .composer-wrap { padding-left: 5%; padding-right: 5%; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">F/</div>
+          <span class="brand-name">FORGE</span>
+          <span class="brand-subtitle">desktop agent</span>
+        </div>
+        <div class="breadcrumb" aria-label="当前位置">
+          <span>Projects</span><span class="crumb-separator">/</span><strong>opencode-fork</strong><span class="crumb-separator">/</span><span>sessions</span>
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-button" title="搜索" aria-label="搜索"><svg class="icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4.5 4.5"></path></svg></button>
+          <button class="icon-button" title="帮助" aria-label="帮助"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"></circle><path d="M9.8 9.5a2.3 2.3 0 1 1 3.9 1.7c-1 .8-1.7 1.1-1.7 2.5"></path><path d="M12 16.9h.01"></path></svg></button>
+          <button class="avatar" title="账户设置">YC</button>
+        </div>
+      </header>
+
+      <aside class="app-rail" aria-label="全局导航">
+        <div class="rail-brand">F/</div>
+        <button class="rail-button active" title="Projects" aria-label="Projects">▦</button>
+        <button class="rail-button" title="Recent" aria-label="Recent">◷</button>
+        <button class="rail-button" title="Search" aria-label="Search">⌕</button>
+        <div class="rail-spacer"></div>
+        <button class="rail-button" id="globalSettingsButton" title="应用设置" aria-label="应用设置">⚙</button>
+        <div class="rail-avatar">YC</div>
+      </aside>
+
+      <aside class="sidebar">
+        <div class="sidebar-inner">
+          <div class="section-label">PROJECTS</div>
+          <div class="project-list">
+            <button class="project-switch-row active"><span class="project-switch-dot"></span><span class="project-switch-name">opencode-fork</span><span class="project-switch-branch">main</span></button>
+            <button class="project-switch-row"><span class="project-switch-dot"></span><span class="project-switch-name">SunEyeVision_V2</span><span class="project-switch-branch">dev</span></button>
+            <button class="project-switch-row"><span class="project-switch-dot"></span><span class="project-switch-name">Rea逆向</span><span class="project-switch-branch">main</span></button>
+          </div>
+          <div class="section-label">CURRENT PROJECT</div>
+          <button class="project-row" style="width: 100%; text-align: left; cursor: pointer;">
+            <span class="project-icon">⌘</span>
+            <span><span class="project-name">opencode-fork</span><span class="project-path">E:\CodeAI</span><span class="project-meta"><span class="branch-badge">main</span><span>clean</span></span></span>
+            <span class="chevron">⌄</span>
+          </button>
+          <button class="worktree-row" style="width: 100%; text-align: left;">
+            <span class="worktree-icon">◈</span><span><span class="worktree-name">main worktree</span><span class="project-path">E:\CodeAI</span></span><span class="worktree-status">⌄</span>
+          </button>
+
+          <button class="project-tools-button" id="projectToolsButton"><span>Project tools</span><span>⌄</span></button>
+          <div class="project-tools-menu hidden" id="projectToolsMenu" aria-label="项目工具">
+            <button class="nav-item active" data-view="sessions"><span class="nav-icon">◈</span><span class="nav-label">Sessions</span></button>
+            <button class="nav-item" data-view="worktrees"><span class="nav-icon">⌘</span><span class="nav-label">Worktrees</span><span class="nav-count">2</span></button>
+            <button class="nav-item" data-view="changes"><span class="nav-icon">▤</span><span class="nav-label">Changes</span></button>
+            <button class="nav-item" data-view="runs"><span class="nav-icon">▶</span><span class="nav-label">Runs</span><span class="nav-count">2</span></button>
+          </div>
+
+          <div class="section-label">SESSIONS</div>
+          <button class="new-session" id="newSession"><span class="plus">+</span><span>New session</span><span class="shortcut">⌘ K</span></button>
+          <div class="session-list">
+            <div class="session-row active" data-session-title="Provider settings flow" data-model="OpenAI-compatible / coder-large" data-provider="OpenAI-compatible"><span class="session-dot"></span><span class="session-copy"><span class="session-label">Provider settings flow</span><span class="session-model">OpenAI-compatible · coder-large</span></span><span class="session-time">now</span></div>
+            <div class="session-row" data-session-title="Desktop packaging baseline" data-model="Anthropic / coding-pro" data-provider="Anthropic"><span class="session-dot"></span><span class="session-copy"><span class="session-label">Desktop packaging baseline</span><span class="session-model">Anthropic · coding-pro</span></span><span class="session-time">1h</span></div>
+            <div class="session-row" data-session-title="Review llm adapters" data-model="Ollama / qwen3-coder" data-provider="Ollama"><span class="session-dot"></span><span class="session-copy"><span class="session-label">Review llm adapters</span><span class="session-model">Ollama · qwen3-coder</span></span><span class="session-time">2h</span></div>
+            <div class="session-row" data-session-title="Initialize product shell" data-model="OpenAI-compatible / coder-large" data-provider="OpenAI-compatible"><span class="session-dot"></span><span class="session-copy"><span class="session-label">Initialize product shell</span><span class="session-model">OpenAI-compatible · coder-large</span></span><span class="session-time">Tue</span></div>
+          </div>
+        </div>
+        <div class="sidebar-footer">
+          <div class="user-row"><span class="avatar">YC</span><span><span class="user-name">Local account</span><span class="user-state">Project session</span></span></div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <div class="main-head session-only">
+          <div><div class="session-scope">This session · model saved with conversation</div><div class="main-title" id="sessionTitle">Provider settings flow</div><div class="status-line"><span class="status-dot"></span><span id="taskStatus">Ready · working tree clean</span></div></div>
+          <div class="main-head-actions">
+            <button class="small-button"><svg class="icon" viewBox="0 0 24 24"><path d="M4 12h16M12 4v16"></path></svg>&nbsp; Share</button>
+            <div style="position: relative;">
+              <button class="model-button" id="modelButton"><span class="model-dot"></span><span id="selectedModel">OpenAI-compatible / coder-large</span><span>⌄</span></button>
+              <div class="dropdown" id="modelDropdown">
+                <button class="dropdown-option" data-model="OpenAI-compatible / coder-large" data-provider="OpenAI-compatible"><span class="model-dot"></span><span><strong>coder-large</strong><small>OpenAI-compatible · 128k</small></span></button>
+                <button class="dropdown-option" data-model="Anthropic / coding-pro" data-provider="Anthropic"><span class="model-dot" style="background: #f2ad70"></span><span><strong>coding-pro</strong><small>Anthropic · tool use</small></span></button>
+                <button class="dropdown-option" data-model="Ollama / qwen3-coder" data-provider="Ollama"><span class="model-dot" style="background: #b9f55f"></span><span><strong>qwen3-coder</strong><small>Local · localhost:11434</small></span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <section class="conversation session-only" id="conversation">
+          <div class="conversation-inner">
+            <div class="date-divider">Today · 10:42</div>
+
+            <article class="message user">
+              <div class="message-avatar">YC</div>
+              <div><div class="message-head"><span class="message-name">You</span><span class="message-time">10:42</span></div><div class="message-body"><p>先把 provider 设置页做出来，支持自定义 Base URL、模型 ID 和连接测试。</p></div></div>
+            </article>
+
+            <article class="message">
+              <div class="message-avatar">F/</div>
+              <div><div class="message-head"><span class="message-name">Forge</span><span class="message-time">10:42</span><span class="permission-badge">plan</span></div><div class="message-body"><p>我会先复用现有 provider 配置结构，补上连接测试状态，再把设置页接入会话模型选择。</p>
+                <div class="plan-list">
+                  <div class="step-row done"><span class="step-number">✓</span><span>定位 provider schema 和设置路由</span></div>
+                  <div class="step-row done"><span class="step-number">✓</span><span>确认 LLM 流式事件的错误格式</span></div>
+                  <div class="step-row current"><span class="step-number">3</span><span>实现表单和连接测试反馈</span></div>
+                  <div class="step-row"><span class="step-number">4</span><span>运行设置页和 provider 契约测试</span></div>
+                </div>
+              </div></div>
+            </article>
+
+            <article class="message">
+              <div class="message-avatar">F/</div>
+              <div><div class="message-head"><span class="message-name">Forge</span><span class="message-time">10:44</span></div><div class="message-body"><p>我先运行相关测试，确认当前基线。</p>
+                <div class="tool-card"><div class="tool-title"><svg class="icon tool-icon" viewBox="0 0 24 24"><path d="m8 9-4 3 4 3M16 9l4 3-4 3M14 5l-4 14"></path></svg><strong>Run command</strong><span class="tool-state">completed</span></div><div class="terminal"><div><span class="prompt">$</span> bun test packages/llm packages/app</div><div class="dim">18 tests passed · 2.4s</div></div></div>
+              </div></div>
+            </article>
+
+            <article class="message">
+              <div class="message-avatar">F/</div>
+              <div><div class="message-head"><span class="message-name">Forge</span><span class="message-time">10:45</span></div><div class="message-body"><p>设置页的第一版已经接入 provider 配置。当前变更集中在一个文件。</p>
+                <div class="diff-card"><div class="diff-title"><svg class="icon" viewBox="0 0 24 24"><path d="M7 3h10v18H7zM10 7h4M10 11h4M10 15h2"></path></svg><strong>provider-form.tsx</strong><span class="file-badge">+42 −8</span></div><div class="diff-lines"><div class="diff-line context">  &lt;ProviderForm&gt;</div><div class="diff-line add">+   &lt;EndpointInput label="Base URL" /&gt;</div><div class="diff-line add">+   &lt;ModelInput label="Model ID" /&gt;</div><div class="diff-line add">+   &lt;ConnectionStatus /&gt;</div><div class="diff-line context">  &lt;/ProviderForm&gt;</div></div></div>
+              </div></div>
+            </article>
+          </div>
+        </section>
+
+        <div class="composer-wrap session-only">
+          <div class="composer">
+            <textarea id="composerInput" placeholder="描述你希望智能体完成的任务…"></textarea>
+            <div class="composer-tools"><div class="composer-left"><button class="build-button"><span class="build-dot"></span>Build <span>⌄</span></button><button class="composer-icon" title="附加文件" aria-label="附加文件"><svg class="icon" viewBox="0 0 24 24"><path d="m20 11-7.8 7.8a5 5 0 0 1-7.1-7.1l8.2-8.2a3.3 3.3 0 0 1 4.7 4.7l-8.1 8.1a1.7 1.7 0 0 1-2.4-2.4l7.6-7.6"></path></svg></button><button class="composer-icon" title="添加上下文" aria-label="添加上下文"><svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"></path></svg></button></div><div class="composer-right"><span style="color: var(--faint); font-size: 10px;">Enter 发送</span><button class="send-button" id="sendButton" title="发送" aria-label="发送"><svg class="icon" viewBox="0 0 24 24"><path d="m5 12 14-7-4 14-3-6-7-1Z"></path><path d="m12 13 3-2"></path></svg></button></div></div>
+          </div>
+        </div>
+        <section class="placeholder-view hidden" id="placeholderView"></section>
+      </main>
+
+      <aside class="inspector session-only">
+        <div class="inspector-head"><div class="panel-title"><svg class="icon" viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"></path></svg><span id="panelTitle">Context</span></div><button class="icon-button" title="收起面板" aria-label="收起面板"><svg class="icon" viewBox="0 0 24 24"><path d="m9 6 6 6-6 6"></path></svg></button></div>
+        <div class="inspector-body">
+          <div class="tabs"><button class="tab-button active" data-tab="context">Context</button><button class="tab-button" data-tab="diff">Diff · 1</button></div>
+          <div id="contextTab">
+            <div class="context-section"><div class="context-label">This session</div><div class="context-card"><div class="context-row"><span class="context-key">Model</span><span class="context-value"><span class="provider-dot"></span><strong id="contextModel">coder-large</strong></span></div><div class="context-row"><span class="context-key">Provider</span><span class="context-value"><strong id="contextProvider">OpenAI-compatible</strong></span></div><div class="context-row"><span class="context-key">Workspace</span><span class="context-value"><strong>E:\CodeAI</strong></span></div><div class="context-row"><span class="context-key">Permission</span><span class="context-value"><span class="permission-badge">workspace-write</span></span></div></div></div>
+            <div class="context-section"><div class="context-label">Changed files</div><div class="file-list"><div class="file-row"><svg class="icon file-icon" viewBox="0 0 24 24"><path d="M7 3h10v18H7zM10 7h4M10 11h4M10 15h2"></path></svg><span class="file-name">provider-form.tsx</span><span class="file-change">+42 −8</span></div><div class="file-row"><svg class="icon file-icon" viewBox="0 0 24 24"><path d="M7 3h10v18H7zM10 7h4M10 11h4M10 15h2"></path></svg><span class="file-name">provider.schema.ts</span><span class="file-change">+12</span></div></div></div>
+            <div class="context-section"><div class="context-label">Needs approval</div><div class="approval-card"><div class="approval-title"><svg class="icon" viewBox="0 0 24 24"><path d="M12 3 21 20H3L12 3Z"></path><path d="M12 9v5M12 17h.01"></path></svg>Command requires approval</div><div class="approval-copy">该命令会访问网络以验证 provider endpoint。</div><span class="approval-command">bun run provider:test --endpoint $BASE_URL</span><div class="approval-actions"><button class="approve-button" id="approveButton">Approve once</button><button class="outline-button" id="denyButton">Deny</button></div></div></div>
+          </div>
+          <div id="diffTab" class="hidden"><div class="context-section"><div class="context-label">Working tree</div><div class="context-card"><div class="context-row"><span class="context-key">Files</span><span class="context-value"><strong>2 changed</strong></span></div><div class="context-row"><span class="context-key">Added</span><span class="context-value"><strong style="color: var(--accent);">+54 lines</strong></span></div><div class="context-row"><span class="context-key">Removed</span><span class="context-value"><strong style="color: var(--red);">−8 lines</strong></span></div></div></div><div class="diff-card"><div class="diff-title"><strong>provider-form.tsx</strong></div><div class="diff-lines"><div class="diff-line add">+   &lt;EndpointInput /&gt;</div><div class="diff-line add">+   &lt;ConnectionStatus /&gt;</div><div class="diff-line remove">-   &lt;TextInput /&gt;</div></div></div></div>
+        </div>
+      </aside>
+
+      <footer class="footer"><div class="footer-left"><span><span class="status-dot"></span>&nbsp; Local runtime connected</span><span>v0.1.0-dev</span></div><div class="footer-right"><span><span class="footer-key">⌘ K</span>&nbsp; command palette</span><span><span class="footer-key">?</span>&nbsp; shortcuts</span></div></footer>
+    </div>
+
+    <template id="template-runs">
+      <div class="placeholder-inner">
+        <div class="view-head"><div><div class="view-kicker">Execution plane</div><div class="view-title">Runs</div><div class="view-subtitle">查看正在运行、已完成和可恢复的 Agent Run。每次运行都有独立的模型、权限、工作区和事件快照。</div></div><div class="view-actions"><button class="outline-button">筛选</button><button class="primary-button">New run</button></div></div>
+        <div class="surface-grid">
+          <div class="surface-card"><div class="surface-card-title"><span class="surface-icon green">▶</span>Active runs</div><div class="metric">2</div><div class="metric-label">当前正在执行</div><div class="surface-card-meta"><span class="status-dot"></span> 1 waiting for approval</div></div>
+          <div class="surface-card"><div class="surface-card-title"><span class="surface-icon">↻</span>Recoverable</div><div class="metric">1</div><div class="metric-label">可以继续的中断任务</div><div class="surface-card-meta">last heartbeat 12s ago</div></div>
+          <div class="surface-card"><div class="surface-card-title"><span class="surface-icon orange">✓</span>Success rate</div><div class="metric">87%</div><div class="metric-label">过去 30 天</div><div class="surface-card-meta">based on 46 runs</div></div>
+          <div class="surface-card wide"><div class="surface-card-title"><span class="surface-icon green">●</span>Current run</div><div class="surface-card-copy">Provider settings flow · OpenAI-compatible / coder-large</div><div class="surface-list"><div class="surface-list-row"><strong>planning</strong><span>2m 14s</span></div><div class="surface-list-row"><strong>tools</strong><span>6 calls · 1 approval</span></div><div class="surface-list-row"><strong>verification</strong><span>queued</span></div></div></div>
+          <div class="surface-card"><div class="surface-card-title"><span class="surface-icon red">!</span>Needs attention</div><div class="surface-card-copy">一个远程 provider 响应超时，需要重试或切换模型。</div><div class="surface-card-meta"><span class="state-pill pending">1 pending</span></div></div>
+          <div class="surface-card full"><div class="surface-card-title"><span class="surface-icon">≡</span>Run history</div><table class="surface-table"><thead><tr><th>Run</th><th>Session</th><th>Model</th><th>Status</th><th>Updated</th></tr></thead><tbody><tr><td><strong>#run-0046</strong></td><td>Provider settings flow</td><td>coder-large</td><td><span class="state-pill">running</span></td><td>now</td></tr><tr><td><strong>#run-0045</strong></td><td>Desktop packaging baseline</td><td>coding-pro</td><td><span class="state-pill">completed</span></td><td>1h ago</td></tr><tr><td><strong>#run-0044</strong></td><td>Review llm adapters</td><td>qwen3-coder</td><td><span class="state-pill pending">paused</span></td><td>2h ago</td></tr></tbody></table></div>
+        </div>
+      </div>
+    </template>
+
+    <template id="template-models">
+      <div class="placeholder-inner">
+        <div class="view-head"><div><div class="view-kicker">Model plane</div><div class="view-title">Models &amp; Providers</div><div class="view-subtitle">集中管理供应商、端点、密钥引用、模型能力和连接状态。模型配置完成后，用户在具体 Session 中选择模型。</div></div><div class="view-actions"><button class="outline-button">Import config</button><button class="primary-button">Add provider</button></div></div>
+        <div class="surface-grid">
+          <div class="surface-card wide"><div class="surface-card-title"><span class="surface-icon green">◎</span>Configured providers</div><div class="surface-list"><div class="surface-list-row"><span class="provider-dot"></span><strong>OpenAI-compatible gateway</strong><span><span class="state-pill">connected</span></span></div><div class="surface-list-row"><span class="provider-dot" style="background: #f2ad70"></span><strong>Anthropic</strong><span><span class="state-pill">connected</span></span></div><div class="surface-list-row"><span class="provider-dot green"></span><strong>Ollama · localhost:11434</strong><span><span class="state-pill">local</span></span></div></div></div>
+          <div class="surface-card"><div class="surface-card-title"><span class="surface-icon">#</span>Model catalog</div><div class="metric">8</div><div class="metric-label">可选模型</div><div class="surface-card-meta">3 providers · 2 custom</div></div>
+          <div class="surface-card full"><div class="surface-card-title"><span class="surface-icon">◇</span>Models</div><table class="surface-table"><thead><tr><th>Model</th><th>Provider</th><th>Context</th><th>Tools</th><th>Scope</th></tr></thead><tbody><tr><td><strong>coder-large</strong></td><td>OpenAI-compatible</td><td>128k</td><td>native</td><td>project</td></tr><tr><td><strong>coding-pro</strong></td><td>Anthropic</td><td>200k</td><td>native</td><td>project</td></tr><tr><td><strong>qwen3-coder</strong></td><td>Ollama</td><td>32k</td><td>adapter</td><td>local</td></tr></tbody></table></div>
+          <div class="surface-card placeholder full"><div class="empty-box"><div><strong>Provider onboarding placeholder</strong><span>这里预留密钥引用、Base URL、API 类型、模型发现、能力测试和预算策略。凭据不会出现在会话页面。</span></div></div></div>
+        </div>
+      </div>
+    </template>
+
+    <template id="template-tools">
+      <div class="placeholder-inner">
+        <div class="view-head"><div><div class="view-kicker">Execution plane</div><div class="view-title">Tools &amp; MCP</div><div class="view-subtitle">查看 Agent 可以使用的工具、MCP 连接和插件权限。工具执行始终经过统一策略和审批接口。</div></div><div class="view-actions"><button class="outline-button">Policy preview</button><button class="primary-button">Add MCP server</button></div></div>
+        <div class="surface-grid">
+          <div class="surface-card"><div class="surface-card-title"><span class="surface-icon green">⌘</span>Built-in tools</div><div class="metric">7</div><div class="metric-label">文件、搜索、Shell、Git</div><div class="surface-card-meta"><span class="state-pill">ready</span></div></div>
+          <div class="surface-card"><div class="surface-card-title"><span class="surface-icon">M</span>MCP servers</div><div class="metric">0</div><div class="metric-label">当前项目未配置</div><div class="surface-card-meta"><span class="state-pill off">placeholder</span></div></div>
+          <div class="surface-card"><div class="surface-card-title"><span class="surface-icon orange">!</span>Approval policy</div><div class="metric">3</div><div class="metric-label">待确认动作类型</div><div class="surface-card-meta">shell · network · git</div></div>
+          <div class="surface-card full"><div class="surface-card-title"><span class="surface-icon">▦</span>Tool registry</div><table class="surface-table"><thead><tr><th>Tool</th><th>Capability</th><th>Default</th><th>Policy</th></tr></thead><tbody><tr><td><strong>workspace.read</strong></td><td>读取文件和目录</td><td><span class="state-pill">enabled</span></td><td>allow</td></tr><tr><td><strong>workspace.write</strong></td><td>创建和修改文件</td><td><span class="state-pill">enabled</span></td><td>ask</td></tr><tr><td><strong>shell.exec</strong></td><td>运行项目命令</td><td><span class="state-pill">enabled</span></td><td>ask</td></tr><tr><td><strong>mcp.external</strong></td><td>访问外部 MCP</td><td><span class="state-pill off">disabled</span></td><td>deny</td></tr></tbody></table></div>
+          <div class="surface-card placeholder wide"><div class="empty-box"><div><strong>MCP management placeholder</strong><span>预留服务器连接、OAuth、工具目录、网络出口和每个项目的启用策略。</span></div></div></div>
+          <div class="surface-card placeholder"><div class="empty-box"><div><strong>Plugin registry placeholder</strong><span>预留 provider、tool、skill 和 UI 插件的安装及版本管理。</span></div></div></div>
+        </div>
+      </div>
+    </template>
+
+    <template id="template-context">
+      <div class="placeholder-inner">
+        <div class="view-head"><div><div class="view-kicker">Context plane</div><div class="view-title">Context &amp; Rules</div><div class="view-subtitle">管理项目规则、技能、固定上下文、代码索引和模型上下文预算。上下文来源会进入每次 Run 的快照。</div></div><div class="view-actions"><button class="outline-button">Refresh index</button><button class="primary-button">Add rule</button></div></div>
+        <div class="surface-grid">
+          <div class="surface-card wide"><div class="surface-card-title"><span class="surface-icon green">▧</span>Project context</div><div class="surface-list"><div class="surface-list-row"><strong>AGENTS.md</strong><span>loaded · project</span></div><div class="surface-list-row"><strong>README.md</strong><span>pinned</span></div><div class="surface-list-row"><strong>packages/llm</strong><span>indexed · 1,284 files</span></div></div></div>
+          <div class="surface-card"><div class="surface-card-title"><span class="surface-icon">≈</span>Context budget</div><div class="metric">42%</div><div class="metric-label">当前 Session 使用量</div><div class="surface-card-meta">auto-compaction enabled</div></div>
+          <div class="surface-card full"><div class="surface-card-title"><span class="surface-icon">✓</span>Rules and skills</div><table class="surface-table"><thead><tr><th>Name</th><th>Source</th><th>Scope</th><th>Status</th></tr></thead><tbody><tr><td><strong>project-coding-style</strong></td><td>AGENTS.md</td><td>project</td><td><span class="state-pill">active</span></td></tr><tr><td><strong>test-before-summary</strong></td><td>built-in</td><td>workspace</td><td><span class="state-pill">active</span></td></tr><tr><td><strong>security-review</strong></td><td>skill package</td><td>future</td><td><span class="state-pill off">placeholder</span></td></tr></tbody></table></div>
+          <div class="surface-card placeholder full"><div class="empty-box"><div><strong>Indexer and memory placeholder</strong><span>预留代码库地图、语义索引、长期记忆、固定文件、上下文来源优先级和脱敏规则。</span></div></div></div>
+        </div>
+      </div>
+    </template>
+
+    <template id="template-audit">
+      <div class="placeholder-inner">
+        <div class="view-head"><div><div class="view-kicker">Control plane</div><div class="view-title">Audit &amp; Usage</div><div class="view-subtitle">记录运行、审批、外部访问、模型调用和资源使用。公司内部模式下，这里是项目和组织级审计入口。</div></div><div class="view-actions"><button class="outline-button">Export log</button><button class="outline-button">Date range</button></div></div>
+        <div class="surface-grid">
+          <div class="surface-card"><div class="surface-card-title"><span class="surface-icon green">✓</span>Runs</div><div class="metric">46</div><div class="metric-label">过去 30 天</div><div class="surface-card-meta">87% completed</div></div>
+          <div class="surface-card"><div class="surface-card-title"><span class="surface-icon orange">$</span>Model usage</div><div class="metric">1.8M</div><div class="metric-label">estimated tokens</div><div class="surface-card-meta">cost tracking placeholder</div></div>
+          <div class="surface-card"><div class="surface-card-title"><span class="surface-icon red">!</span>Approvals</div><div class="metric">12</div><div class="metric-label">需要人工判断</div><div class="surface-card-meta">0 unresolved</div></div>
+          <div class="surface-card full"><div class="surface-card-title"><span class="surface-icon">≡</span>Audit events</div><table class="surface-table"><thead><tr><th>Time</th><th>Actor</th><th>Action</th><th>Target</th><th>Result</th></tr></thead><tbody><tr><td>10:45</td><td>Local user</td><td>approval.resolved</td><td>shell.exec</td><td><span class="state-pill">approved</span></td></tr><tr><td>10:44</td><td>Forge Runtime</td><td>verification.finished</td><td>packages/llm</td><td><span class="state-pill">passed</span></td></tr><tr><td>10:42</td><td>Local user</td><td>session.model_changed</td><td>Provider settings flow</td><td><span class="state-pill">recorded</span></td></tr></tbody></table></div>
+          <div class="surface-card placeholder wide"><div class="empty-box"><div><strong>Organization audit placeholder</strong><span>预留用户、组织、项目、角色、策略变更和合规导出。</span></div></div></div>
+          <div class="surface-card placeholder"><div class="empty-box"><div><strong>Budget controls placeholder</strong><span>预留预算、限流、provider 配额和异常告警。</span></div></div></div>
+        </div>
+      </div>
+    </template>
+
+    <template id="template-settings">
+      <div class="placeholder-inner">
+        <div class="view-head"><div><div class="view-kicker">Application</div><div class="view-title">Settings</div><div class="view-subtitle">应用运行时、外观、安全、存储、日志和更新策略。项目级设置与账户级设置在这里分开管理。</div></div><div class="view-actions"><button class="primary-button">Save changes</button></div></div>
+        <div class="surface-grid">
+          <div class="surface-card"><div class="surface-card-title"><span class="surface-icon">◐</span>Appearance</div><div class="surface-card-copy">主题、字体、密度、语言、快捷键和通知。</div><div class="surface-card-meta"><span class="state-pill off">UI placeholder</span></div></div>
+          <div class="surface-card"><div class="surface-card-title"><span class="surface-icon green">◉</span>Runtime</div><div class="surface-card-copy">Local、Hybrid、Internal 运行模式和 Worker 连接。</div><div class="surface-card-meta"><span class="state-pill">Local Mode</span></div></div>
+          <div class="surface-card"><div class="surface-card-title"><span class="surface-icon orange">⌁</span>Security</div><div class="surface-card-copy">密钥存储、网络出口、默认审批和插件信任。</div><div class="surface-card-meta"><span class="state-pill pending">Review required</span></div></div>
+          <div class="surface-card full"><div class="surface-card-title"><span class="surface-icon">▣</span>Storage and diagnostics</div><table class="surface-table"><thead><tr><th>Setting</th><th>Current</th><th>Scope</th><th>State</th></tr></thead><tbody><tr><td><strong>Session storage</strong></td><td>Local SQLite</td><td>device</td><td><span class="state-pill">active</span></td></tr><tr><td><strong>Secret store</strong></td><td>OS keychain</td><td>device</td><td><span class="state-pill">active</span></td></tr><tr><td><strong>Telemetry</strong></td><td>off</td><td>device</td><td><span class="state-pill off">disabled</span></td></tr><tr><td><strong>Update channel</strong></td><td>Stable</td><td>application</td><td><span class="state-pill">active</span></td></tr></tbody></table></div>
+          <div class="surface-card placeholder wide"><div class="empty-box"><div><strong>Organization settings placeholder</strong><span>预留登录、组织、角色、项目权限、集中 provider 和企业策略。</span></div></div></div>
+          <div class="surface-card placeholder"><div class="empty-box"><div><strong>Release and recovery placeholder</strong><span>预留更新回滚、崩溃恢复、诊断包和版本兼容检查。</span></div></div></div>
+        </div>
+      </div>
+    </template>
+
+    <script>
+      const placeholderView = document.getElementById("placeholderView");
+      const sessionOnlyElements = document.querySelectorAll(".session-only");
+      const navItems = document.querySelectorAll(".nav-item");
+
+      function openProductView(view) {
+        const isSession = view === "sessions";
+        sessionOnlyElements.forEach((element) => element.classList.toggle("hidden", !isSession));
+        placeholderView.classList.toggle("hidden", isSession);
+        if (!isSession) {
+          placeholderView.innerHTML = document.getElementById("template-" + view).innerHTML;
+        }
+        navItems.forEach((item) => item.classList.toggle("active", item.dataset.view === view));
+      }
+
+      navItems.forEach((item) => {
+        item.addEventListener("click", () => openProductView(item.dataset.view));
+      });
+
+      const modelButton = document.getElementById("modelButton");
+      const modelDropdown = document.getElementById("modelDropdown");
+      const selectedModel = document.getElementById("selectedModel");
+      const contextModel = document.getElementById("contextModel");
+      const contextProvider = document.getElementById("contextProvider");
+      const sessionTitle = document.getElementById("sessionTitle");
+      let activeSession = document.querySelector(".session-row.active");
+
+      function setSessionModel(model, provider) {
+        selectedModel.textContent = model;
+        contextModel.textContent = model.split(" / ")[1];
+        contextProvider.textContent = provider;
+        if (activeSession) {
+          activeSession.dataset.model = model;
+          activeSession.dataset.provider = provider;
+          activeSession.querySelector(".session-model").textContent = `${provider} · ${model.split(" / ")[1]}`;
+        }
+      }
+      const taskStatus = document.getElementById("taskStatus");
+      const composerInput = document.getElementById("composerInput");
+      const conversation = document.getElementById("conversation");
+
+      modelButton.addEventListener("click", () => modelDropdown.classList.toggle("open"));
+      document.addEventListener("click", (event) => {
+        if (!modelButton.contains(event.target) && !modelDropdown.contains(event.target)) modelDropdown.classList.remove("open");
+      });
+
+      document.querySelectorAll(".dropdown-option").forEach((option) => {
+        option.addEventListener("click", () => {
+          setSessionModel(option.dataset.model, option.dataset.provider);
+          modelDropdown.classList.remove("open");
+          taskStatus.textContent = "Ready · model saved to this session";
+        });
+      });
+
+      document.querySelectorAll(".session-row").forEach((session) => {
+        session.addEventListener("click", () => {
+          document.querySelectorAll(".session-row").forEach((item) => item.classList.remove("active"));
+          session.classList.add("active");
+          activeSession = session;
+          sessionTitle.textContent = session.dataset.sessionTitle;
+          setSessionModel(session.dataset.model, session.dataset.provider);
+          taskStatus.textContent = "Ready · session restored";
+        });
+      });
+
+      document.querySelectorAll(".tab-button").forEach((tab) => {
+        tab.addEventListener("click", () => {
+          document.querySelectorAll(".tab-button").forEach((item) => item.classList.remove("active"));
+          tab.classList.add("active");
+          document.getElementById("contextTab").classList.toggle("hidden", tab.dataset.tab !== "context");
+          document.getElementById("diffTab").classList.toggle("hidden", tab.dataset.tab !== "diff");
+          document.getElementById("panelTitle").textContent = tab.dataset.tab === "context" ? "Context" : "Diff";
+        });
+      });
+
+      document.getElementById("approveButton").addEventListener("click", (event) => {
+        event.currentTarget.textContent = "Approved";
+        event.currentTarget.disabled = true;
+        taskStatus.textContent = "Running · provider connection test";
+      });
+
+      document.getElementById("denyButton").addEventListener("click", () => {
+        taskStatus.textContent = "Paused · approval denied";
+      });
+
+      document.getElementById("newSession").addEventListener("click", () => {
+        openProductView("sessions");
+        taskStatus.textContent = "Ready · new session";
+        composerInput.focus();
+      });
+
+      function sendMessage() {
+        const text = composerInput.value.trim();
+        if (!text) return;
+        const article = document.createElement("article");
+        article.className = "message user";
+        article.innerHTML = `<div class="message-avatar">YC</div><div><div class="message-head"><span class="message-name">You</span><span class="message-time">now</span></div><div class="message-body"><p>${text.replace(/[&<>]/g, (char) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;"}[char]))}</p></div></div>`;
+        conversation.querySelector(".conversation-inner").append(article);
+        composerInput.value = "";
+        taskStatus.textContent = "Queued · waiting for agent";
+        conversation.scrollTop = conversation.scrollHeight;
+      }
+
+      document.getElementById("sendButton").addEventListener("click", sendMessage);
+      composerInput.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" && !event.shiftKey) {
+          event.preventDefault();
+          sendMessage();
+        }
+      });
+    </script>
+  </body>
+</html>
