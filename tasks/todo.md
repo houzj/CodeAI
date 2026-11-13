@@ -261,3 +261,11 @@
 - [x] 无 Artifact Tab 时右侧区域未出现在生产页面 AX 树中，说明现有 SideRegion 的无 Tab 隐藏规则生效。
 - [x] 真实任务打开 `index.html` 后，AX 树出现 `review-panel`、浏览器地址栏和预览 Tab；`Ctrl+Shift+R` 隐藏后 `review-panel` 消失，再次切换恢复同一 Tab。
 - [ ] 第二个 Session 的点击切换和右侧全屏/文件级 Tab 仍需下一轮桌面操作验证。
+
+### 执行记录（2026-11-14，启动品牌清理）
+
+- [x] 启动 Splash 已移除 OpenCode logo/Wordmark，改为 CodeAI 文案。
+- [x] Desktop host 的可见运行时身份改为 CodeAI。
+- [x] Session Runtime Header 将默认 `opencode` provider 显示为 CodeAI，内部协议和兼容层保持不变。
+- [x] app/desktop 类型检查和最新桌面渲染构建通过。
+- [x] 最新便携包启动窗口标题为 CodeAI，远程 Session 仍可进入真实 Workspace Frame。
