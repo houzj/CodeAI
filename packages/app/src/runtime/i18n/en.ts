@@ -361,6 +361,9 @@ export const dict = {
   "session.child.status.interrupted": "Interrupted",
   "session.runtime.empty": "No runtime events",
   "session.runtime.idle": "Idle",
+  "session.runtime.steps": "{{count}} steps",
+  "session.runtime.approvals": "{{count}} approvals",
+  "session.runtime.changes": "{{count}} changed files",
 
   "prompt.action.attachFile": "Add files",
 
