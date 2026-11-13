@@ -73,6 +73,18 @@ worktreeRoot
 
 这些静态名称表明 Codex 把项目、Worktree、Session、无项目会话、Composer 和 Worktree 生命周期作为独立状态管理。
 
+### 渲染工作区观察
+
+结合桌面截图、窗口导航日志和上述状态键，可以把 Codex 的渲染工作区分成三个独立层：
+
+```text
+左侧导航：全局入口 → Project → Worktree → Session
+中间主区：当前任务 / Run 状态 / 工具事件 / 变更摘要 / Composer
+右侧工作区：当前文件、变更、预览、日志和审批上下文
+```
+
+可观察到的关键行为是：项目和会话树表达归属关系；中间区是持续执行流而不是普通聊天气泡；右侧区由当前会话打开的文件或产物 Tab 驱动，没有活动 Tab 时不占用主布局，并且可以独立隐藏或全屏。窗口日志中的 `thread_navigation`、`rendererWebContentsId`、`rendererWindowId`、`threadState=hot` 和 `retained view state` 进一步证明会话页面有独立的渲染导航和保留视图状态。CodeAI 应把这三个区域当作投影消费者，而不是把 Project、Run 和 Artifact 混成一个页面状态。
+
 ### 审批和产物线索
 
 ```text
