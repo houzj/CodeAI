@@ -50,32 +50,32 @@ export function CodeAIRunCenter(props: { session: SessionModel }) {
 
   return (
     <div class="flex min-h-0 flex-1 flex-col overflow-y-auto px-4 pb-36 pt-6 md:px-8" data-component="codeai-run-center">
-      <div class="mx-auto flex w-full max-w-[860px] flex-col gap-4">
-        <section class="rounded-[10px] border border-v2-border-border-base bg-v2-background-bg-layer-01 px-4 py-3">
+      <div class="mx-auto flex w-full max-w-[760px] flex-col gap-6">
+        <section class="border-s-2 border-v2-border-border-focus px-4 py-1">
           <div class="mb-2 flex items-center justify-between gap-3 text-11-medium uppercase tracking-[0.08em] text-v2-text-text-muted">
             <span>{language.t("session.run.task")}</span>
-            <span class="normal-case tracking-normal text-v2-text-text-faint">{status()}</span>
+            <span class="normal-case tracking-normal text-v2-text-text-faint" aria-live="polite">{status()}</span>
           </div>
           <p class="whitespace-pre-wrap text-14-regular leading-6 text-v2-text-text-base">{task()}</p>
         </section>
         <Show when={result()}>
           {(value) => (
-            <section class="rounded-[10px] border border-v2-border-border-base bg-v2-background-bg-base px-4 py-3">
+            <section class="px-4">
               <div class="mb-2 text-11-medium uppercase tracking-[0.08em] text-v2-text-text-muted">{language.t("session.run.result")}</div>
               <p class="whitespace-pre-wrap text-13-regular leading-6 text-v2-text-text-base">{value()}</p>
             </section>
           )}
         </Show>
-        <details class="rounded-[10px] border border-v2-border-border-base bg-v2-background-bg-base">
-          <summary class="flex cursor-pointer list-none items-center gap-2 px-4 py-3 text-13-medium text-v2-text-text-muted hover:bg-v2-background-bg-layer-01">
+        <details class="border-t border-v2-border-border-base">
+          <summary class="flex cursor-pointer list-none items-center gap-2 px-4 py-3 text-13-medium text-v2-text-text-muted hover:text-v2-text-text-base">
             <span>{language.t("session.run.runtime")}</span>
             <span class="text-v2-text-text-faint">{language.t("session.runtime.steps", { count: activity()?.steps.length ?? 0 })}</span>
             <Show when={pending().length > 0}>
               <span class="text-v2-text-warning">{language.t("session.runtime.approvals", { count: pending().length })}</span>
             </Show>
-            <span class="ms-auto">⌄</span>
+            <span class="ms-auto text-v2-text-text-faint">⌄</span>
           </summary>
-          <div class="flex flex-col gap-2 border-t border-v2-border-border-base px-4 py-3">
+          <div class="flex flex-col gap-2 px-4 pb-3">
             <Show when={(activity()?.steps.length ?? 0) > 0} fallback={<div class="text-12-regular text-v2-text-text-faint">{language.t("session.runtime.empty")}</div>}>
               <For each={activity()?.steps ?? []}>
                 {(step) => (
@@ -112,7 +112,10 @@ export function CodeAIRunCenter(props: { session: SessionModel }) {
             </Show>
             <Show when={(activity()?.changedFiles.length ?? 0) > 0}>
               <div class="border-t border-v2-border-border-base pt-2 text-12-regular text-v2-text-text-muted">
-                {language.t("session.runtime.changes", { count: activity()?.changedFiles.length ?? 0 })}
+                <div>{language.t("session.runtime.changes", { count: activity()?.changedFiles.length ?? 0 })}</div>
+                <For each={activity()?.changedFiles ?? []}>
+                  {(file) => <div class="truncate text-v2-text-text-faint">{file}</div>}
+                </For>
               </div>
             </Show>
           </div>
