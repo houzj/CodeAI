@@ -241,6 +241,40 @@ turn/addUserMessage
 
 这组方法说明“正在运行的会话里继续输入”不是重新创建聊天，而是通过 queue、steer 或 interrupt 改变当前 Thread 的执行状态。CodeAI Composer 需要根据 Run 状态选择新 Turn、steer、排队或中断，而不是始终追加普通消息。
 
+### Runtime 二进制字段线索
+
+对随 MSIX 分发的 `resources/codex.exe` 和本机 Runtime `codex.exe` 做字符串交叉校验，两个版本都包含同一组事件和领域字段。当前能确认字段名存在，但不能仅凭字符串恢复完整结构：
+
+```text
+threadId
+turnId
+itemId
+requestId
+command
+cwd
+processId
+exitCode
+aggregatedOutput
+filePath
+patch
+changes
+permissionProfile
+approvalPolicy
+sandboxPolicy
+modelProvider
+reasoningEffort
+functionCallOutput
+commandExecution
+tool_call_started
+tool_call_completed
+contextCompaction
+enteredReviewMode
+shortDescription
+structuredContent
+```
+
+这组字段与事件注册表可以形成 CodeAI 的最小事件载荷方向：命令 Item 至少需要命令、工作目录、进程和退出结果；文件变更 Item 至少需要文件路径、补丁或变更摘要；审批事件需要权限配置和沙箱策略快照；模型事件需要 Provider、模型和推理强度；工具结果需要结构化输出。精确的可选字段、枚举和嵌套结构仍需通过可控请求的 JSON-RPC 通信或官方协议源确认，不能把字符串扫描当成完整 schema。
+
 ## 运行日志证据
 
 Codex 本地日志位于：
