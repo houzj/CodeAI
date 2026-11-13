@@ -20,19 +20,19 @@
 
 代码 Agent 的核心对象是 Task、Run、Tool、Approval、Changes 和 Result。聊天消息只能作为结果来源，不能继续承担主布局。
 
-生产桌面路由已切换到 `CodeAIRunCenter`：任务和结果默认显示，Runtime 详情默认折叠；移动端暂时保留原时间线以避免破坏窄屏交互。
+生产桌面路由现在使用真实 `MessageTimeline`：任务、用户输入、助手结果、工具事件、审批、变更、计划和压缩事件都来自 Session history/event stream。临时的卡片式 `CodeAIRunCenter` 已删除，避免用简化卡片替代生产时间线。
 
 ### 3. Composer 必须是稳定的底部工作区
 
 Composer 需要始终固定在中间区底部，使用真实 prompt、interrupt、model selection 和输入状态。工具详情、变更和审批展开时不能推动 Composer 跳动。
 
-现有 Composer 仍由 OpenCode 生产组件提供，下一步只调整其布局容器和模型选择位置，不复制一套新的输入状态机。
+现有 Composer 仍由 OpenCode 生产组件提供，外层使用真实底部布局和 timeline inset；其 prompt、interrupt、model selection、steer/queue 和输入状态机保持由生产组件管理。
 
 ### 4. Artifact 不是常驻抽屉
 
 右侧区域必须由真实文件、预览、变更或日志 Tab 驱动：没有活动 Tab 时隐藏，有 Tab 时显示，并且可以独立关闭、恢复和全屏。
 
-现有 SideRegion 已经具备无 Tab 自动隐藏和独立切换能力，生产冒烟已验证预览 Tab 的显示、隐藏和恢复。全屏及文件级 Tab 仍需补验证。
+现有 SideRegion 已经具备无 Tab 自动隐藏和独立切换能力，支持文件/预览/日志等插件 Tab、独立关闭、恢复和面板全屏入口。生产包静态审计确认 `session-side-panel` 和 `MessageTimeline` 已进入最新交付；全屏及文件级 Tab 仍需用户手动冒烟验证。
 
 ### 5. 品牌泄露不能只修窗口标题
 
@@ -48,21 +48,19 @@ Splash、错误页、远程连接页、Provider 图标、Provider 标签和安�
 ## 当前生产结构
 
 ```text
-Session Route
-└── CodeAIWorkspaceFrame
-    ├── Project / Worktree / Session navigator
-    └── SessionScreenView
-        ├── CodeAI Session Context
-        ├── CodeAI Run Center（桌面）
-        ├── 原生 Timeline（移动端兼容）
-        ├── 真实 Composer
-        └── SideRegion Artifact workbench
+Global Shell
+├── Project → Worktree → Session navigator (SidebarOrganized)
+└── SessionScreenView
+    ├── CodeAI Session Context
+    ├── MessageTimeline（桌面和移动端共用生产时间线）
+    ├── 真实 Composer（底部布局 + steer/queue）
+    └── SideRegion Artifact workbench（独立 Tab/显隐）
 ```
 
 ## 后续改造顺序
 
 1. 完成 Project、Worktree、Session 的选中态、折叠态和跨 Session 切换验证。
-2. 在 Run Center 中补齐审批操作和变更入口，保持默认折叠。
+2. 在生产 MessageTimeline 中确认审批操作和变更入口保持默认折叠。
 3. 调整 Composer 外层布局，确保模型选择器、发送按钮和输入区符合 Codex 交互。
 4. 补齐 Artifact 文件级 Tab、全屏和恢复状态。
 5. 用全新安装包完成一次真实任务闭环，再决定是否结束第一版目标。
@@ -71,9 +69,9 @@ Session Route
 
 这些约束优先于静态截图的像素相似度。任何新增 UI 如果违反其中一条，视为生产壳回退：
 
-- 桌面中间区不能以聊天气泡时间线作为主布局。
+- 桌面中间区不能以普通聊天气泡作为主布局；必须使用包含任务/Run/工具事件/审批/变更的生产时间线。
 - 左侧只表达 Project → Worktree → Session 层级，不重复堆叠最近会话和全局设置。
-- Run Center 默认只显示 Task、当前状态、Result 和 Composer。
+- 时间线默认只显示任务、当前状态、结果和 Composer；工具、审批、变更详情按行折叠。
 - Tool、Approval、Changes 默认折叠；Approval 展开后必须调用真实 Permission API。
 - Composer 固定在中间区底部，模型选择属于 Composer 发送区的一部分。
 - Artifact 右侧没有活动 Tab 时隐藏；打开后可以独立关闭、恢复和全屏。
