@@ -10,19 +10,23 @@ export function CodexSessionContext(props: { session: () => SessionInfo | undefi
   const server = useServer()
   const sdk = useServerSDK()
   const [activity, setActivity] = createSignal<CodexActivityState | undefined>()
+  const sessionIdentity = createMemo(() => {
+    const session = props.session()
+    return session ? { id: session.id, directory: session.location.directory } : undefined
+  })
   const snapshot = createMemo(() => {
     const session = props.session()
     return session ? selectCodexSessionSnapshot({ session, project: server.ctx.projects.forSession(session) }) : undefined
   })
 
   createEffect(() => {
-    const session = props.session()
-    if (!session) return
+    const identity = sessionIdentity()
+    if (!identity) return
 
-    setActivity(createCodexActivityState(session.id))
+    setActivity(createCodexActivityState(identity.id))
     const disconnect = connectCodexActivity({
-      sessionID: session.id,
-      directory: session.location.directory,
+      sessionID: identity.id,
+      directory: identity.directory,
       event: sdk.event,
       onState: setActivity,
     })
