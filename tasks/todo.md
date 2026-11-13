@@ -270,3 +270,4 @@
 - [x] app/desktop 类型检查和最新桌面渲染构建通过。
 - [x] 最新便携包启动窗口标题为 CodeAI，远程 Session 仍可进入真实 Workspace Frame。
 - [x] Composer provider label 和远程连接品牌入口不再显示用户可见的 OpenCode/Wordmark。
+- [x] 终端验证最新便携目录包含 `CodeAI.exe` 和 `resources/app.asar`，NSIS 包已重新生成：`packages/desktop/dist/codeai-desktop-win-x64.exe`。
