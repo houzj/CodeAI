@@ -368,3 +368,9 @@
 - [x] 新增 `docs/codeai-command-surface.md`，区分 OpenCode Runtime 已有命令与 CodeAI 需要补齐的目标、计划、定时任务、侧边聊天和代码审查能力。
 - [x] `packages/app` 类型检查通过（2,396 files）。
 - [ ] 需要在用户本机验证时间线滚动、工具详情展开/收起、审批、计划/压缩事件以及 Composer 的悬停和键盘焦点反馈。
+
+### 执行记录（2026-11-14，长目标执行模型）
+
+- [x] 新增 `docs/codeai-long-running-goals.md`，定义 Goal → Plan → Run → Step → ToolEvent/Approval/Change/Checkpoint 的持久化关系。
+- [x] 明确后台调度、心跳租约、恢复、权限持久化、沙盒边界、上下文压缩和 Git 检查点是长目标闭环的基础能力。
+- [ ] 基于 OpenCode SessionExecution/Permission/Compaction/Git API 设计 Goal、Plan、Schedule、Checkpoint 的实验性 Schema/Server 契约。
