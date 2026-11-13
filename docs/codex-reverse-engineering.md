@@ -87,6 +87,57 @@ changes
 
 这些对象与 CodeAI 计划中的 Run、Approval、ChangeSet 和 Artifact 对应。
 
+### 模型和 Composer 线索
+
+静态入口中观察到：
+
+```text
+defaultModel
+modelProvider
+modelProviders
+modelPreferences
+providerModelFallback
+supportedReasoningEfforts
+enabledReasoningEfforts
+defaultReasoningEffort
+reasoningEffort
+reasoningEffortUpdates
+showUltraInModelPickerSlider
+composerEnterBehavior
+composerPlainTextMode
+composer.togglePlanMode
+```
+
+这些名称支持以下实现判断：模型选择至少包含 Provider、Model 和 Reasoning Effort 三层状态，Reasoning Effort 有能力列表、默认值和运行时更新事件，Composer 还保存 Enter 行为、纯文本模式和 Plan 模式。
+
+### Runtime 和任务事件线索
+
+入口中还观察到：
+
+```text
+runtime
+runtimes
+runtimeWorkspaceRoots
+model_prompt_sha256
+model_context_window
+model_reasoning_effort
+model_reasoning_summary
+agent_reasoning_delta
+agent_reasoning_section_break
+sessionConfigured
+sessionCompleted
+sessionEnded
+sessionUpdated
+startSession
+finishSessionSegment
+finishHandoffSessionSegment
+thread-queued-followups-changed
+thread-stream-state-changed
+thread-stream-following-changed
+```
+
+CodeAI 的 `Session` 应保存 Runtime 引用和 Workspace Root。`Run` 或执行段应保存模型快照、上下文窗口、推理强度和提示哈希，确保会话恢复后可以解释当时使用的模型配置。
+
 ### IPC 线索
 
 ```text
