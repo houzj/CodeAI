@@ -23,7 +23,8 @@
 - [x] R4：确认 Git watcher、独立 Runtime bundle、App Host、Git Worker、浏览器侧边栏和 MCP 沙箱 IPC 边界。
 - [x] R5：建立 Codex 观察项到 CodeAI 类型化投影和 Runtime Adapter 的映射。
 - [x] R6a：从运行日志补采 `mcpServer/tool/call` 和 `mcpServer/elicitation/request` 的路由信封与接受响应。
-- [ ] R6b：在可控测试项目中补采命令执行、审批、文件变更、预览 Tab 和模型切换的 payload。
+- [x] R6b-结构：确认命令、审批、文件变更、预览 Tab 和模型切换的事件名及 Runtime 字段方向。
+- [ ] R6b-payload：在可控测试项目中补采上述事件的完整 JSON payload 和重放顺序。
 - [ ] R7：将确认后的事件字段固化为 CodeAI Protocol/Schema，并补正常完成、失败、拒绝、取消和恢复用例。
 - [ ] R8：按事件投影实现 AgentRuntimeAdapter、GitRuntimeAdapter、PermissionBroker 和 SessionProjection。
 
