@@ -277,7 +277,7 @@ structuredContent
 
 ### 官方协议交叉验证
 
-OpenAI 的公开 App Server 文档与本机逆向结果一致：客户端通过 stdin/stdout 发送 newline-delimited JSON，先 `initialize`，再 `thread/start` 和 `turn/start`；客户端显示 `item/agentMessage/delta`，并以 `turn/completed` 的状态判断成功、失败或中断。官方文档还明确说明 App Server 负责保持会话、流式事件、工具调用、沙箱和审批，而应用负责连接、生命周期和用户体验。
+OpenAI 的公开 App Server 文档与本机逆向结果一致：客户端通过 stdin/stdout 发送 newline-delimited JSON，先 `initialize`，再 `thread/start` 和 `turn/start`；客户端显示 `item/agentMessage/delta`，并以 `turn/completed` 的状态判断成功、失败或中断。`model/list` 可用于填充模型选择器，但返回的是目录，不等于用户一定有权限调用该模型。官方文档还明确说明 App Server 负责保持会话、流式事件、工具调用、沙箱和审批，而应用负责连接、生命周期和用户体验。
 
 - [Codex app-server – Sign in with ChatGPT](https://developers.openai.com/siwc/token-sharing-open-source/codex-app-server)
 - [Codex as a platform: build on the open agent harness](https://developers.openai.com/blog/codex-as-a-platform)
