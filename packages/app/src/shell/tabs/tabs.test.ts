@@ -109,11 +109,13 @@ describe("tab migration", () => {
 
     // The removed terminal dock's fields decode away.
     const regions = Schema.decodeUnknownSync(TabStorage.Regions)({
-      tab: { review: true, sessionWidth: 300, terminal: true, terminalHeight: 300 },
+      tab: { review: true, sideFullscreen: true, sessionWidth: 300, terminal: true, terminalHeight: 300 },
     })
 
-    expect(regions).toEqual({ tab: { side: true, sessionWidth: 300 } })
-    expect(Schema.encodeSync(TabStorage.Regions)(regions)).toEqual({ tab: { review: true, sessionWidth: 300 } })
+    expect(regions).toEqual({ tab: { side: true, sideFullscreen: true, sessionWidth: 300 } })
+    expect(Schema.encodeSync(TabStorage.Regions)(regions)).toEqual({
+      tab: { review: true, sideFullscreen: true, sessionWidth: 300 },
+    })
     expect(() => Schema.decodeUnknownSync(TabStorage.Regions)({ tab: { review: "yes" } })).toThrow()
   })
 })

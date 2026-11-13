@@ -641,6 +641,8 @@ export const dict = {
   "session.tab.new": "New tab",
   "session.tab.unknown": "Unknown Session",
   "session.panel.reviewAndFiles": "Review and files",
+  "session.panel.fullscreen": "Full screen review and files",
+  "session.panel.exitFullscreen": "Exit full screen review and files",
   "session.panel.bottom": "Bottom panel",
   "session.panel.bottom.hide": "Hide bottom panel",
   "session.error.notFound": "This session cannot be found",

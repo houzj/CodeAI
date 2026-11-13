@@ -27,6 +27,7 @@ import {
 import { createPanelMotion, guardClosingFocus, panelOpacity, setPanelResizing } from "@/shell/panel-motion"
 import { createSidebarPeek } from "@/shell/sidebar-peek"
 import { windowDragEnabled } from "@/session/header/drag-area"
+import { GlobalRail } from "@/shell/global-rail"
 
 type SidebarPose = { closed: number; peek: number | undefined }
 
@@ -240,6 +241,14 @@ export default function Layout(props: ParentProps) {
             aria-hidden="true"
             class="absolute inset-x-0 top-0 h-[var(--shell-top-inset,8px)]"
             data-tauri-drag-region
+          />
+        </Show>
+        <Show when={!mobile()}>
+          <GlobalRail
+            home={() => command.trigger("home.toggle")}
+            search={() => command.trigger("sessions.search")}
+            toggleSidebar={toggleSidebar}
+            settings={() => command.trigger("settings.open")}
           />
         </Show>
         <Show when={verticalTabs()}>

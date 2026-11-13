@@ -409,3 +409,19 @@
 - [x] Web 入口 `packages/app/index.html` 和生产路由可由 Vite 开发服务器返回；开发服务器绑定 `0.0.0.0`，浏览器使用终端显示的 Network 地址访问。
 - [ ] 继续在网页开发模式验证 Project → Worktree → Session、Run 时间线、Composer 和 Artifact pane 后，再进入 Electron 开发模式。
 - [ ] 发布候选版本才重新生成 Windows 安装包并做安装后冒烟。
+
+### 执行记录（2026-11-14，Artifact 右侧区域全屏状态）
+
+- [x] 右侧区域继续由真实 Artifact Tab 驱动：没有 Tab 时不显示右侧区域入口。
+- [x] 右上角增加独立的“全屏审查和文件”控制；全屏时隐藏会话正文，仅保留 Artifact 内容区，退出后恢复原布局。
+- [x] 全屏状态持久化到 Tab regions，并提供中英文标签。
+- [x] `packages/app` 类型检查通过；Vite production build 通过（仅保留仓库已有 CSS/分包告警）。
+- [ ] 需要在 Web 开发服务器中打开一个真实 Artifact Tab，验证右侧显示/隐藏、全屏和退出全屏。
+
+### 执行记录（2026-11-14，Codex 全局导航 Rail）
+
+- [x] 在项目侧栏之外增加独立的窄版 Global Rail，分离 Home、Projects、History、Remote sessions、Worktrees、Panels 和 Settings 入口。
+- [x] Rail 与项目/Worktree/Session 树保持独立显示和独立折叠，不再把 Codex 的全局导航误当成项目列表。
+- [x] Rail 入口接入现有 Home、Session Search、Sidebar Toggle 和 Settings commands。
+- [x] `packages/app` 类型检查通过（2,397 files）。
+- [ ] 需要在 Web 开发服务器刷新后确认 Rail 与现有 vertical sidebar 的宽度、悬停和折叠状态。

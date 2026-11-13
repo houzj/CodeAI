@@ -35,6 +35,8 @@ export const useSessionLayout = () => {
   const regions = {
     sideOpened: () => tabs.region(currentTab(), "side"),
     setSideOpened: (opened: boolean) => tabs.setRegion(currentTab(), "side", opened),
+    sideFullscreen: () => tabs.region(currentTab(), "sideFullscreen"),
+    setSideFullscreen: (fullscreen: boolean) => tabs.setRegion(currentTab(), "sideFullscreen", fullscreen),
     // The bottom pane shows whenever it holds tabs until the user hides it.
     bottomOpened: () => tabs.region(currentTab(), "bottom", true),
     setBottomOpened: (opened: boolean) => tabs.setRegion(currentTab(), "bottom", opened),

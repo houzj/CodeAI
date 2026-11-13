@@ -316,7 +316,8 @@ export const defaultSettings: Settings = {
     mobileTitlebarPosition: "top",
     followUpBehavior: "steer",
   },
-  appearance: { fontSize: 14, mono: "", sans: "", terminal: "", tabLayout: "horizontal", reduceMotion: "system" },
+  // CodeAI uses the Codex-style project/session workspace by default. Users can still switch to top tabs in Settings.
+  appearance: { fontSize: 14, mono: "", sans: "", terminal: "", tabLayout: "vertical", reduceMotion: "system" },
   keybinds: {},
   permissions: { autoApprove: false, autoApproveProjects: {} },
   workspaces: { defaultDestination: "last-used", lastUsed: {} },

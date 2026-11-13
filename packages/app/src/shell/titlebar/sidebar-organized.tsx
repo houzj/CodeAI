@@ -341,7 +341,9 @@ function ProjectList(props: {
                     server={conn()}
                     actions={projectActions}
                     index={index()}
-                    expanded={!!props.state.expanded[key()]}
+                    // Codex keeps the active project hierarchy visible on first use. An explicit persisted
+                    // value still wins so a user's collapse choice is respected on later launches.
+                    expanded={props.state.expanded[key()] ?? projectSessions().length > 0}
                     onToggle={() => {
                       if (props.state.expanded[key()]) setLocal("sessionLimits", key(), 5)
                       props.onExpand(key())

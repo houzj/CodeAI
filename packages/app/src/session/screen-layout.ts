@@ -138,6 +138,7 @@ export function createSessionScreenLayout(
       contentWidth: sideContentWidth,
       width: sideWidth,
       open: tabsOpen,
+      fullscreen: createMemo(() => tabsOpen() && view().side.fullscreen()),
       tabs: { open: tabsOpen },
     },
     size,

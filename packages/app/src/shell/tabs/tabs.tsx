@@ -66,6 +66,7 @@ export type PendingSession = {
 export type TabInfo = typeof TabStorage.Info.Type
 
 export type TabRegion = "side" | "bottom"
+export type TabRegionKey = TabRegion | "sideFullscreen"
 
 export type TabRegionSize = "sessionWidth" | "bottomHeight" | "splitRatio"
 
@@ -835,12 +836,12 @@ export const { use: useTabs, provider: TabsProvider } = createSimpleContext({
       stateValue<T>(tab: Tab, name: string) {
         return memory.get<T>(tabKey(tab), name)
       },
-      region(tab: Tab | undefined, region: TabRegion, fallback = false) {
+      region(tab: Tab | undefined, region: TabRegionKey, fallback = false) {
         if (!tab) return fallback
 
         return regions[tabKey(tab)]?.[region] ?? fallback
       },
-      setRegion(tab: Tab | undefined, region: TabRegion, opened: boolean) {
+      setRegion(tab: Tab | undefined, region: TabRegionKey, opened: boolean) {
         if (!tab) return
         const key = tabKey(tab)
         const current = regions[key]

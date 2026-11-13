@@ -151,6 +151,7 @@ function SessionScreenContent(props: {
   })
 
   const sideVisible = createMemo(() => isDesktop() && screen.side.open())
+  const sideFullscreen = createMemo(() => sideVisible() && screen.side.fullscreen())
 
   const location = {
     directory: () => session.data.info()?.location.directory,
@@ -455,7 +456,7 @@ function SessionScreenContent(props: {
       <div class="flex-1 min-h-0 flex flex-col gap-2 px-[var(--shell-inline-inset,8px)] pb-[var(--shell-bottom-inset,8px)] pt-[var(--shell-top-inset,8px)]">
         <div ref={screen.panel.ref} data-pane-row class="relative flex-1 min-h-0 flex flex-col md:flex-row gap-2">
           {/* Keep the control outside panel animations. */}
-          <Show when={isDesktop() && messagesReady() && session.identity.params.id}>
+          <Show when={isDesktop() && messagesReady() && session.identity.params.id && region.pane("side").keys().length > 0}>
             <div
               class="absolute end-[var(--session-header-inset-end,12px)] top-0 z-30 h-12 flex items-center"
               data-slot="session-review-toggle"
@@ -464,6 +465,7 @@ function SessionScreenContent(props: {
             >
               <SessionReviewToggle
                 onToggle={region.toggle}
+                  onFullscreenVisible={() => region.pane("side").keys().length > 0}
                 glyph={(fill) => {
                   sideGlyph = fill
                   paintSideGlyph(sideMotion.closed())
@@ -474,6 +476,7 @@ function SessionScreenContent(props: {
           <div
             ref={chat}
             class="relative z-10 min-w-0 shrink-0 flex flex-col min-h-0 h-full flex-1 md:flex-none"
+            classList={{ hidden: sideFullscreen() }}
             data-slot="session-chat-panel"
             data-scrollbar-hidden={store.timelineScrollbarHidden}
             onPointerMove={revealTimelineScrollbar}
@@ -513,7 +516,9 @@ function SessionScreenContent(props: {
               ref={sidePresence}
               data-slot="session-side-panel-presence"
               class={`z-0 min-w-0 h-full overflow-visible ${
-                !sideMotion.present()
+                sideFullscreen()
+                  ? "absolute inset-0"
+                  : !sideMotion.present()
                   ? // Out of the row, so a closed panel takes no space or gap.
                     "absolute inset-y-0 end-0 w-0 [content-visibility:hidden]"
                   : "relative flex-1"
@@ -523,6 +528,7 @@ function SessionScreenContent(props: {
                 ref={sideContent}
                 data-slot="session-side-panel-content"
                 class="absolute inset-y-0 start-0 size-full [contain:layout_style] will-change-[opacity]"
+                style={{ width: sideFullscreen() ? "100%" : `var(--panel-hold-width, ${screen.side.contentWidth()})` }}
               >
                 <div data-slot="session-side-region" class="absolute inset-0 min-h-0 overflow-visible">
                   <div data-slot="session-side-region-presence" class="absolute inset-0">

@@ -53,6 +53,7 @@ export const Regions = Schema.Record(
   Schema.mutableKey(
     Persistence.struct({
       side: Schema.optional(Schema.Boolean),
+      sideFullscreen: Schema.optional(Schema.Boolean),
       sessionWidth: Schema.optional(Schema.Finite),
       bottom: Schema.optional(Schema.Boolean),
       bottomHeight: Schema.optional(Schema.Finite),

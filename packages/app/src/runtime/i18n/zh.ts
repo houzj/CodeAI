@@ -377,6 +377,8 @@ export const dict = {
   "session.tab.session": "会话",
   "session.tab.unknown": "未知会话",
   "session.panel.reviewAndFiles": "审查和文件",
+  "session.panel.fullscreen": "全屏显示审查和文件",
+  "session.panel.exitFullscreen": "退出审查和文件全屏",
   "session.error.notFound": "找不到此会话",
   "session.error.notFound.description": "此标签页指向的会话已不存在于此服务器上。",
   "session.error.notFound.closeTab": "关闭标签页",

@@ -59,6 +59,8 @@ export type HomeProjectSelection = typeof layoutSchema.Type.home.selection
 export type TabRegions = {
   sideOpened: Accessor<boolean>
   setSideOpened(opened: boolean): void
+  sideFullscreen: Accessor<boolean>
+  setSideFullscreen(fullscreen: boolean): void
   bottomOpened: Accessor<boolean>
   setBottomOpened(opened: boolean): void
   sessionWidth: Accessor<number | undefined>
@@ -597,6 +599,8 @@ export const { use: useLayout, provider: LayoutProvider } = createSimpleContext(
             toggle() {
               regions.setSideOpened(!regions.sideOpened())
             },
+            fullscreen: regions.sideFullscreen,
+            setFullscreen: regions.setSideFullscreen,
           },
           /** The pane under the session and the side region, shown while it holds tabs and the user has not hidden it. */
           bottom: {

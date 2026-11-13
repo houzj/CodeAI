@@ -10,7 +10,11 @@ import { useSessionLayout } from "@/session/session-layout"
 /** The review toggle's pane fill, scaled from the panel's edge to `open` of its width. */
 export const reviewGlyphFill = (open: number) => `matrix(${open} 0 0 1 ${2.917 * (1 - open)} 0)`
 
-export function SessionReviewToggle(props: { onToggle: () => void; glyph?: (fill: SVGPathElement) => void }) {
+export function SessionReviewToggle(props: {
+  onToggle: () => void
+  onFullscreenVisible?: () => boolean
+  glyph?: (fill: SVGPathElement) => void
+}) {
   const command = useCommand()
   const language = useLanguage()
   const { view } = useSessionLayout()
@@ -24,6 +28,12 @@ export function SessionReviewToggle(props: { onToggle: () => void; glyph?: (fill
         reviewOpened: view().side.opened(),
         onReviewToggle: props.onToggle,
         reviewGlyph: props.glyph,
+        fullscreenVisible: props.onFullscreenVisible?.() ?? false,
+        fullscreen: view().side.fullscreen(),
+        onFullscreen: () => view().side.setFullscreen(!view().side.fullscreen()),
+        fullscreenLabel: language.t(
+          view().side.fullscreen() ? "session.panel.exitFullscreen" : "session.panel.fullscreen",
+        ),
       }}
     />
   )
@@ -35,6 +45,10 @@ export type SessionHeaderActionsState = {
   reviewVisible: boolean
   reviewOpened: boolean
   onReviewToggle: () => void
+  fullscreenVisible?: boolean
+  fullscreen?: boolean
+  onFullscreen?: () => void
+  fullscreenLabel?: string
   /** Draws the glyph's pane fill from a ref the caller scales as the panel moves; otherwise it follows the state. */
   reviewGlyph?: (fill: SVGPathElement) => void
 }
@@ -83,6 +97,25 @@ export function SessionHeaderActions(props: { state: SessionHeaderActionsState }
             }
           />
         </Tooltip>
+        <Show when={props.state.fullscreenVisible && props.state.reviewOpened}>
+          <Tooltip
+            class="shrink-0"
+            placement="bottom"
+            value={props.state.fullscreenLabel ?? props.state.reviewLabel}
+          >
+            <IconButton
+              type="button"
+              variant="ghost-muted"
+              size="large"
+              class="shrink-0"
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => props.state.onFullscreen?.()}
+              aria-label={props.state.fullscreenLabel ?? props.state.reviewLabel}
+              aria-pressed={props.state.fullscreen ?? false}
+              icon={<Icon name={props.state.fullscreen ? "layout-right-full" : "layout-right"} />}
+            />
+          </Tooltip>
+        </Show>
       </Show>
     </div>
   )
