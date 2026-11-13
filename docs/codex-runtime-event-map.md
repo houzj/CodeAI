@@ -38,6 +38,8 @@
 - **部分确认**：二进制字符串中的字段方向，包括 `threadId`、`turnId`、`itemId`、`command`、`cwd`、`processId`、`exitCode`、`filePath`、`patch`、`permissionProfile`、`approvalPolicy`、`sandboxPolicy`、`modelProvider`、`reasoningEffort`。
 - **待确认**：每个通知的完整 JSON payload、可选字段、枚举值、事件重放顺序和跨版本兼容策略。
 
+公开事件资料还给出了增量消息的通用关联方式：事件自身有 `event_id`，持久化 Item 使用 `item_id`，内容片段使用 `output_index` 和 `content_index`，增量字段为 `delta`，完成字段为完整 `text`。CodeAI 的 `RunItemProjection` 应保留这些游标和关联键，避免多个并行工具或文本片段互相覆盖。
+
 ## CodeAI 实现顺序
 
 1. 先定义 `SessionInbox`、`Run`、`RunItem`、`ApprovalRequest`、`ChangeSet` 和 `Artifact` 的 Schema。
