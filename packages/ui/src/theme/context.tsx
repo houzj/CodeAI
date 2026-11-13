@@ -65,7 +65,7 @@ function knownThemes() {
 
 const names = new Map(
   Object.entries({
-    "oc-2": "OpenCode",
+    "oc-2": "CodeAI",
     amoled: "AMOLED",
     aura: "Aura",
     ayu: "Ayu",
@@ -196,7 +196,8 @@ export const { use: useTheme, provider: ThemeProvider } = createSimpleContext({
     // An id no theme has yet stays selected until `settle`: a registered theme can arrive after startup.
     const initial = createThemeState({
       themeId: read(STORAGE_KEYS.THEME_ID) || props.defaultTheme || DEFAULT_THEME_ID,
-      scheme: parseColorScheme(read(STORAGE_KEYS.COLOR_SCHEME)),
+      // CodeAI's first-run workbench is dark; once selected, the user's persisted scheme wins.
+      scheme: parseColorScheme(read(STORAGE_KEYS.COLOR_SCHEME) || "dark"),
       systemMode: getSystemMode(),
       defaultTheme: oc2Theme,
       bundled: knownThemes(),
