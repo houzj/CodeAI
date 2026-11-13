@@ -30,7 +30,11 @@ export function composerProviderName(
   const group = consoleProviderGroup(all)
 
   const name =
-    provider.integrationID === "opencode" && group ? consoleProviderName(group, provider.name) : provider.name
+    provider.id === "opencode"
+      ? "CodeAI"
+      : provider.integrationID === "opencode" && group
+        ? consoleProviderName(group, provider.name)
+        : provider.name
 
   if (provider.integrationID !== "opencode" || !provider.canonical) return name
   const active = connected && new Set(connected)
@@ -43,7 +47,7 @@ export function composerProviderName(
       (item.integrationID ?? item.id) === provider.canonical,
   )
 
-  return direct ? `OpenCode / ${name}` : name
+  return direct ? `CodeAI / ${name}` : name
 }
 
 export function composerModelLabels(

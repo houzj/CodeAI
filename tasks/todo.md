@@ -269,3 +269,4 @@
 - [x] Session Runtime Header 将默认 `opencode` provider 显示为 CodeAI，内部协议和兼容层保持不变。
 - [x] app/desktop 类型检查和最新桌面渲染构建通过。
 - [x] 最新便携包启动窗口标题为 CodeAI，远程 Session 仍可进入真实 Workspace Frame。
+- [x] Composer provider label 和远程连接品牌入口不再显示用户可见的 OpenCode/Wordmark。
