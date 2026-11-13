@@ -312,7 +312,7 @@ export const defaultSettings: Settings = {
     newIcons: false,
     foldUserMessages: false,
     newQuestionUI: false,
-    sidebarOrganize: "list",
+    sidebarOrganize: "projects",
     mobileTitlebarPosition: "top",
     followUpBehavior: "steer",
   },

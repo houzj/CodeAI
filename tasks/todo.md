@@ -336,3 +336,10 @@
 - [x] Run Center 不再用额外的 `pb-36` 遮挡补偿，正文滚动区和输入区拥有独立高度。
 - [x] `packages/app` 类型检查通过，Runtime history projection 测试 4/4 通过。
 - [ ] 需要重新生成 Windows 包，确认会话正文不再被 Composer 覆盖。
+
+### 执行记录（2026-11-14，全局项目侧栏重构）
+
+- [x] Session 路由移除重复的 `CodeAIWorkspaceFrame`，不再在会话页内创建第二棵项目树。
+- [x] 新用户默认使用全局 `SidebarOrganized` 的 Project 分组导航。
+- [x] 现有运行时/历史投影类型检查通过；设置测试受现有 Bun/Solid `jsxDEV` 环境错误影响。
+- [ ] 仍需将全局 Sidebar 的会话拖动归属接到真实 `session.move`。

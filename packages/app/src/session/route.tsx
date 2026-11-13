@@ -31,7 +31,6 @@ import { SessionErrorFallback, SessionNotFoundPanel } from "./route-error"
 import { sessionDocumentTitle, sessionModelDirectory, sessionRouteView, viewedSessionID } from "./resolution-machine"
 import { createSessionResolution } from "./session-resolution"
 import { SessionScreenView } from "./screen"
-import { CodeAIWorkspaceFrame } from "./codeai-workspace-frame"
 import { PreparingComposer } from "./preparing-composer"
 import { ComposerFocusProvider } from "./composer/focus"
 import { INITIAL_SESSION_VIEWED_STATE, transitionSessionViewed, type SessionViewedState } from "./viewed-machine"
@@ -246,11 +245,7 @@ function TargetSessionPage() {
 function SessionPage() {
   const session = useSessionModel()
 
-  return (
-    <CodeAIWorkspaceFrame session={session}>
-      <SessionScreenView session={session} />
-    </CodeAIWorkspaceFrame>
-  )
+  return <SessionScreenView session={session} />
 }
 
 function MarkSessionViewed(props: { sessionID: () => string | undefined }) {
