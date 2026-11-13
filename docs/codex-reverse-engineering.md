@@ -275,6 +275,16 @@ structuredContent
 
 这组字段与事件注册表可以形成 CodeAI 的最小事件载荷方向：命令 Item 至少需要命令、工作目录、进程和退出结果；文件变更 Item 至少需要文件路径、补丁或变更摘要；审批事件需要权限配置和沙箱策略快照；模型事件需要 Provider、模型和推理强度；工具结果需要结构化输出。精确的可选字段、枚举和嵌套结构仍需通过可控请求的 JSON-RPC 通信或官方协议源确认，不能把字符串扫描当成完整 schema。
 
+### 官方协议交叉验证
+
+OpenAI 的公开 App Server 文档与本机逆向结果一致：客户端通过 stdin/stdout 发送 newline-delimited JSON，先 `initialize`，再 `thread/start` 和 `turn/start`；客户端显示 `item/agentMessage/delta`，并以 `turn/completed` 的状态判断成功、失败或中断。官方文档还明确说明 App Server 负责保持会话、流式事件、工具调用、沙箱和审批，而应用负责连接、生命周期和用户体验。
+
+- [Codex app-server – Sign in with ChatGPT](https://developers.openai.com/siwc/token-sharing-open-source/codex-app-server)
+- [Codex as a platform: build on the open agent harness](https://developers.openai.com/blog/codex-as-a-platform)
+- [Automatic review and approvals](https://developers.openai.com/api/docs/guides/agents-api/sessions/approvals)
+
+官方资料列出的审批范围包括 Shell/终端输入、文件变更、额外文件系统或网络权限以及 MCP 工具调用；这与本机入口中的 `exec_approval_request`、`apply_patch_approval_request` 和 `serverRequest/resolved` 相互印证。官方资料没有公开 Windows 桌面端的全部私有 payload，因此 CodeAI 仍需以本机事件采集和 OpenCode 的公开协议作为实现依据。
+
 ## 运行日志证据
 
 Codex 本地日志位于：
