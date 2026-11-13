@@ -15,6 +15,19 @@
 - CodeAI 品牌基线已落地：桌面名称、窗口标题、应用 ID、协议、图标、Windows 可执行文件和 NSIS 安装包已替换。
 - 品牌验证：桌面类型检查、构建通过；`codeai-desktop-win-x64.exe` 安装包生成并安装，安装目录中的 `CodeAI.exe` 可启动。
 
+## 逆向分析推进（2026-11-13）
+
+- [x] R1：提取 Codex Windows MSIX、`app.asar`、Electron 入口和运行时组件清单。
+- [x] R2：确认 Project、Worktree、Session、Composer、Model、Permission、Artifact 和 Change 的静态状态线索。
+- [x] R3：确认 App Server 的 stdio 边界、Thread/Turn/Model/FS/Hook/Permission/MCP 方法和一次 Turn 的调用顺序。
+- [x] R4：确认 Git watcher、独立 Runtime bundle、App Host、Git Worker、浏览器侧边栏和 MCP 沙箱 IPC 边界。
+- [x] R5：建立 Codex 观察项到 CodeAI 类型化投影和 Runtime Adapter 的映射。
+- [ ] R6：在可控测试项目中补采命令执行、审批、文件变更、预览 Tab 和模型切换的 payload。
+- [ ] R7：将确认后的事件字段固化为 CodeAI Protocol/Schema，并补正常完成、失败、拒绝、取消和恢复用例。
+- [ ] R8：按事件投影实现 AgentRuntimeAdapter、GitRuntimeAdapter、PermissionBroker 和 SessionProjection。
+
+详细证据、限制和验收标准见 [docs/codex-reverse-engineering.md](../docs/codex-reverse-engineering.md)。
+
 ## Phase 0: 产品级基础
 
 - [ ] 确认 Local、Hybrid、Internal 三种运行模式的接口
