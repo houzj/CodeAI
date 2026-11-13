@@ -54,10 +54,10 @@ LoadLanguageFile "\${NSISDIR}\\Contrib\\Language files\\English.nlf"
 LangString appRunning \${LANG_ENGLISH} "running"
 LangString appClosing \${LANG_ENGLISH} "closing"
 LangString appCannotBeClosed \${LANG_ENGLISH} "cannot close"
-!define APP_EXECUTABLE_FILENAME "OpenCode.exe"
-!define APP_ID "ai.opencode.desktop"
-!define APP_FILENAME "@opencodedesktop"
-!define UNINSTALL_FILENAME "Uninstall OpenCode.exe"
+!define APP_EXECUTABLE_FILENAME "CodeAI.exe"
+!define APP_ID "ai.codeai.desktop"
+!define APP_FILENAME "@codeaidesktop"
+!define UNINSTALL_FILENAME "Uninstall CodeAI.exe"
 !define UNINSTALL_REGISTRY_KEY "${uninstallKey}"
 !define SHORTCUT_NAME "OpenCode Installer Test"
 !define APP_64 "${path.join(dir, "app.7z")}"
@@ -133,28 +133,28 @@ const stagedCases = [
   {
     name: "moves the staged app into the emptied install directory",
     installed: [],
-    staged: { [`update-${payloadHash.slice(0, 16)}`]: ["OpenCode.exe", "resources/app.asar"] },
+    staged: { [`update-${payloadHash.slice(0, 16)}`]: ["CodeAI.exe", "resources/app.asar"] },
     moved: true,
-    expected: ["OpenCode.exe", "resources/app.asar"],
+    expected: ["CodeAI.exe", "resources/app.asar"],
   },
   {
     name: "keeps an install directory that still holds files",
     installed: ["locked.dll"],
-    staged: { [`update-${payloadHash.slice(0, 16)}`]: ["OpenCode.exe"] },
+    staged: { [`update-${payloadHash.slice(0, 16)}`]: ["CodeAI.exe"] },
     moved: false,
     expected: ["locked.dll"],
   },
   {
     name: "discards an update staged from another payload",
     installed: [],
-    staged: { "update-FEDCBA9876543210": ["OpenCode.exe"] },
+    staged: { "update-FEDCBA9876543210": ["CodeAI.exe"] },
     moved: false,
     expected: [],
   },
   {
     name: "discards staging that never finished",
     installed: [],
-    staged: { staging: ["OpenCode.exe"] },
+    staged: { staging: ["CodeAI.exe"] },
     moved: false,
     expected: [],
   },
@@ -214,40 +214,40 @@ windows(
 const directoryCases = [
   {
     name: "a first install uses the app ID",
-    from: "@opencodedesktop",
+    from: "@codeaidesktop",
     shared: [],
-    expected: "ai.opencode.desktop",
+    expected: "ai.codeai.desktop",
     left: undefined,
     uninstallKept: true,
   },
   {
     name: "leaving the shared directory keeps the other channels",
-    from: "@opencodedesktop",
+    from: "@codeaidesktop",
     shared: [
-      "OpenCode.exe",
-      "Uninstall OpenCode.exe",
-      "OpenCode Beta.exe",
-      "Uninstall OpenCode Beta.exe",
+      "CodeAI.exe",
+      "Uninstall CodeAI.exe",
+      "CodeAI Beta.exe",
+      "Uninstall CodeAI Beta.exe",
       "resources/app.asar",
     ],
-    expected: "ai.opencode.desktop",
-    left: ["OpenCode Beta.exe", "Uninstall OpenCode Beta.exe", "resources/app.asar"],
+    expected: "ai.codeai.desktop",
+    left: ["CodeAI Beta.exe", "Uninstall CodeAI Beta.exe", "resources/app.asar"],
     uninstallKept: false,
   },
   {
     name: "the last channel removes the shared directory",
-    from: "@opencodedesktop",
-    shared: ["OpenCode.exe", "Uninstall OpenCode.exe", "resources/app.asar"],
-    expected: "ai.opencode.desktop",
+    from: "@codeaidesktop",
+    shared: ["CodeAI.exe", "Uninstall CodeAI.exe", "resources/app.asar"],
+    expected: "ai.codeai.desktop",
     left: undefined,
     uninstallKept: false,
   },
   {
     name: "an install elsewhere stays where it is",
     from: "custom",
-    shared: ["OpenCode.exe", "Uninstall OpenCode.exe"],
+    shared: ["CodeAI.exe", "Uninstall CodeAI.exe"],
     expected: "custom",
-    left: ["OpenCode.exe", "Uninstall OpenCode.exe"],
+    left: ["CodeAI.exe", "Uninstall CodeAI.exe"],
     uninstallKept: true,
   },
 ]
