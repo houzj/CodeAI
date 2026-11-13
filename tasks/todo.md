@@ -303,3 +303,9 @@
 - [x] 修复后 `packages/app` 类型检查通过，Session/布局专项测试通过（10/10）。
 - [x] 修复后重新生成 NSIS：`dist/desktop/codeai-desktop-win-x64.exe`（约 281 MB）。
 - [ ] 仍需用户本机手动启动最新安装包完成视觉冒烟。
+
+### 执行记录（2026-11-14，交付包静态审计）
+
+- [x] 从最新 `resources/app.asar` 解包验证，产物包含 CodeAI、Project、Worktree、Run details 和 `session.run.runtime` 文案。
+- [x] 最新 app.asar 未发现 `codex-v4` 或 `ui-prototype/codex-v4` 交付引用。
+- [x] 安装包和预打包目录均来自最新 app 构建；未启动用户桌面。
