@@ -331,6 +331,18 @@ parse failures: 0
 
 分析确认入口中存在事件注册、子进程创建、配置读取、请求构造、资源生命周期和 CommonJS/ESM 绑定候选。由于入口是压缩 bundle，动态属性、调用目标和未选中的 4 个 preload 文件仍被标记为 unknown；这属于分析覆盖边界，不能解释为“没有 IPC 或没有窗口”。本报告的 IPC 结论因此继续以直接字符串证据、preload 提取和运行日志三者交叉验证为准。
 
+随后对四个入口文件做了受控复核，保留证据：
+
+```text
+evidence: ev_d04f654debea41c936f75a538f39876eb5079c5aad4950fc2063e0aecd60d556
+requested: early-bootstrap.js, preload.js, browser-page-preload.js, sandbox-preload.js
+parsed JavaScript: 2
+syntax findings: 747
+visited AST nodes: 132,259
+```
+
+`preload.js`、`sandbox-preload.js` 和入口文件的静态扫描完成了部分图构建；`browser-page-preload.js` 在 60 秒单源预算内超时，因而没有把浏览器侧边栏的缺失图关系解释为不存在。REA 还明确标记了动态 IPC channel、竞争 handler 和 Electron loader identity 为 unknown。这个结果支持“按入口分组进行静态分析”的方法，也确认不能用单次语义图的 `ipc.operations=0` 覆盖直接提取到的 IPC 字符串和运行日志证据。
+
 ## 运行日志证据
 
 Codex 本地日志位于：
