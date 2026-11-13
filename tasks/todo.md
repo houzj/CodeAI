@@ -348,3 +348,9 @@
 
 - [x] 全局 Sidebar 会话菜单已接入真实 `session.move`，目标按 Project/Worktree 列出并在服务端确认后同步 Session。
 - [ ] 仍需把同一操作接到 Sidebar 的拖放手势，并补充拖动反馈和失败回滚。
+
+### 执行记录（2026-11-14，Policy 兼容层）
+
+- [x] 新增 `projectCodeAIPolicy`，将 OpenCode Worktree/Permission 映射为 CodeAI 的执行环境、文件范围、命令策略、外部目录策略和审批策略。
+- [x] 对 OpenCode 不提供的 OS sandbox、网络和上下文压缩能力明确标记为 `unknown`/`runtime-managed`，不伪装成 Codex 等价能力。
+- [x] `packages/app` 类型检查通过（2,397 files），Policy/Runtime 测试 6/6 通过。
