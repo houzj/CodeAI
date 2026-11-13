@@ -354,3 +354,36 @@ opencode/
 - 是否允许用户配置任意 Base URL，还是先限制为白名单 provider。
 - 是否需要把 OpenCode 的 CLI 和 VS Code SDK 一并保留在第一版。
 
+## Codex Runtime 接入增量计划
+
+v4 原型已经验证了桌面宿主的空间关系，但原型里的运行记录仍是静态示例。下一阶段只把真实 Runtime 接入到投影层，再逐步替换 UI 数据源，避免视觉层直接依赖底层事件细节。
+
+### Slice A: Session 事件投影
+
+- [x] 新增 `CodexActivityState`，以 Session ID 为边界维护运行状态、工具步骤、审批请求和产物入口。
+- [x] 将 `session.execution.*`、`session.tool.*`、`permission.*`、`filesystem.changed` 和消息流事件映射为稳定的 UI 状态。
+- [x] 为投影 reducer 添加事件顺序、重复事件和跨 Session 隔离测试。
+
+**完成标准：** 给定真实 `OpenCodeEvent` 序列，可以还原当前 Run 状态和待审批项；不新增协议字段。
+
+### Slice B: 真实 Session/Project 数据源
+
+- [ ] 用现有 `ServerSDK` 的 project/session/workspace 查询替换 v4 中的静态项目和会话数据。
+- [ ] 用当前会话模型和权限状态替换右侧 Context 示例。
+- [ ] 让 Composer 提交直接调用现有 Session prompt/interrupt API。
+
+**完成标准：** 从真实项目进入会话后，左侧层级、中间标题和 Composer 上下文来自同一个 ServerSDK。
+
+### Slice C: Artifacts 按事件和 Tab 驱动
+
+- [ ] 文件、变更、预览和日志只在真实产物出现后创建入口。
+- [ ] 打开文件创建文件级 Tab，右侧工作区无活动 Tab 时自动隐藏。
+- [ ] 保留独立关闭、恢复和全屏状态，不占用中间会话布局。
+
+### Checkpoint: Runtime 第一条闭环
+
+- [ ] 真实 Session 可以提交一条 prompt。
+- [ ] UI 能显示 execution、tool、permission 和文件变化事件。
+- [ ] 右侧工作区能由产物事件显示/隐藏，隐藏后中间区域自动扩展。
+- [ ] `packages/app` 类型检查和针对性测试通过。
+

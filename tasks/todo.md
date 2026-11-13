@@ -80,6 +80,20 @@
 - [ ] Task 9: 完成 diff、测试结果和任务总结
 - [ ] Task 10: 发布前验证和文档
 
+## Codex Runtime 接入（2026-11-13）
+
+- [x] A1：建立 `CodexActivityState` 运行态投影，覆盖 execution、tool、permission、filesystem 和消息流事件。
+- [x] A2：补充事件顺序、重复事件、跨 Session 隔离和终态收敛测试。
+- [ ] A3：把真实 ServerSDK 的项目、Worktree、Session 和模型信息接入 v4 容器。
+- [ ] A4：把 Composer 的提交、停止和审批操作接到现有 Session API。
+- [ ] A5：把 Artifacts 改为产物事件和文件 Tab 驱动，并验证右侧独立显示/隐藏。
+
+### Runtime 接入检查点
+
+- [ ] 真实 Session prompt 能在 UI 中形成 Run 状态。
+- [ ] 工具、审批和文件变化不再使用静态示例数据。
+- [ ] `packages/app` 类型检查和相关测试通过。
+
 ## Checkpoint: 第一版完成
 
 - [ ] Windows 安装包可以从全新环境启动
