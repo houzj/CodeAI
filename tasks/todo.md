@@ -386,3 +386,11 @@
 - [x] 从 OpenCode Composer/Session inbox 实现确认当前底层已支持工作中连续发送：`steer` 立即引导当前 Run，`queue` 排队后续输入，不需要停止当前执行。
 - [x] 将连续发送约束写入命令面设计：CodeAI 输入框在运行中不能被禁用，必须显示当前 delivery 状态和队列反馈。
 - [ ] 桌面冒烟时验证运行中的 Enter、Shift+Enter、Steer/Queue 切换和队列编辑行为。
+
+### 执行记录（2026-11-14，Project-Worktree-Session 侧栏）
+
+- [x] 全局侧栏将 Project 下的会话按真实 Worktree inventory 和 Session location 分组显示，形成 Project → Worktree → Session 层级。
+- [x] Session 打开时使用所属 Worktree directory；拖动和上下文菜单仍调用真实 `session.move`。
+- [x] `packages/app` 类型检查通过（2,396 files）。
+- [x] 重新执行 Desktop build、Windows unpacked build 和 NSIS 打包，最新安装包已生成。
+- [ ] 用户本机仍需验证 Worktree 展开、跨项目拖动、右侧 Artifact 显隐和悬停状态。

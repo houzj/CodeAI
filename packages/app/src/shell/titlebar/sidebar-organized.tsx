@@ -1,5 +1,5 @@
 import { Schema } from "effect"
-import { createEffect, createMemo, Show, onCleanup, untrack, type Accessor, type JSX } from "solid-js"
+import { createEffect, createMemo, For, Show, onCleanup, untrack, type Accessor, type JSX } from "solid-js"
 import { Key } from "@solid-primitives/keyed"
 import { createStore } from "solid-js/store"
 import { useQuery } from "@tanstack/solid-query"
@@ -13,10 +13,11 @@ import { IconButton } from "@opencode/ui/icon-button"
 import { Menu } from "@opencode/ui/menu"
 import { ScrollView } from "@opencode/ui/scroll-view"
 import { displayName } from "@opencode/ui/project-avatar"
+import { getFilename } from "@opencode/util/path"
 import { homeSessionsQuery } from "@/home/sessions/queries"
 import { createProjectActions } from "@/home/projects/actions"
 import { ProjectMenuItems } from "@/home/projects/menu"
-import { buildHomeSessionRecords } from "@/home/sessions/records"
+import { buildHomeSessionRecords, type HomeSessionRecord } from "@/home/sessions/records"
 import { arrayMove } from "@/runtime/array-move"
 import { useLanguage } from "@/runtime/i18n/language"
 import { Persistence } from "@/runtime/persistence/schema"
@@ -315,6 +316,23 @@ function ProjectList(props: {
 
                 const projectSessions = () => grouped().get(pathKey(project().worktree)) ?? []
 
+                const worktreeGroups = createMemo(() => {
+                  const groups = new Map<string, HomeSessionRecord[]>()
+                  const directories = [project().worktree, ...project().worktrees.map((item) => item.directory)]
+
+                  directories.forEach((directory) => groups.set(pathKey(directory), []))
+                  projectSessions().forEach((record) => {
+                    const key = pathKey(record.session.location.directory)
+                    groups.set(key, [...(groups.get(key) ?? []), record])
+                  })
+
+                  return [...groups.entries()].map(([key, records]) => ({
+                    key,
+                    directory: records[0]?.session.location.directory ?? directories.find((item) => pathKey(item) === key)!,
+                    records,
+                  }))
+                })
+
                 const limit = () => local.sessionLimits[key()] ?? 5
 
                 return (
@@ -329,36 +347,47 @@ function ProjectList(props: {
                       props.onExpand(key())
                     }}
                   >
-                    <Key
-                      each={projectSessions().slice(0, limit())}
-                      by={(record) => record.session.id}
-                      fallback={
-                        <div class="ps-8 pe-2 py-2 text-12-regular text-v2-text-text-faint">
-                          {language.t("sidebar.organize.empty")}
+                    <For each={worktreeGroups()}>
+                      {(worktree) => (
+                        <div class="ms-5 min-w-0 border-s border-v2-border-border-muted ps-2">
+                          <div class="flex h-6 min-w-0 items-center gap-1.5 text-11-medium text-v2-text-text-faint" title={worktree.directory}>
+                            <Icon name="branch" size="small" class="shrink-0 text-v2-icon-icon-muted" />
+                            <span class="min-w-0 truncate">{getFilename(worktree.directory) || worktree.directory}</span>
+                            <span class="ms-auto shrink-0 tabular-nums">{worktree.records.length || ""}</span>
+                          </div>
+                          <Key
+                            each={worktree.records.slice(0, limit())}
+                            by={(record) => record.session.id}
+                            fallback={
+                              <div class="pe-2 py-1 text-11-regular text-v2-text-text-faint">
+                                {language.t("sidebar.organize.empty")}
+                              </div>
+                            }
+                          >
+                            {(record) => (
+                              <ProjectSessionRow
+                                server={ServerConnection.key(conn())}
+                                session={record().session}
+                                openTab={props.isOpenTab(ServerConnection.key(conn()), record().session.id)}
+                                active={
+                                  props.highlightActive &&
+                                  props.currentTab?.type === "session" &&
+                                  props.currentTab.server === ServerConnection.key(conn()) &&
+                                  props.currentTab.sessionId === record().session.id
+                                }
+                                onOpen={() => {
+                                  props.onSelect({
+                                    server: ServerConnection.key(conn()),
+                                    sessionId: record().session.id,
+                                  })
+                                  actions.openProjectSession(conn(), worktree.directory, record().session, { preview: true })
+                                }}
+                              />
+                            )}
+                          </Key>
                         </div>
-                      }
-                    >
-                      {(record) => (
-                        <ProjectSessionRow
-                          server={ServerConnection.key(conn())}
-                          session={record().session}
-                          openTab={props.isOpenTab(ServerConnection.key(conn()), record().session.id)}
-                          active={
-                            props.highlightActive &&
-                            props.currentTab?.type === "session" &&
-                            props.currentTab.server === ServerConnection.key(conn()) &&
-                            props.currentTab.sessionId === record().session.id
-                          }
-                          onOpen={() => {
-                            props.onSelect({
-                              server: ServerConnection.key(conn()),
-                              sessionId: record().session.id,
-                            })
-                            actions.openProjectSession(conn(), project().worktree, record().session, { preview: true })
-                          }}
-                        />
                       )}
-                    </Key>
+                    </For>
                     <Show when={projectSessions().length > limit()}>
                       <Button
                         variant="ghost-muted"
