@@ -27,14 +27,12 @@ export function CodeAIWorkspaceFrame(props: ParentProps<{ session: SessionModel 
     if (!session || !value) return undefined
     return value.worktrees.find((item) => item.directory === session.location.directory)
   })
-  const sessionsFor = (directory: string) => {
-    const session = current()
-    if (!session) return []
+  const sessionsFor = (projectID: string, directory: string) => {
     return data.session
       .list()
       .filter(
         (item) =>
-          item.projectID === session.projectID &&
+          item.projectID === projectID &&
           item.location.directory === directory &&
           item.time.archived === undefined,
       )
@@ -42,8 +40,8 @@ export function CodeAIWorkspaceFrame(props: ParentProps<{ session: SessionModel 
       .slice(0, 12)
   }
 
-  const openWorkspace = (directory: string) => {
-    const next = sessionsFor(directory)[0]
+  const openWorkspace = (projectID: string, directory: string) => {
+    const next = sessionsFor(projectID, directory)[0]
     if (next) {
       navigate(sessionHref(server.key, next.id))
       return
@@ -76,7 +74,7 @@ export function CodeAIWorkspaceFrame(props: ParentProps<{ session: SessionModel 
                   <button
                     type="button"
                     class="w-full truncate text-start hover:text-v2-text-text-base"
-                    onClick={() => openWorkspace(item.worktree)}
+                    onClick={() => openWorkspace(item.id, item.worktree)}
                   >
                     {item.name}
                   </button>
@@ -96,13 +94,13 @@ export function CodeAIWorkspaceFrame(props: ParentProps<{ session: SessionModel 
                                 "text-v2-text-text-muted": directory.directory !== worktree()?.directory,
                               }}
                               title={directory.directory}
-                              onClick={() => openWorkspace(directory.directory)}
+                              onClick={() => openWorkspace(item.id, directory.directory)}
                             >
                               {directory.directory.split(/[\\/]/).filter(Boolean).at(-1) ?? directory.directory}
                             </button>
                             <Show when={directory.directory === worktree()?.directory}>
                               <div class="ms-2 mt-0.5 flex flex-col gap-0.5 border-s border-v2-border-border-base ps-2">
-                                <For each={sessionsFor(directory.directory)}>
+                                <For each={sessionsFor(item.id, directory.directory)}>
                                   {(item) => (
                                     <button
                                       type="button"
