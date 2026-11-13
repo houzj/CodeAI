@@ -425,3 +425,10 @@
 - [x] Rail 入口接入现有 Home、Session Search、Sidebar Toggle 和 Settings commands。
 - [x] `packages/app` 类型检查通过（2,397 files）。
 - [ ] 需要在 Web 开发服务器刷新后确认 Rail 与现有 vertical sidebar 的宽度、悬停和折叠状态。
+
+### 执行记录（2026-11-14，原生 Codex 证据与 OpenCode 适配边界）
+
+- [x] 从本机 Codex MSIX 的真实 `app.asar`、`webview/index.html` 和前端 bundle 读取 Projects、Worktrees、New chat、Move to project、Composer、Goal、Automation 与侧栏显示/隐藏标识。
+- [x] 新增 `docs/codex-opencode-ui-evidence.md`，区分 shipped evidence、OpenCode 可复用能力和必须新增的 CodeAI 契约。
+- [x] 移除 Global Rail 中无法由当前 OpenCode Runtime 支撑的 “Remote sessions” 和泛化 “More” 入口，避免把 Codex 专属能力伪装成 CodeAI 已有功能。
+- [ ] 继续把 Goal、Schedule、跨会话协作和本地权限/沙盒边界落到实验性 Server/Protocol 契约，再接入主导航。
