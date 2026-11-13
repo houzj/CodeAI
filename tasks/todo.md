@@ -316,3 +316,9 @@
 - [x] 截图确认生产 Run Center 显示任务状态和 Composer，模型选择器位于底部 Composer 控制栏。
 - [ ] 截图时任务仍处于 Running 且尚未产生 Runtime steps；需任务结束后再次展开运行详情确认事件。
 - [ ] 仍需打开文件/预览，确认 Artifact 右栏出现并在关闭最后一个 Tab 后隐藏。
+
+### 执行记录（2026-11-14，用户桌面运行事件截图）
+
+- [x] 截图确认 Run Center 已接收真实 Runtime 事件：6 个步骤显示 `edit`、`write`、`shell`。
+- [x] 已完成步骤显示 `completed`，当前步骤显示 `running`，说明工具事件投影和状态更新生效。
+- [ ] 等当前 shell 步骤结束后，再确认最终 Run 状态和 Result。
