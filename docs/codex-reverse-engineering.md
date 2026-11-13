@@ -343,6 +343,19 @@ visited AST nodes: 132,259
 
 `preload.js`、`sandbox-preload.js` 和入口文件的静态扫描完成了部分图构建；`browser-page-preload.js` 在 60 秒单源预算内超时，因而没有把浏览器侧边栏的缺失图关系解释为不存在。REA 还明确标记了动态 IPC channel、竞争 handler 和 Electron loader identity 为 unknown。这个结果支持“按入口分组进行静态分析”的方法，也确认不能用单次语义图的 `ipc.operations=0` 覆盖直接提取到的 IPC 字符串和运行日志证据。
 
+`preload.js` 单文件复核已完成，证据为：
+
+```text
+evidence: ev_40da1918ef3963821918bba15dd0349a2e259ed935f4206f382898642bc6d61a
+source bytes: 8,783
+AST nodes: 1,887
+findings: 37
+event relations retained: 7
+parse failures: 0
+```
+
+该结果说明 preload 本身可被完整解析，但由于构建产物对 Electron API 和动态 channel 做了压缩/封装，REA 不会自动把所有 `ipcRenderer` 字符串提升成已配对的主进程 handler；因此报告同时保留字符串级 IPC 清单和运行时响应信封作为更高层的行为证据。
+
 ## 运行日志证据
 
 Codex 本地日志位于：
