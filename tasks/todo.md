@@ -398,6 +398,6 @@
 ### 执行记录（2026-11-14，验证流程调整）
 
 - [x] 确认日常 UI 验证改为 Web 开发服务器优先，不以 Windows 安装包作为前置条件。
-- [x] Web 入口 `packages/app/index.html` 和生产路由可由 Vite 开发服务器返回；当前服务地址为 `http://127.0.0.1:3000/`。
+- [x] Web 入口 `packages/app/index.html` 和生产路由可由 Vite 开发服务器返回；开发服务器绑定 `0.0.0.0`，浏览器使用终端显示的 Network 地址访问。
 - [ ] 继续在网页开发模式验证 Project → Worktree → Session、Run 时间线、Composer 和 Artifact pane 后，再进入 Electron 开发模式。
 - [ ] 发布候选版本才重新生成 Windows 安装包并做安装后冒烟。
