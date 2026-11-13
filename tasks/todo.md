@@ -289,3 +289,10 @@
 - [x] Session 列表按当前 Worktree 过滤，不再把同一 Project 下的会话混在一起。
 - [x] 点击 Worktree 优先打开该 Worktree 最近会话；没有会话时才回到首页选择目录。
 - [x] 当前生产 app 构建再次通过，PWA 生成 2,801 个 precache 条目。
+
+### 执行记录（2026-11-14，最新 Windows 产物）
+
+- [x] `dist/desktop/app/CodeAI.exe`、`resources/app.asar` 和 `resources/opencode-cli.exe` 已重新生成并存在。
+- [x] NSIS 安装包 `dist/desktop/codeai-desktop-win-x64.exe` 已重新生成，大小约 281 MB。
+- [x] 打包后已恢复临时版本改写，工作区保持干净。
+- [ ] 仍需用户本机手动启动最新安装包，确认视觉效果和项目切换；本环境不再自动控制桌面。
