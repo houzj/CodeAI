@@ -49,7 +49,7 @@ export function CodeAIRunCenter(props: { session: SessionModel }) {
   })
 
   return (
-    <div class="flex min-h-0 flex-1 flex-col overflow-y-auto px-4 pb-36 pt-6 md:px-8" data-component="codeai-run-center">
+    <div class="flex min-h-0 flex-1 flex-col overflow-y-auto px-4 pb-6 pt-6 md:px-8" data-component="codeai-run-center">
       <div class="mx-auto flex w-full max-w-[760px] flex-col gap-6">
         <section class="border-s-2 border-v2-border-border-focus px-4 py-1">
           <div class="mb-2 flex items-center justify-between gap-3 text-11-medium uppercase tracking-[0.08em] text-v2-text-text-muted">

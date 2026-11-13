@@ -329,3 +329,10 @@
 - [x] 顶部会话上下文移除重复的 Provider/Model 文案；模型选择统一保留在 Composer。
 - [x] `packages/app` 类型检查通过，Runtime history projection 测试 4/4 通过。
 - [ ] 需要重新生成 Windows 包并补一张任务结束后的 Run Center 截图。
+
+### 执行记录（2026-11-14，会话 Composer 结构重做）
+
+- [x] 移除 `h-0` 浮动 Composer 行，Composer 改为真实的底部布局区域。
+- [x] Run Center 不再用额外的 `pb-36` 遮挡补偿，正文滚动区和输入区拥有独立高度。
+- [x] `packages/app` 类型检查通过，Runtime history projection 测试 4/4 通过。
+- [ ] 需要重新生成 Windows 包，确认会话正文不再被 Composer 覆盖。

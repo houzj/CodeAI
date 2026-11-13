@@ -433,10 +433,9 @@ function SessionScreenContent(props: {
         </Switch>
       </div>
 
-      {/* The composer region overflows this zero-height row upward, over a timeline that scrolls on underneath it. It
-          stays shallower than the timeline's observed elements, so their resizes from its inset arrive in the same
-          ResizeObserver pass. */}
-      <div class="relative z-[70] flex h-0 shrink-0 flex-col justify-end">
+      {/* Composer owns a real bottom row. The session stream scrolls in the row above it, so the input can never cover
+          task results, tool events, changes, or approvals. */}
+      <div class="relative z-[70] shrink-0 flex flex-col justify-end">
         <Show when={composer.active()} keyed>
           {(model) => (
             <ActiveSessionComposerRegion
