@@ -296,3 +296,10 @@
 - [x] NSIS 安装包 `dist/desktop/codeai-desktop-win-x64.exe` 已重新生成，大小约 281 MB。
 - [x] 打包后已恢复临时版本改写，工作区保持干净。
 - [ ] 仍需用户本机手动启动最新安装包，确认视觉效果和项目切换；本环境不再自动控制桌面。
+
+### 执行记录（2026-11-14，跨 Project 切换）
+
+- [x] 跨 Project 点击现在按目标 Project + Worktree 查找最近会话，不再错误复用当前 Session 的 projectID。
+- [x] 修复后 `packages/app` 类型检查通过，Session/布局专项测试通过（10/10）。
+- [x] 修复后重新生成 NSIS：`dist/desktop/codeai-desktop-win-x64.exe`（约 281 MB）。
+- [ ] 仍需用户本机手动启动最新安装包完成视觉冒烟。
