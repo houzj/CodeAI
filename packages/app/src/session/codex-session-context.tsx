@@ -47,7 +47,7 @@ export function CodexSessionContext(props: { session: () => SessionInfo | undefi
               <div class="truncate text-12-regular text-v2-text-tertiary">{value.worktree.directory}</div>
             </div>
             <Show when={value.session.model}>
-              {(model) => <span class="max-w-44 shrink-0 truncate text-12-regular text-v2-text-tertiary">{model().providerID} / {model().modelID}</span>}
+              {(model) => <span class="max-w-44 shrink-0 truncate text-12-regular text-v2-text-tertiary">{providerLabel(model().providerID)} / {model().modelID}</span>}
             </Show>
           </div>
           <Show when={activity()}>{(current) => <ActivityDetails activity={current()} />}</Show>
@@ -55,6 +55,10 @@ export function CodexSessionContext(props: { session: () => SessionInfo | undefi
       )}
     </Show>
   )
+}
+
+function providerLabel(providerID: string) {
+  return providerID === "opencode" ? "CodeAI" : providerID
 }
 
 function ActivityDetails(props: { activity: CodexActivityState }) {

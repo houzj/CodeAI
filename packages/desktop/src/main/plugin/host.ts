@@ -336,7 +336,7 @@ export function createHost(input: {
   }
 
   const about = {
-    name: "opencode",
+    name: "CodeAI",
     version: VERSION,
     channel: CHANNEL,
     platform: "desktop",

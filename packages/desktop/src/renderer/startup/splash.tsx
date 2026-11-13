@@ -1,5 +1,3 @@
-import { Splash } from "@opencode/ui/logo"
-import { Wordmark } from "@opencode/ui/wordmark"
 import type { Platform } from "@opencode/app/desktop"
 import { onCleanup, onMount, Show } from "solid-js"
 import "./splash.css"
@@ -13,14 +11,18 @@ export function LoadingSplash(props: {
   onDrawEnd: () => void
 }) {
   onMount(() => {
-    if (!props.drawingPaused) return
+    if (!props.drawingPaused) {
+      props.onDrawStart()
+      props.onDrawEnd()
+      return
+    }
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)")
 
     const start = () => {
       if (document.visibilityState !== "visible" || !document.hasFocus()) return
       props.onDrawStart()
 
-      if (motion.matches) props.onDrawEnd()
+      props.onDrawEnd()
     }
 
     window.addEventListener("focus", start)
@@ -57,7 +59,7 @@ export function LoadingSplash(props: {
             "bg-v2-background-bg-base": !props.deep,
           }}
         >
-          <Splash class="w-16 h-20 opacity-50 animate-pulse" />
+          <div class="text-3xl font-semibold tracking-[-0.04em] text-v2-text-text-muted opacity-70">CodeAI</div>
         </div>
       }
     >
@@ -79,12 +81,9 @@ export function LoadingSplash(props: {
         <div class="relative size-full">
           <div class="absolute inset-x-0 top-[25.375%]">
             <div class="mx-auto w-full max-w-[720px]">
-              <Wordmark
-                outline
-                fade={false}
-                muted={false}
-                class="mx-auto block h-auto w-4/5 text-v2-icon-icon-faint opacity-50"
-              />
+              <div class="mx-auto block w-4/5 text-center text-6xl font-semibold tracking-[-0.06em] text-v2-icon-icon-faint opacity-50">
+                CodeAI
+              </div>
             </div>
           </div>
         </div>
