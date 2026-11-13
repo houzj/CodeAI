@@ -394,3 +394,10 @@
 - [x] `packages/app` 类型检查通过（2,396 files）。
 - [x] 重新执行 Desktop build、Windows unpacked build 和 NSIS 打包，最新安装包已生成。
 - [ ] 用户本机仍需验证 Worktree 展开、跨项目拖动、右侧 Artifact 显隐和悬停状态。
+
+### 执行记录（2026-11-14，验证流程调整）
+
+- [x] 确认日常 UI 验证改为 Web 开发服务器优先，不以 Windows 安装包作为前置条件。
+- [x] Web 入口 `packages/app/index.html` 和生产路由可由 Vite 开发服务器返回；当前服务地址为 `http://127.0.0.1:3000/`。
+- [ ] 继续在网页开发模式验证 Project → Worktree → Session、Run 时间线、Composer 和 Artifact pane 后，再进入 Electron 开发模式。
+- [ ] 发布候选版本才重新生成 Windows 安装包并做安装后冒烟。

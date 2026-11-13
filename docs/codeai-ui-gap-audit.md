@@ -65,6 +65,16 @@ Global Shell
 4. 补齐 Artifact 文件级 Tab、全屏和恢复状态。
 5. 用全新安装包完成一次真实任务闭环，再决定是否结束第一版目标。
 
+## 验证阶梯
+
+日常 UI 开发不依赖 Windows 安装包。验证顺序固定为：
+
+1. **Web 开发服务器**：在 `packages/app` 运行 `bun run dev --host 127.0.0.1`，验证 Project → Worktree → Session 导航、时间线、Composer、折叠事件和右侧 Artifact pane。
+2. **Electron 开发模式**：运行 `packages/desktop` 的 `bun run dev`，验证窗口、IPC、内置 CLI 和独立 pane；这一步不生成安装包。
+3. **发布构建**：只有发布候选版本才运行 `packages/desktop` 的 `bun run build` / `bun run pack`，检查安装后的资源路径、品牌和 CLI 启动。
+
+安装包不能替代前两层验证；它只封装已经在 Web 和 Electron 开发模式中验证过的源码。
+
 ## Codex 风格一致性硬约束
 
 这些约束优先于静态截图的像素相似度。任何新增 UI 如果违反其中一条，视为生产壳回退：
