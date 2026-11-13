@@ -51,7 +51,6 @@ import { reviewGlyphFill, SessionReviewToggle } from "./header/session-header-ac
 import { createTimelineCache } from "./timeline/cache"
 import { createPanelMotion, holdLandingWidth, panelOpacity, setPanelResizing } from "@/shell/panel-motion"
 import { CodexSessionContext } from "./codex-session-context"
-import { CodeAIRunCenter } from "./codeai-run-center"
 
 export function SessionScreenView(props: { session: SessionModel }) {
   // Link handling for the rest of the screen; each cached timeline provides its own for its session.
@@ -425,9 +424,7 @@ function SessionScreenContent(props: {
               <SessionIdentityHeader sessionID={session.identity.params.id ?? ""} session={session.data.info()} />
             </Show>
             <Show when={messagesReady() && session.identity.params.id}>
-              <Show when={isDesktop()} fallback={timelineView()}>
-                <CodeAIRunCenter session={session} />
-              </Show>
+              {timelineView()}
             </Show>
           </Match>
         </Switch>

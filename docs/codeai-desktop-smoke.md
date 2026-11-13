@@ -9,4 +9,6 @@ Use the latest installer at `dist/desktop/codeai-desktop-win-x64.exe`. This chec
 5. Open a file or preview from the task. Confirm the Artifact tab makes the right region appear. Close the last Artifact tab and confirm the right region disappears while the center expands.
 6. Switch to another Session and confirm the Run center, Composer, activity events, and Artifact region belong to the selected Session rather than the previous one.
 
+7. Verify hover and focus affordances: hovering a Project reveals its actions/new-session affordance; hovering a Session reveals its contextual actions and move affordance; hovering a Run/tool row reveals its expand/open action; Composer controls expose tooltips; Artifact tabs expose close and panel actions; keyboard focus has the same visible affordance as hover.
+
 Record the result in `tasks/todo.md`, including the package version/date and any failed step. Do not use `ui-prototype/codex-v4.html` as the test target.

@@ -360,3 +360,11 @@
 - [x] 新增 `projectCodeAIPolicy`，将 OpenCode Worktree/Permission 映射为 CodeAI 的执行环境、文件范围、命令策略、外部目录策略和审批策略。
 - [x] 对 OpenCode 不提供的 OS sandbox、网络和上下文压缩能力明确标记为 `unknown`/`runtime-managed`，不伪装成 Codex 等价能力。
 - [x] `packages/app` 类型检查通过（2,397 files），Policy/Runtime 测试 6/6 通过。
+
+### 执行记录（2026-11-14，会话时间线与命令面）
+
+- [x] 桌面会话主区恢复使用生产 `MessageTimeline`，统一承载用户消息、助手正文、工具事件、审批、变更、计划/压缩等真实 Session 记录；移除临时卡片式 `CodeAIRunCenter`，避免继续堆叠玩具化 UI。
+- [x] Composer 保持独立底部布局，时间线通过真实 inset 预留空间，正文不会被输入框覆盖。
+- [x] 新增 `docs/codeai-command-surface.md`，区分 OpenCode Runtime 已有命令与 CodeAI 需要补齐的目标、计划、定时任务、侧边聊天和代码审查能力。
+- [x] `packages/app` 类型检查通过（2,396 files）。
+- [ ] 需要在用户本机验证时间线滚动、工具详情展开/收起、审批、计划/压缩事件以及 Composer 的悬停和键盘焦点反馈。
