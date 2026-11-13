@@ -283,3 +283,9 @@
 - [x] `packages/app` 类型检查通过，相关 Runtime/布局测试 13/13 通过。
 - [x] `packages/app` Vite 生产构建通过（5,358 modules transformed）。
 - [ ] 最新 Run Center 需要在用户本机安装包中完成一次手动视觉冒烟；当前不再自动控制用户桌面。
+
+### 执行记录（2026-11-14，Worktree 层级修复）
+
+- [x] Session 列表按当前 Worktree 过滤，不再把同一 Project 下的会话混在一起。
+- [x] 点击 Worktree 优先打开该 Worktree 最近会话；没有会话时才回到首页选择目录。
+- [x] 当前生产 app 构建再次通过，PWA 生成 2,801 个 precache 条目。
