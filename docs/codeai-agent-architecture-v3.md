@@ -22,6 +22,8 @@ Project
 
 Project and Worktree are navigation scope. Session is the durable conversation. A Run is an execution projection inside a Session; it is not a separate chat message. Tool calls, approvals, file changes and results attach to the Run timeline and remain available after the live event stream ends.
 
+Worktree is also the Git execution boundary. A branch name is metadata on a Worktree, not a replacement for the Worktree itself. File reads, writes, shell commands, diffs and previews resolve against the selected Worktree directory; branch creation and Git status remain server/VCS operations.
+
 ## Runtime boundaries
 
 - `SessionStore` owns durable prompt admission and message history.
@@ -40,6 +42,7 @@ The shipped Codex desktop artifact provides stronger evidence than screenshots a
 - Permission policy is tool-scoped, including read, edit, shell, task/subagent, and external-directory access. Approval UI must resolve a concrete permission request and preserve the decision in the Run.
 - Context compaction is a session execution operation with its own threshold and background behavior. It must remain separate from ordinary message rendering and be represented in the session state machine.
 - The existing app already contains the correct seams: `SidebarOrganized`, `ProjectSessionRow`, `DragDropProvider`, `session.move`, workspace creation, permission docks, and compaction/session execution state. CodeAI should compose these seams instead of adding a second navigation tree inside the Session route.
+- Git integration should reuse the existing Worktree inventory and VCS APIs. The UI should expose branch/status metadata at the Worktree level and never infer a new branch from a Session title.
 
 ## Desktop layout contract
 
