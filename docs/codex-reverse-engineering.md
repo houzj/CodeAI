@@ -374,6 +374,29 @@ AppServerConnection: app-server transport stop
 
 日志还记录了 `model/list`、`mcpServerStatus/list`、`app/installed` 和 `app/read`。这说明一次 Turn 不是单个模型请求，而是由 Thread 状态、文件索引、Hook、权限、配置和工具服务共同驱动的执行过程。
 
+日志中还捕获了真实 MCP 工具和用户询问链：
+
+```text
+AppServerConnection response_routed
+  method=mcpServer/tool/call
+  conversationId=<thread id>
+  requestId=mcpServer/tool/call:<uuid>
+  durationMs=<elapsed>
+  errorCode=null
+
+electron-message-handler [windows-review-request]
+  method=mcpServer/elicitation/request
+  requestId=64
+  conversationId=<thread id>
+
+host-app-server-manager Sending server response
+  id=64
+  method=mcpServer/elicitation/request
+  response={"action":"accept","content":{},"_meta":{"persist":"session"}}
+```
+
+这证明 MCP 工具调用和需要用户输入的 elicitation 都走 App Server 控制面，并且 elicitation 的响应包含 `action`、`content` 和可选的 `_meta.persist`。CodeAI 的 `McpToolProjection` 不能只显示“工具运行中”，还要支持等待用户输入、接受/拒绝和会话级持久化元数据。
+
 Codex 当前日志中的执行配置是：
 
 ```text
