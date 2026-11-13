@@ -434,3 +434,103 @@ v4 原型已经验证了桌面宿主的空间关系，但原型里的运行记�
 - [ ] 右侧 Artifact 区独立显示并能自动隐藏。
 - [ ] Windows 冒烟任务完成且所有事件来自 Runtime。
 
+## CodeAI 生产壳落地计划 v2（2026-11-13）
+
+这份计划是当前执行基线。目标是把已有的 Runtime 投影和 Workspace Frame 继续收敛成可交付的 CodeAI 桌面产品；`ui-prototype/codex-v4.html` 仅用于视觉对照，不作为功能实现或验收依据。
+
+### 依赖关系
+
+```text
+ServerSDK Project/Session 数据
+        ├── Workspace Frame（Project → Worktree → Session）
+        ├── Session Composer（prompt / interrupt / model）
+        └── OpenCode 事件流
+                └── CodexActivityState
+                        ├── Run Header / Run Steps
+                        └── Artifact 状态与右侧区域
+```
+
+### Task 1：工作区导航完成真实切换
+
+**描述：** 左侧导航不仅展示层级，还要能在同一 Worktree 下切换 Session，并保持当前 Session 的 Runtime 状态和 Composer 上下文。
+
+**验收标准：**
+- [ ] Project、Worktree、Session 均来自 ServerSDK，不出现静态示例项。
+- [ ] 切换 Session 后 URL、标题、Run 状态和 Composer 上下文一致。
+- [ ] 当前 Worktree 切换不破坏已有 Session 事件订阅。
+
+**验证：** `packages/app` 类型检查；桌面手动切换两个真实 Session；事件回放测试覆盖跨 Session 隔离。
+
+**依赖：** 已完成的 Workspace Frame、CodexActivityState。
+
+### Task 2：中间 Run 区收敛为 Codex 结构
+
+**描述：** 将中间区固定为任务、当前运行状态和输入框三层；工具详情、变更、审批默认折叠，展开后显示真实事件内容。
+
+**验收标准：**
+- [ ] 默认视图不显示聊天气泡式消息堆叠。
+- [ ] Run Header 显示任务名、模型、状态、耗时和停止入口。
+- [ ] Tool、Change、Approval 展开/收起不改变 Composer 定位和滚动锚点。
+- [ ] Enter 发送、Shift+Enter 换行，输入框按内容在最小/最大高度间自适应。
+
+**验证：** 组件测试覆盖折叠状态；真实 Session 执行命令并产生审批、变更和终态；桌面截图检查中间留白。
+
+**依赖：** Task 1、CodexActivityState、现有 Session prompt/interrupt API。
+
+### Task 3：会话级模型选择与自定义模型配置
+
+**描述：** 模型选择器放在 Composer 发送按钮左侧；每个 Session 保存自己的 provider/model/reasoning 配置，自定义模型通过弹窗配置并连接测试。
+
+**验收标准：**
+- [ ] 模型选择器不再固定在右上角。
+- [ ] 切换模型只影响当前 Session，不修改其他会话。
+- [ ] 自定义模型支持 Provider、Base URL、模型 ID、API Key 和连接测试。
+- [ ] 连接失败不会清空当前会话或破坏运行状态。
+
+**验证：** provider schema/API 测试；至少一个 OpenAI-compatible 和一个非 OpenAI provider 完成真实请求。
+
+**依赖：** Task 2、现有 provider/model 数据契约。
+
+### Task 4：Artifact 工作区按真实产物驱动
+
+**描述：** 右侧区域不是常驻抽屉。只有当前 Session 有文件、预览、变更或日志 Tab 时才显示；无活动 Tab 自动隐藏，中间区扩展。
+
+**验收标准：**
+- [ ] 打开文件、预览或变更时创建对应 Tab，关闭最后一个 Tab 后右侧自动隐藏。
+- [ ] 右侧可独立关闭、恢复和全屏，不影响左侧导航和中间 Run。
+- [ ] 文件 Tab 的内容根据文件类型选择编辑器、Markdown、图片或浏览器预览。
+- [ ] Artifact 状态与当前 Session 绑定，切换 Session 不串内容。
+
+**验证：** 真实任务生成 HTML、修改文件、打开预览并关闭 Tab；桌面检查隐藏/恢复/全屏。
+
+**依赖：** Task 1、真实文件/预览事件、现有 SideRegion 插件机制。
+
+### Task 5：品牌、打包和运行时验收
+
+**描述：** 用最新生产壳重新构建 CodeAI Windows 包，验证品牌和核心任务闭环。
+
+**验收标准：**
+- [ ] 窗口标题、菜单、图标、应用 ID、可执行文件和安装包名称均为 CodeAI。
+- [ ] 全新安装环境可启动并进入真实 Workspace Frame。
+- [ ] 完成“创建项目/进入 Worktree/新建 Session/执行命令/审批/查看变更/打开预览”的闭环。
+- [ ] 不依赖 `codex-v4.html`，不包含测试密钥或开发配置。
+
+**验证：** `bun run check`；`packages/desktop` build/pack；全新安装启动；桌面冒烟录像或截图留档。
+
+**依赖：** Task 1–4。
+
+### 检查点
+
+- **Checkpoint A（Task 1–2）：** 真实 Session 可切换，Run 中心可执行且默认简洁。
+- **Checkpoint B（Task 3–4）：** 会话级模型和 Artifact 工作区闭环，左右区域独立控制。
+- **Checkpoint C（Task 5）：** Windows 安装包完成端到端冒烟，准备进入内部试用。
+
+### 当前风险
+
+| 风险 | 影响 | 处理方式 |
+|---|---|---|
+| OpenCode 原生 Shell 仍有旧入口 | 用户看到新旧两套导航 | 逐项替换 Session 路由外层，旧入口只保留兼容逻辑 |
+| Artifact 事件字段不完整 | 右侧 Tab 无法稳定创建 | 先使用现有 SideRegion 能力，再补 Protocol/Schema，不复制静态状态 |
+| 多 provider 行为差异 | 同一任务结果不一致 | 通过 Model Gateway 统一能力声明和错误归一化 |
+| Windows 包缓存或 ACL | 包构建结果不可复现 | 固定缓存目录并保留 build/pack 日志 |
+

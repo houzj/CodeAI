@@ -197,3 +197,56 @@
 - [ ] 会话可以恢复，diff 和测试结果可查看
 - [ ] 权限拒绝、网络错误和模型错误有清晰反馈
 - [ ] 发布包没有测试密钥和开发配置
+
+## 当前主目标：CodeAI 生产壳 v2（2026-11-13）
+
+目标：将 `packages/app` 从 OpenCode 原生壳推进为真实 Runtime 驱动的 Codex 风格工作区；所有完成项必须有代码、测试或桌面验证证据。
+
+### Task 1：工作区导航真实切换
+
+- [ ] Project → Worktree → Session 层级可切换
+- [ ] 切换 Session 后 Run、Composer、事件订阅保持一致
+- [ ] 跨 Session 不串 Runtime 状态
+
+### Task 2：Run 中心区
+
+- [ ] 默认只显示任务、当前运行状态和 Composer
+- [ ] Tool、Change、Approval 默认折叠并可展开
+- [ ] Composer 支持 Enter 发送、Shift+Enter 换行和自适应高度
+
+### Task 3：会话级模型
+
+- [ ] 模型选择器位于 Composer 发送按钮左侧
+- [ ] 每个 Session 独立保存 provider/model/reasoning
+- [ ] 自定义模型弹窗支持 Provider、Base URL、模型 ID、API Key、连接测试
+
+### Task 4：Artifact 工作区
+
+- [ ] 由真实文件/预览/变更/日志产物创建 Tab
+- [ ] 无活动 Tab 时右侧自动隐藏，中间区自动扩展
+- [ ] 右侧支持独立关闭、恢复、全屏和文件级 Tab
+
+### Task 5：Windows 交付
+
+- [ ] 最新生产壳完成类型检查和针对性测试
+- [ ] 重新生成 CodeAI Windows 便携包和 NSIS 安装包
+- [ ] 全新安装完成真实项目任务闭环
+- [ ] 验证窗口标题、菜单、图标、可执行文件和安装包名称
+
+### Checkpoint A：Task 1–2
+
+- [ ] 真实 Session 可切换
+- [ ] Run 中心和 Composer 可用
+- [ ] 中间区没有聊天气泡式主布局
+
+### Checkpoint B：Task 3–4
+
+- [ ] 会话级模型配置有效
+- [ ] Artifact 右侧按 Tab 自动显示/隐藏
+- [ ] 左右区域可独立控制
+
+### Checkpoint C：Task 5
+
+- [ ] Windows 安装包全新环境启动
+- [ ] 完成项目、Worktree、Session、Run、审批、变更和预览闭环
+- [ ] 交付不依赖 `ui-prototype/codex-v4.html`
