@@ -138,6 +138,109 @@ thread-stream-following-changed
 
 CodeAI 的 `Session` 应保存 Runtime 引用和 Workspace Root。`Run` 或执行段应保存模型快照、上下文窗口、推理强度和提示哈希，确保会话恢复后可以解释当时使用的模型配置。
 
+### Runtime 事件注册表
+
+在 `early-bootstrap.js` 的 App Server 兼容层中发现了显式事件注册表。它不是 UI 文案，而是客户端认可的 Runtime 通知类型，覆盖范围比日志摘要更完整：
+
+```text
+thread/started
+thread/readState/changed
+thread/section/changed
+thread/name/updated
+thread/attachment/updated
+thread/queue/changed
+thread/environment/connected
+thread/environment/disconnected
+thread/settings/updated
+thread/tokenUsage/updated
+turn/started
+turn/completed
+turn/diff/updated
+turn/plan/updated
+item/started
+item/completed
+item/agentMessage/delta
+item/plan/delta
+item/commandExecution/outputDelta
+item/commandExecution/terminalInteraction
+item/fileChange/outputDelta
+item/fileChange/patchUpdated
+item/mcpToolCall/progress
+item/reasoning/summaryTextDelta
+item/reasoning/summaryPartAdded
+item/reasoning/textDelta
+item/autoApprovalReview/started
+item/autoApprovalReview/completed
+autoApprovalReview/strictReviewRequired
+serverRequest/resolved
+project/changed
+fs/changed
+mcpServer/startupStatus/updated
+mcpServer/event/stream/notification
+model/rerouted
+model/verification
+windowsSandbox/setupCompleted
+```
+
+同一注册表还保留了旧版兼容事件名：
+
+```text
+codex/event/session_configured
+codex/event/task_started
+codex/event/agent_reasoning
+codex/event/agent_message
+codex/event/task_complete
+codex/event/mcp_tool_call_begin
+codex/event/mcp_tool_call_end
+codex/event/exec_command_begin
+codex/event/exec_command_end
+codex/event/exec_command_output_delta
+codex/event/exec_approval_request
+codex/event/apply_patch_approval_request
+codex/event/turn_diff
+codex/event/agent_reasoning_delta
+codex/event/agent_reasoning_section_break
+codex/event/agent_message_delta
+codex/event/stream_error
+codex/event/turn_aborted
+codex/event/plan_delta
+codex/event/plan_update
+codex/event/patch_apply_begin
+codex/event/patch_apply_end
+codex/event/item_started
+codex/event/item_completed
+```
+
+这确认了 Codex 的“对话”底层实际上是 `Thread → Turn → Item` 三级事件模型：Turn 负责一次执行段，Item 负责消息、命令、文件变更、MCP 工具和推理片段。审批、差异、计划和沙箱状态都是独立事件，不应被编码成聊天气泡。CodeAI 的事件投影应以这三级模型为基础，同时在 Adapter 层兼容 OpenCode 当前的事件命名。
+
+### Thread 控制面方法
+
+同一兼容层声明了 Thread/Turn 控制方法集合：
+
+```text
+thread/start
+thread/read
+thread/resume
+thread/stop
+thread/archive
+thread/unarchive
+thread/name/set
+thread/settings/update
+thread/items/list
+thread/inject_items
+thread/queue/add
+thread/queue/list
+thread/queue/update
+thread/queue/delete
+thread/queue/reorder
+turn/start
+turn/steer
+turn/interrupt
+turn/addUserMessage
+```
+
+这组方法说明“正在运行的会话里继续输入”不是重新创建聊天，而是通过 queue、steer 或 interrupt 改变当前 Thread 的执行状态。CodeAI Composer 需要根据 Run 状态选择新 Turn、steer、排队或中断，而不是始终追加普通消息。
+
 ## 运行日志证据
 
 Codex 本地日志位于：
