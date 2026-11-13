@@ -254,6 +254,7 @@ export const dict = {
   "session.run.result": "结果",
   "session.run.runtime": "运行详情",
   "session.run.emptyTask": "尚未提交任务。",
+  "session.run.approveOnce": "批准一次",
   "prompt.action.attachFile": "附加文件",
   "prompt.toast.attachmentDuplicate.title": "此文件已上传",
   "prompt.toast.uploading.percent": "{{percent}}%",

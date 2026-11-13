@@ -25,6 +25,15 @@ export function CodeAIRunCenter(props: { session: SessionModel }) {
     return language.t("session.runtime.idle")
   })
   const pending = () => activity()?.approvals.filter((item) => item.status === "pending") ?? []
+  const permissions = createMemo(() => {
+    const id = identity()?.id
+    return id ? props.session.shared.data.session.permission.list(id) ?? [] : []
+  })
+  const approve = (requestID: string) => {
+    const id = identity()?.id
+    if (!id) return
+    void props.session.shared.data.session.permission.reply({ sessionID: id, requestID, decision: "once" })
+  }
 
   createEffect(() => {
     const current = identity()
@@ -81,6 +90,24 @@ export function CodeAIRunCenter(props: { session: SessionModel }) {
             <Show when={pending().length > 0}>
               <div class="border-t border-v2-border-border-base pt-2 text-12-regular text-v2-text-warning">
                 <For each={pending()}>{(item) => <div class="truncate">{item.action} · {item.resources.join(", ")}</div>}</For>
+              </div>
+            </Show>
+            <Show when={permissions().length > 0}>
+              <div class="border-t border-v2-border-border-base pt-2">
+                <For each={permissions()}>
+                  {(request) => (
+                    <div class="flex items-center gap-3 py-1.5 text-12-regular">
+                      <span class="min-w-0 flex-1 truncate text-v2-text-warning">{request.action}</span>
+                      <button
+                        type="button"
+                        class="rounded border border-v2-border-border-base px-2 py-1 text-12-medium text-v2-text-text-base hover:bg-v2-background-bg-layer-02"
+                        onClick={() => approve(request.id)}
+                      >
+                        {language.t("session.run.approveOnce")}
+                      </button>
+                    </div>
+                  )}
+                </For>
               </div>
             </Show>
             <Show when={(activity()?.changedFiles.length ?? 0) > 0}>

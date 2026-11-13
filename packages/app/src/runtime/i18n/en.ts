@@ -368,6 +368,7 @@ export const dict = {
   "session.run.result": "Result",
   "session.run.runtime": "Run details",
   "session.run.emptyTask": "No task has been submitted yet.",
+  "session.run.approveOnce": "Approve once",
 
   "prompt.action.attachFile": "Add files",
 
