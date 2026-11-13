@@ -257,6 +257,71 @@ codex_desktop:chunked-message-ack
 
 这说明桌面主进程、App Host、Git Worker、渲染页面和浏览器/WebView 之间存在明确的 IPC 边界。
 
+入口 preload 的进一步静态扫描补充了这些边界：
+
+```text
+codex_desktop:get-sentry-init-options
+codex_desktop:take-initial-switch-status
+codex_desktop:get-fast-mode-rollout-metrics
+codex_desktop:trigger-sentry-test
+codex_desktop:worker
+codex_desktop:browser-sidebar-runtime-message
+codex_desktop:browser-page-event
+codex_desktop:get-browser-webmcp-policy
+codex_desktop:get-browser-annotation-api-policy
+codex_desktop:mcp-app-sandbox-guest-message
+codex_desktop:mcp-app-sandbox-host-message
+codex_desktop:remote-hosted-pip-video-frame
+```
+
+`early-bootstrap.js` 和 `preload.js` 都声明了 Git Worker 与 App Host 的连接入口；`browser-page-preload.js` 单独声明了浏览器侧边栏、页面事件和 WebMCP 策略入口；`sandbox-preload.js` 声明了 MCP App 沙箱 guest/host 消息入口。CodeAI 的桌面壳应把这些通道分成 `agent-host`、`git-worker`、`browser-surface` 和 `mcp-sandbox` 四组，避免在 Renderer 里混用 Electron IPC。
+
+### App Server 响应信封
+
+桌面日志中的 `AppServerConnection` 响应记录都带有统一路由字段：
+
+```text
+method
+requestId=<method>:<uuid>
+conversationId=<thread id or null>
+durationMs
+queueWaitMs
+errorCode
+hadPending
+hadInternalHandler
+originWebcontentsId
+broadcastFallback
+targetDestroyed
+```
+
+其中 `conversationId` 只在 Thread 相关请求或 `turn/steer` 等会话操作中出现，模型目录、配置、权限、Hook 和 MCP 状态查询通常是全局请求。`errorCode=-32603` 会出现在单个 `fs/getMetadata` 失败项上，但同一批目录扫描仍可继续，说明文件树读取采用逐项容错而不是整批失败。CodeAI 的 Protocol 层应保留 `requestId`、`sessionId`、排队耗时、执行耗时和可恢复错误字段，UI 再将它们投影成 Run/Tool Event 状态。
+
+### Runtime 分发和进程边界
+
+桌面日志还记录了 Runtime 安装配置：运行时以独立 bundle 发布，包含 Windows x64、Windows ARM64、macOS 和 Linux 平台包，并通过 `codex-primary-runtime` 目录名和 digest 选择版本。桌面进程同时维护本地 App Server、`codex-code-mode-host`、命令执行器和 Windows sandbox service。由此可确认：Electron 桌面壳不是 Agent Runtime 本身，而是 Runtime 的版本选择、进程编排、权限确认和 UI 投影层。
+
+CodeAI 第一版应采用同样的边界：
+
+```text
+Electron Main
+  ├─ AgentRuntimeAdapter  → OpenCode Server / Session Runner
+  ├─ GitRuntimeAdapter    → Git watcher / Worktree operations
+  ├─ ToolHostAdapter      → command, filesystem, MCP tools
+  └─ PermissionBroker     → approval policy and sandbox profile
+Renderer
+  └─ typed projections     → Project / Worktree / Session / Run / ChangeSet / Artifact
+```
+
+## 逆向分析目标与验收标准
+
+本轮分析的目标不是复制 Codex 的私有实现，而是确认 CodeAI 所需的产品边界和事件契约。完成标准分为三层：
+
+1. **结构层**：能从 MSIX/Electron 入口确认主进程、preload、浏览器侧边栏、Git Worker、MCP 沙箱和 Runtime 进程边界。
+2. **行为层**：能从运行日志确认 Project、Worktree、Session、Turn、Model、Permission、Tool、Change 和 Artifact 的创建、更新、完成、失败和恢复信号。
+3. **落地层**：每个确认的行为都能映射到 CodeAI 的类型化投影、OpenCode Runtime Adapter、桌面 IPC 和 UI 任务，并且不把 Codex 私有 key 直接暴露为公共协议。
+
+当前结构层已完成；行为层已确认 Thread/Turn、模型、文件扫描、Hook、权限、Git watcher、MCP 状态和 Runtime 配置，审批/工具/变更/Artifact 的具体 payload 仍需用可控的真实操作补采；落地层已形成初版映射表，下一步进入 CodeAI 的 Adapter 和事件投影实现。
+
 ## CodeAI 映射
 
 | Codex 观察项 | CodeAI 对象或模块 | 实现含义 |
@@ -291,19 +356,18 @@ REA 的 Electron runtime capture 已对实际安装目录和工作区副本分�
 
 ## 待验证问题
 
-- Codex 主窗口和 WebView 的实际窗口层级
 - Project、Worktree、Session 在运行时的创建和切换顺序
 - Composer 的 Enter、Shift+Enter、Plan 和模型选择行为
 - 模型选择器的状态来源和会话级持久化字段
-- Run、Tool Event、Approval、Change 和 Artifact 的事件顺序
-- `codex.exe` 与桌面 App Host 的通信协议
+- Run、Tool Event、Approval、Change 和 Artifact 的具体 payload 以及事件顺序
+- `codex.exe` 与桌面 App Host 的 JSON-RPC 方法参数
 - Git Worker 与 Worktree 创建、清理和上游刷新之间的边界
-- 右侧 Files、Changes、Preview、Logs 的显示条件和 Tab 生命周期
+- 右侧文件预览 Tab 与 Artifact 生命周期的显示条件
 
 ## 后续分析顺序
 
-1. 通过 REA Electron runtime capture 获取主进程、窗口、preload 和 IPC 事件。
-2. 捕获新建会话、打开项目、切换 Worktree 和发送任务的事件序列。
-3. 捕获打开文件、查看变更、审批命令和切换模型的事件序列。
-4. 把事件映射到 CodeAI 的标准 `Project`、`Worktree`、`Session`、`Run`、`Approval`、`ChangeSet` 和 `Artifact`。
-5. 将确认后的映射转成 CodeAI 的 Runtime Adapter 和 UI 实现任务。
+1. **可控行为采集**：在单独测试项目中依次执行新建项目、创建 Worktree、新建会话、发送命令、触发审批、拒绝/批准、修改文件、打开文件预览和切换模型；每个动作保存对应日志时间窗。
+2. **payload 解析**：针对每个动作抽取 JSON-RPC 请求/响应和 AppServerConnection 路由信封，建立事件字段表；遇到只记录摘要的日志，标记为“已确认事件名、未确认 payload”。
+3. **Runtime 对照**：用 OpenCode 的 Session/Run/Permission/Tool/Change 现有模型逐项对照，确定哪些能力直接复用，哪些需要 CodeAI projection 或 adapter。
+4. **产品落地**：先实现 `AgentRuntimeAdapter`、`GitRuntimeAdapter`、`PermissionBroker` 和 `SessionProjection`，再接入三栏 UI；所有 UI 状态来自投影事件，不直接读取 Electron 私有状态。
+5. **验收**：至少覆盖正常完成、工具失败、审批暂停、用户拒绝、Turn steer、会话恢复、Worktree 删除确认和右侧文件 Tab 自动显示/隐藏八条路径。
