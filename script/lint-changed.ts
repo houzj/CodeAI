@@ -43,7 +43,7 @@ const chunks = Array.from({ length: Math.ceil(files.length / 100) }, (_, index) 
 const report: { diagnostics: Diagnostic[] } = { diagnostics: [] }
 
 for (const chunk of chunks) {
-  const output = JSON.parse(await $`bunx oxlint --format json ${chunk}`.nothrow().quiet().text()) as {
+  const output = JSON.parse(await $`bunx oxlint --threads=1 --format json ${chunk}`.nothrow().quiet().text()) as {
     diagnostics: Diagnostic[]
   }
   report.diagnostics.push(...output.diagnostics)
