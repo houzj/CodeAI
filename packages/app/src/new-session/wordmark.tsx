@@ -10,7 +10,6 @@ import {
   selectWordmarkFlatVisible,
   selectWordmarkGrip,
   selectWordmarkLifted,
-  selectWordmarkLodger,
   type WordmarkEvent,
   type WordmarkState,
 } from "./wordmark-machine"
@@ -147,6 +146,9 @@ type Parts = {
   blink: SVGGElement
 }
 
+// Keep the legacy interaction implementation available for future branded motion work.
+void WordmarkLodger
+
 /**
  * Reserves the wordmark's space. With `pins`, `NewSessionPinBoard` draws the logo into it. Otherwise it shows
  * the flat logo, and something lives in the top counter of the final "e".
@@ -159,34 +161,13 @@ export function NewSessionWordmark(props: {
   play?: boolean
   sound?: () => boolean
 }) {
-  // Read once: the lodger stays mounted after handing over to the pin board, and can be dragged back into the hole.
-  const lodger = selectWordmarkLodger(props.state())
-  let box!: HTMLDivElement
-
   return (
     <div
       data-component="new-session-wordmark"
-      aria-hidden="true"
-      class="pointer-events-none mx-auto w-full max-w-[720px] text-v2-background-bg-inverse"
+      aria-label="CodeAI"
+      class="pointer-events-none mx-auto flex w-full max-w-[720px] justify-center text-v2-text-text-base"
     >
-      <div
-        ref={(el) => {
-          box = el
-          props.ref(el)
-        }}
-        data-slot="wordmark-box"
-        class="relative mx-auto aspect-[234/42] w-4/5"
-      >
-        <Show when={lodger}>
-          <WordmarkLodger
-            box={box}
-            sound={props.sound ?? (() => false)}
-            state={props.state}
-            onEvent={props.onEvent}
-            play={!!props.play}
-          />
-        </Show>
-      </div>
+      <div ref={props.ref} data-slot="wordmark-box" class="text-[56px] font-semibold tracking-[-0.08em]">CodeAI</div>
     </div>
   )
 }
