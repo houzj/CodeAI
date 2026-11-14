@@ -539,7 +539,7 @@ export function useOpenSessionRoute() {
   }
 }
 
-export function SessionIdentityHeader(props: { sessionID: string; session?: SessionInfo }) {
+export function SessionIdentityHeader(props: { sessionID: string; session?: SessionInfo; compact?: boolean }) {
   const server = useServer()
   const tabs = useTabs()
   const language = useLanguage()
@@ -616,12 +616,14 @@ export function SessionIdentityHeader(props: { sessionID: string; session?: Sess
           title={title()}
           location={
             <>
-              <SessionLocation
-                project={project()}
-                directory={directory()}
-                compact={!!parentID()}
-                trailing={!!(title() || parentID())}
-              />
+              <Show when={!props.compact}>
+                <SessionLocation
+                  project={project()}
+                  directory={directory()}
+                  compact={!!parentID()}
+                  trailing={!!(title() || parentID())}
+                />
+              </Show>
               <Show when={parentID()}>
                 {(id) => (
                   <SessionAncestorTrail
