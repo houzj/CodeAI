@@ -17,4 +17,5 @@ if (process.versions.bun !== expectedBunVersion) {
   console.warn(`Warning: Bun version ${process.versions.bun} differs from expected ${expectedBunVersion}`);
 }
 '
-bun run check
+# Keep pushes fast and scoped to the change being published. Full lint and typecheck run in CI.
+bun run lint:changed
