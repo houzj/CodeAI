@@ -80,6 +80,7 @@ if (root instanceof HTMLElement && root.dataset.opencodeMounted === undefined) {
   root.dataset.opencodeMounted = ""
   void loadInitialLocale().then((locale) => {
     const auth = authFromToken(new URLSearchParams(location.search).get("auth_token"))
+    const devPassword = import.meta.env.DEV ? import.meta.env.VITE_OPENCODE_SERVER_PASSWORD : undefined
     clearAuthToken()
     const standalone = isStandalone()
     root.dataset.standalone = String(standalone)
@@ -92,7 +93,7 @@ if (root instanceof HTMLElement && root.dataset.opencodeMounted === undefined) {
           authToken: !!auth,
           http: {
             url: web.currentServerUrl,
-            ...auth,
+            ...(auth ?? (devPassword ? { password: devPassword } : {})),
           },
         }
       : undefined
