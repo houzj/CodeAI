@@ -18,4 +18,4 @@ if (process.versions.bun !== expectedBunVersion) {
 }
 '
 # Keep pushes fast and scoped to the change being published. Full lint and typecheck run in CI.
-bun run lint:changed
+LINT_BASE=HEAD^1 bun run lint:changed
