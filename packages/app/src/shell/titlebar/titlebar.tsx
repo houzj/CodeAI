@@ -813,7 +813,7 @@ export function Titlebar(props: { verticalTabs?: { mount?: HTMLElement } }) {
                                   <SidebarInbox />
                                 </Match>
                                 <Match when={settings.general.sidebarOrganize() === "projects"}>
-                                  <SidebarOrganized currentTab={currentTab()}>{verticalTabStrip}</SidebarOrganized>
+                                  <SidebarOrganized currentTab={currentTab()} />
                                 </Match>
                                 <Match when={settings.general.sidebarOrganize() === "customize"}>
                                   <SidebarCustomized currentTab={currentTab()} onNewSession={openNewTab}>

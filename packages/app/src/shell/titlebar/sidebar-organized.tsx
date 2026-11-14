@@ -1,5 +1,5 @@
 import { Schema } from "effect"
-import { createEffect, createMemo, For, Show, onCleanup, untrack, type Accessor, type JSX } from "solid-js"
+import { createEffect, createMemo, For, Show, onCleanup, untrack, type JSX } from "solid-js"
 import { Key } from "@solid-primitives/keyed"
 import { createStore } from "solid-js/store"
 import { useQuery } from "@tanstack/solid-query"
@@ -75,31 +75,16 @@ export function createSidebarActivityListener() {
 
 export function SidebarOrganized(props: {
   currentTab: Tab | undefined
-  children: (highlightActive: Accessor<boolean>, onNavigate: () => void) => JSX.Element
 }) {
   const language = useLanguage()
-
   const tabs = useTabs()
 
   createSidebarActivityListener()
 
   const [local, setLocal] = createStore<{
-    projectSession: { server: ServerConnection.Key; sessionId: string } | undefined
     thumbTrack: HTMLDivElement | undefined
     hoverTarget: HTMLDivElement | undefined
-  }>({ projectSession: undefined, thumbTrack: undefined, hoverTarget: undefined })
-
-  const selectTabs = () => setLocal("projectSession", undefined)
-
-  const projectSelected = () => {
-    const tab = props.currentTab
-
-    return (
-      tab?.type === "session" &&
-      tab.server === local.projectSession?.server &&
-      tab.sessionId === local.projectSession?.sessionId
-    )
-  }
+  }>({ thumbTrack: undefined, hoverTarget: undefined })
 
   const [state, setState, , ready] = persisted(Persist.global("sidebar.organize"), SidebarState, {
     projectsCollapsed: false,
@@ -144,8 +129,7 @@ export function SidebarOrganized(props: {
                 <ProjectList
                   currentTab={props.currentTab}
                   isOpenTab={isOpenTab}
-                  highlightActive={projectSelected()}
-                  onSelect={(session) => setLocal("projectSession", session)}
+                  highlightActive
                   state={state}
                   ready={ready()}
                   onExpand={(key) => setState("expanded", key, (value) => !value)}
@@ -154,13 +138,8 @@ export function SidebarOrganized(props: {
               </div>
             </Show>
           </section>
-          <div class="flex shrink-0 flex-col gap-3" classList={{ hidden: tabs.store.length === 0 }}>
-            <Show when={!state.projectsCollapsed}>
-              <div role="separator" class="mx-2 h-px shrink-0 bg-v2-border-border-muted" />
-            </Show>
-            {/* The empty strip still owns tab shortcuts; only its visual section is hidden. */}
-            {props.children(() => !projectSelected(), selectTabs)}
-          </div>
+          {/* Sessions are opened directly from the project tree. The titlebar tab strip is intentionally absent in
+              Projects mode so a project owns multiple conversations instead of one conversation per visible tab. */}
         </div>
       </ScrollView>
     </div>
@@ -171,7 +150,6 @@ function ProjectList(props: {
   currentTab: Tab | undefined
   isOpenTab: (server: ServerConnection.Key, sessionId: string) => boolean
   highlightActive: boolean
-  onSelect: (session: { server: ServerConnection.Key; sessionId: string }) => void
   state: typeof SidebarState.Type
   ready: boolean
   onExpand: (key: string) => void
@@ -378,10 +356,6 @@ function ProjectList(props: {
                                   props.currentTab.sessionId === record().session.id
                                 }
                                 onOpen={() => {
-                                  props.onSelect({
-                                    server: ServerConnection.key(conn()),
-                                    sessionId: record().session.id,
-                                  })
                                   actions.openProjectSession(conn(), worktree.directory, record().session, { preview: true })
                                 }}
                               />

@@ -59,7 +59,9 @@ export default function Layout(props: ParentProps) {
     tabsPanel: undefined,
   })
 
-  const verticalTabs = () => preferences.appearance.tabLayout() !== "horizontal" && !mobile()
+  // Projects mode owns session switching in the Project → Worktree → Session tree.
+  // Keep that navigation available even when an older profile stored horizontal tabs.
+  const verticalTabs = () => !mobile() && (preferences.appearance.tabLayout() !== "horizontal" || preferences.general.sidebarOrganize() === "projects")
 
   const organizedSidebar = () =>
     preferences.appearance.tabLayout() === "vertical" && preferences.general.sidebarOrganize() !== "list"
