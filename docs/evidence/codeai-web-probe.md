@@ -37,6 +37,10 @@ REA `inspect_electron_fuses` inspected the currently installed `CodeAI.exe` and 
 
 The installed development package currently has `RunAsNode`, `NodeOptions`, and `NodeCliInspectArguments` enabled. `OnlyLoadAppFromAsar`, `EmbeddedAsarIntegrityValidation`, and cookie encryption are disabled. These are release-hardening gaps to close before publishing the Windows installer. This finding belongs to the packaging gate and does not block the web Runtime probe.
 
+The current unsigned Windows build completed with `bun run build` and `bun run pack`. The unpacked artifact is under `dist/desktop/app`. REA fuse evidence `ev_15dc857802a6702bc3f631e2e6c663baaa7e7cb64acd1544ed5b1e40dfd5bd97` inspected `dist/desktop/app/CodeAI.exe` with SHA-256 `888a5e36e699b2332bc100f86f49fc11f5cba3b999cd6a490a0a9857516d546e`. The release executable still reports RunAsNode, NodeOptions and NodeCliInspectArguments enabled, with embedded ASAR integrity and app-ASAR-only loading disabled.
+
+REA release audit `ev_b821f7cf2c7d7ab235a3b3ff6941f83f59fe7c28d7778cb589273e679dc347c0` inspected the current `app.asar` with SHA-256 `583ba991947fa61deac38161d3725b5c8f8d8c10d494323f32402e9437655f0a`. It observed only low-severity extractable payload and native PDB path exposure within the assessed checks. Source-map and credential checks remained partially unknown because the bounded audit omitted members. Final release hardening remains open until Electron fuses are configured and a full-size release audit is rerun.
+
 The source brand scan now passes after replacing user-visible upstream links, provider labels, notifications, localized display text, feedback routes, and generated desktop metadata with CodeAI equivalents. Compatibility identifiers, Provider IDs, migration keys, and internal SDK names remain scoped as technical implementation details.
 
 Validation after the branding pass completed with app typecheck, desktop typecheck, and the production app build. The app build emitted existing CSS selector and chunk-size warnings, but completed successfully.
