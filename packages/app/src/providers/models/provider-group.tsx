@@ -25,6 +25,7 @@ function CustomManagedProviderIcon(props: { class?: string }) {
 }
 
 export function ProviderModelIcon(props: { provider: ModelProvider; class?: string }) {
+  // SAFETY: the identifier is accepted only after membership in the icon name registry is checked.
   const icon = () =>
     [
       props.provider.canonical,

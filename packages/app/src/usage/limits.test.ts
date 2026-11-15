@@ -24,7 +24,9 @@ const info = (...budgets: UsageLimitsBudget[]): UsageLimitsInfo => ({
 })
 
 const opus = { providerID: "opencode", modelID: "claude-opus-5", name: "Claude Opus 5" }
+
 const sonnet = { providerID: "opencode", modelID: "claude-sonnet-5", name: "Claude Sonnet 5" }
+
 const served = (id: string, provider = "opencode") => ({ id, provider: { id: provider, integrationID: "opencode" } })
 
 describe("modelUsage", () => {

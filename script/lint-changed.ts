@@ -49,15 +49,48 @@ for (const chunk of chunks) {
   report.diagnostics.push(...output.diagnostics)
 }
 
-report.diagnostics.forEach((diagnostic) => {
+const addedLines = await addedLineRanges(base, files)
+const diagnostics = report.diagnostics.filter((diagnostic) => {
+  const span = diagnostic.labels[0]?.span
+  if (!span) return false
+  const filename = normalizePath(diagnostic.filename)
+  return addedLines.get(filename)?.some((range) => span.line >= range.start && span.line < range.start + range.count) ?? false
+})
+
+diagnostics.forEach((diagnostic) => {
   const span = diagnostic.labels[0]?.span
   console.log(`${diagnostic.filename}:${span?.line}:${span?.column}  ${diagnostic.code}  ${diagnostic.message}`)
 })
-const dirty = new Set(report.diagnostics.map((diagnostic) => diagnostic.filename))
+const dirty = new Set(diagnostics.map((diagnostic) => diagnostic.filename))
 console.log(
-  `lint:changed: ${report.diagnostics.length} problem(s) in ${dirty.size} of ${files.length} changed files since ${base.slice(0, 10)}`,
+  `lint:changed: ${diagnostics.length} new problem(s) in ${dirty.size} of ${files.length} changed files since ${base.slice(0, 10)}`,
 )
-process.exit(report.diagnostics.length > 0 ? 1 : 0)
+process.exit(diagnostics.length > 0 ? 1 : 0)
+
+async function addedLineRanges(base: string, files: string[]) {
+  const ranges = new Map<string, { start: number; count: number }[]>()
+  const untracked = new Set((await $`git ls-files --others --exclude-standard`.text()).split("\n").filter(Boolean))
+  untracked.forEach((file) => ranges.set(normalizePath(file), [{ start: 1, count: Number.MAX_SAFE_INTEGER }]))
+
+  const diff = await $`git diff --unified=0 --no-color ${base} -- ${files}`.text()
+  let file: string | undefined
+  diff.split("\n").forEach((line) => {
+    if (line.startsWith("+++ b/")) {
+      file = normalizePath(line.slice(6))
+      if (!ranges.has(file)) ranges.set(file, [])
+      return
+    }
+    if (!file || !line.startsWith("@@")) return
+    const match = line.match(/\+(\d+)(?:,(\d+))?\s@@/)
+    if (!match) return
+    ranges.get(file)!.push({ start: Number(match[1]), count: Number(match[2] ?? 1) })
+  })
+  return ranges
+}
+
+function normalizePath(path: string) {
+  return path.replaceAll("\\", "/")
+}
 
 async function resolveBase(explicit: string | undefined) {
   if (explicit) return (await $`git rev-parse ${explicit}`.text()).trim()
