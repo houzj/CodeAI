@@ -18,6 +18,8 @@ The Web probe created a real Project and Session through the running Runtime. Th
 
 The initial hover implementation rendered its card inside the sidebar scroll container, so the card was clipped outside the sidebar. The implementation now uses a portalled HoverCard. The live DOM probe confirmed the portalled project card contains the project name, worktree count, directory and edit entry after hover.
 
+The same live DOM probe confirmed the session card contains the session title, update state and project name after hovering the session row.
+
 ## Scope
 
 This is a Web evidence slice. Windows packaging remains a separate final-host gate.
