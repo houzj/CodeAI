@@ -1,5 +1,7 @@
 # OpenCode Fork 第一版任务清单
 
+> 当前落地总计划见 [docs/codeai-agent-desktop-rea-rollout.md](../docs/codeai-agent-desktop-rea-rollout.md)。所有 UI 验收以 REA 结构证据、agent-desktop 行为截图和源码实现三者闭环为准，并包含品牌泄露扫描。
+
 > 产品级系统总设计见 [docs/product-architecture.md](../docs/product-architecture.md)。以下清单先完成基础模块和接口，再进入 UI。
 
 ## 当前目标
