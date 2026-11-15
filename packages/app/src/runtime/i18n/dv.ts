@@ -131,9 +131,9 @@ export const dict = {
   "dialog.provider.empty": "އެއްވެސް ޕްރޮވައިޑަރެއް ނުފެނެއެވެ",
   "dialog.provider.group.popular": "މަޝްހޫރު",
   "dialog.provider.tag.recommended": "ލަފާދެވިފައިވުން",
-  "dialog.provider.opencode.note":
+  "dialog.provider.CodeAI.note":
     "ކިއުރެޓް ކުރެވިފައިވާ މޮޑެލްތަކުގެ ތެރޭގައި Claude، GPT، Gemini އަދި އެހެނިހެން މޮޑެލްތައް ހިމެނެއެވެ",
-  "dialog.provider.opencode.tagline": "އިތުބާރު ހުރި އޮޕްޓިމައިޒްޑް މޮޑެލްތަކެވެ",
+  "dialog.provider.CodeAI.tagline": "އިތުބާރު ހުރި އޮޕްޓިމައިޒްޑް މޮޑެލްތަކެވެ",
   "dialog.provider.opencodeGo.tagline": "އެންމެންނަށް ކުޑަ އަގެއްގައި ސަބްސްކްރިޕްޝަން ދިނުމެވެ",
   "dialog.provider.copilot.note": "GitHub Copilot މެދުވެރިކޮށް ކޯޑިންގ އެހީތެރިވުމަށް AI މޮޑެލްތައް",
   "dialog.provider.openai.note": "އަވަސް، ގާބިލް އާންމު AI ޓާސްކްތަކަށް GPT މޮޑެލްތަކެވެ",
@@ -294,7 +294,7 @@ export const dict = {
   "error.chain.responseBody": "ޖަވާބުދާރީވާ ހަށިގަނޑު:\n\u2068{{body}}\u2069 އެވެ",
   "error.chain.didYouMean": "ތިޔަ މާނަކުރީ: \u2068{{suggestions}}\u2069 ހެއްޔެވެ",
   "error.chain.modelNotFound": "މޮޑެލް ނުފެނޭ: \u2068{{provider}}\u2069/\u2068{{model}}\u2069",
-  "error.chain.checkConfig": "ތިބާގެ ކޮންފިގް (opencode.json) ޕްރޮވައިޑަރ/މޮޑެލް ނަންތައް ޗެކްކުރުން",
+  "error.chain.checkConfig": "ތިބާގެ ކޮންފިގް (CodeAI runtime configuration) ޕްރޮވައިޑަރ/މޮޑެލް ނަންތައް ޗެކްކުރުން",
   "error.chain.mcpFailed":
     'MCP ސަރވަރ "\u2068{{name}}\u2069" ފޭލްވެއްޖެއެވެ. ނޯޓް، CodeAI އިން އަދި MCP އޮތެންޓިކޭޝަން އަށް ސަޕޯޓް ނުކުރެއެވެ.',
   "error.chain.providerAuthFailed":
@@ -580,7 +580,7 @@ export const dict = {
   "settings.extensions.tab.mcps": "MCPs",
   "settings.extensions.tab.skills": "ހުނަރުތައް",
   "settings.extensions.availableAll": "ހުރިހާ ޕްރޮޖެކްޓަކަށް ލިބެންހުރި",
-  "settings.extensions.manageConfig": "opencode.json ގައި މެނޭޖްކުރާށެވެ",
+  "settings.extensions.manageConfig": "CodeAI runtime configuration ގައި މެނޭޖްކުރާށެވެ",
   "settings.extensions.addSkills": "ހުނަރުތައް އިތުރުކުރާނެ ގޮތް",
   "project.settings.extensions.description": "މި ޕްރޮޖެކްޓަށް ލިބެންހުރި އެކްސްޓެންޝަންތައް ބަލާށެވެ",
   "project.settings.extensions.tab.lsps": "LSPs",
@@ -619,7 +619,7 @@ export const dict = {
   "desktop.menu.installCli": "CLI އިންސްޓޯލް ކުރާށެވެ...",
   "desktop.cli.installed.title": "CLI އިންސްޓޯލް ކުރެވިއްޖެ",
   "desktop.cli.installed.message":
-    "CLI އިންސްޓޯލް ކުރެވިފައިވަނީ \u2068{{path}}\u2069 އަށެވެ\n\n'opencode2' ކޮމާންޑް ބޭނުންކުރުމަށް ޓާމިނަލް އަލުން ފަށާށެވެ.",
+    "CLI އިންސްޓޯލް ކުރެވިފައިވަނީ \u2068{{path}}\u2069 އަށެވެ\n\n'codeai' ކޮމާންޑް ބޭނުންކުރުމަށް ޓާމިނަލް އަލުން ފަށާށެވެ.",
   "desktop.cli.failed.title": "އިންސްޓޯލް ކުރުން ނާކާމިޔާބުވެއްޖެ",
   "desktop.cli.failed.message": "CLI އިންސްޓޯލް ނުކުރެވުނެވެ: \u2068{{error}}\u2069",
   "command.project.copyID": "ޕްރޮޖެކްޓް ID ކޮޕީކުރުން",
@@ -689,7 +689,7 @@ export const dict = {
   "settings.about.otherContributor.other": "އެހެން \u2068{{count}}\u2069",
   "settings.about.firstPublished": "ފުރަތަމަ ޗާޕުކުރީ އެމެރިކާގެ މިޒޫރީގައެވެ",
   "settings.about.firstIllustrated": "ފުރަތަމަ ކުރެހީ އިނގިރޭސިވިލާތުގެ ލަންޑަންގައެވެ",
-  "settings.about.website": "www.opencode.ai",
+  "settings.about.website": "codeai.app",
   "settings.about.description": "CodeAI، އޯޕަން ސޯސް ކޯޑިންގ އޭޖެންޓް",
   "settings.about.trademark": "CodeAI އަކީ Anomaly Innovations, Inc. ގެ ރަޖިސްޓަރޑް ޓްރޭޑްމާކެވެ.",
   "settings.about.typeset": "Inter އަދި IBM Plex Mono އިން ޓައިޕްސެޓްކޮށްފައި",

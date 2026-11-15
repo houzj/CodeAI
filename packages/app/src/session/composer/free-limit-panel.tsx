@@ -10,7 +10,7 @@ import { useWorkspaceLocation } from "@/workspaces/location"
 import type { ModelSelection } from "@/providers/models/selection"
 import { limitResetAt } from "../usage-exceeded-dialogs"
 
-const GO_URL = "https://opencode.ai/go"
+const GO_URL = "https://github.com/houzj/CodeAI"
 
 // OpenCode Zen always says when free usage resets; this covers a refusal that doesn't, or a delay out of range.
 const FALLBACK_RESET_MS = 3_600_000

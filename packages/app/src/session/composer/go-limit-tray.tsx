@@ -31,7 +31,7 @@ function goLimit(locale: string, event: SessionStepFailed): GoLimit {
     name: metadata?.limitName,
     reset: formatLimitReset(locale, event.created, event.data.error.retryAfterMs),
     // The Go page is where the workspace turns on Extra Usage to keep going on its balance.
-    link: workspace ? `https://opencode.ai/console/${encodeURIComponent(workspace)}/go` : "https://opencode.ai/console",
+    link: workspace ? `https://github.com/houzj/CodeAI)}/go` : "https://github.com/houzj/CodeAI",
   }
 }
 

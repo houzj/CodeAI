@@ -16,7 +16,7 @@ const GO_UPSELL_FREE_TIER_DONT_SHOW = "go_upsell_dont_show"
 
 const GO_UPSELL_WINDOW = 86_400_000 // 24 hrs
 
-const GO_URL = "https://opencode.ai/go"
+const GO_URL = "https://github.com/houzj/CodeAI"
 
 const MAX_RETRY_AFTER_MS = 45 * 86_400_000
 

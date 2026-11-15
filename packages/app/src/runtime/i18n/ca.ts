@@ -128,8 +128,8 @@ export const dict = {
   "dialog.provider.empty": "No s'han trobat proveïdors",
   "dialog.provider.group.popular": "Popular",
   "dialog.provider.tag.recommended": "Recomanat",
-  "dialog.provider.opencode.note": "Models seleccionats que inclouen Claude, GPT, Gemini i més",
-  "dialog.provider.opencode.tagline": "Models optimitzats fiables",
+  "dialog.provider.CodeAI.note": "Models seleccionats que inclouen Claude, GPT, Gemini i més",
+  "dialog.provider.CodeAI.tagline": "Models optimitzats fiables",
   "dialog.provider.opencodeGo.tagline": "Subscripció de baix cost per a tothom",
   "dialog.provider.copilot.note": "Models d'IA per a l'assistència de codificació mitjançant GitHub Copilot",
   "dialog.provider.openai.note": "GPT models per a tasques d'IA generals ràpides i capaces",
@@ -288,7 +288,7 @@ export const dict = {
   "error.chain.responseBody": "Òrgan de resposta:\n{{body}}",
   "error.chain.didYouMean": "Volíeu dir: {{suggestions}}",
   "error.chain.modelNotFound": "No s'ha trobat el model: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "Comproveu els noms del vostre proveïdor/model de configuració (opencode.json).",
+  "error.chain.checkConfig": "Comproveu els noms del vostre proveïdor/model de configuració (CodeAI runtime configuration).",
   "error.chain.mcpFailed":
     'El servidor MCP "{{name}}" ha fallat. Tingueu en compte que CodeAI encara no admet l\'autenticació MCP.',
   "error.chain.providerAuthFailed": "L'autenticació del proveïdor ha fallat ({{provider}}): {{message}}",
@@ -598,7 +598,7 @@ export const dict = {
   "settings.extensions.tab.mcps": "MCP",
   "settings.extensions.tab.skills": "Habilitats",
   "settings.extensions.availableAll": "Disponible per a tots els projectes",
-  "settings.extensions.manageConfig": "Gestiona-ho a opencode.json",
+  "settings.extensions.manageConfig": "Gestiona-ho a CodeAI runtime configuration",
   "settings.extensions.addSkills": "Com afegir habilitats",
   "project.settings.extensions.description": "Consulteu les extensions disponibles per a aquest projecte",
   "project.settings.extensions.tab.lsps": "LSP",
@@ -609,7 +609,7 @@ export const dict = {
   "desktop.menu.installCli": "Instal·la la CLI...",
   "desktop.cli.installed.title": "CLI instal·lada",
   "desktop.cli.installed.message":
-    "La CLI s'ha instal·lat a {{path}}\n\nReinicieu el terminal per utilitzar l'ordre 'opencode2'.",
+    "La CLI s'ha instal·lat a {{path}}\n\nReinicieu el terminal per utilitzar l'ordre 'codeai'.",
   "desktop.cli.failed.title": "La instal·lació ha fallat",
   "desktop.cli.failed.message": "No s'ha pogut instal·lar la CLI: {{error}}",
   "command.project.copyID": "Copia l'ID del projecte",
@@ -680,7 +680,7 @@ export const dict = {
   "settings.about.otherContributor.other": "{{count}} altres",
   "settings.about.firstPublished": "Publicat per primera vegada a Missouri, EUA",
   "settings.about.firstIllustrated": "Il·lustrat per primera vegada a Londres, Anglaterra",
-  "settings.about.website": "www.opencode.ai",
+  "settings.about.website": "codeai.app",
   "settings.about.description": "CodeAI, l'agent de codificació de codi obert",
   "settings.about.trademark": "CodeAI és una marca registrada de Anomaly Innovations, Inc.",
   "settings.about.typeset": "Tipografia en Inter i IBM Plex Mono",
@@ -729,9 +729,9 @@ export const dict = {
   "server.connect.failed":
     "No s'ha pogut connectar. Comproveu l'adreça i la contrasenya del servidor i torneu-ho a provar.",
   "server.connect.scan": "Escaneja el codi QR",
-  "server.connect.scan.description": "Apunteu la càmera al codi QR que mostra opencode pair.",
+  "server.connect.scan.description": "Apunteu la càmera al codi QR que mostra codeai pair.",
   "server.connect.scan.invalid":
-    "Aquest no és un codi d'aparellament CodeAI. Escaneja el codi mostrat per opencode pair.",
+    "Aquest no és un codi d'aparellament CodeAI. Escaneja el codi mostrat per codeai pair.",
   "server.connect.camera": "Càmera d'aparellament",
   "server.connect.camera.starting": "Obertura de la càmera...",
   "server.connect.mixedContent":

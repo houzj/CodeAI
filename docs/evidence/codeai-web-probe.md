@@ -36,3 +36,7 @@ The audit observed low-severity packaged payload exposure and native PDB path st
 REA `inspect_electron_fuses` inspected the currently installed `CodeAI.exe` and returned Evidence ID `ev_9001aa5b9505830c02edcff3746a19705b863ad31540a375d5021c617cc62294`. The executable digest was `99340de9f07d077e5957bdfb63a41326b7a74a43069b8c8da091acd8477ab61a`.
 
 The installed development package currently has `RunAsNode`, `NodeOptions`, and `NodeCliInspectArguments` enabled. `OnlyLoadAppFromAsar`, `EmbeddedAsarIntegrityValidation`, and cookie encryption are disabled. These are release-hardening gaps to close before publishing the Windows installer. This finding belongs to the packaging gate and does not block the web Runtime probe.
+
+The source brand scan now passes after replacing user-visible upstream links, provider labels, notifications, localized display text, feedback routes, and generated desktop metadata with CodeAI equivalents. Compatibility identifiers, Provider IDs, migration keys, and internal SDK names remain scoped as technical implementation details.
+
+Validation after the branding pass completed with app typecheck, desktop typecheck, and the production app build. The app build emitted existing CSS selector and chunk-size warnings, but completed successfully.

@@ -24,9 +24,9 @@ export const dict = {
   "server.connect.failed":
     "No se pudo conectar. Verifique la dirección y la contraseña del servidor y vuelva a intentarlo.",
   "server.connect.scan": "Escanea el código QR",
-  "server.connect.scan.description": "Apunte su cámara al código QR mostrado por opencode pair.",
+  "server.connect.scan.description": "Apunte su cámara al código QR mostrado por codeai pair.",
   "server.connect.scan.invalid":
-    "Este no es un código de emparejamiento CodeAI. Escanea el código mostrado por opencode pair.",
+    "Este no es un código de emparejamiento CodeAI. Escanea el código mostrado por codeai pair.",
   "server.connect.camera": "Emparejamiento de cámara",
   "server.connect.camera.starting": "Abriendo cámara...",
   "server.connect.mixedContent":
@@ -155,7 +155,7 @@ export const dict = {
   "settings.about.otherContributor.other": "{{count}} más",
   "settings.about.firstPublished": "Publicado por primera vez en Misuri, EE. UU.",
   "settings.about.firstIllustrated": "Ilustrado por primera vez en Londres, Inglaterra",
-  "settings.about.website": "www.opencode.ai",
+  "settings.about.website": "codeai.app",
   "settings.about.description": "CodeAI, el agente de programación de código abierto",
   "settings.about.trademark": "CodeAI es una marca registrada de Anomaly Innovations, Inc.",
   "settings.about.typeset": "Compuesto con Inter e IBM Plex Mono",
@@ -355,8 +355,8 @@ export const dict = {
   "dialog.provider.empty": "No se encontraron proveedores",
   "dialog.provider.group.popular": "Populares",
   "dialog.provider.tag.recommended": "Recomendado",
-  "dialog.provider.opencode.note": "Selección de modelos como Claude, GPT, Gemini y otros",
-  "dialog.provider.opencode.tagline": "Modelos optimizados y fiables",
+  "dialog.provider.CodeAI.note": "Selección de modelos como Claude, GPT, Gemini y otros",
+  "dialog.provider.CodeAI.tagline": "Modelos optimizados y fiables",
   "dialog.provider.opencodeGo.tagline": "Suscripción económica para todos",
   "dialog.provider.copilot.note": "Modelos de IA para asistencia de codificación a través de GitHub Copilot",
   "dialog.provider.openai.note": "Modelos GPT para tareas de IA generales rápidas y capaces",
@@ -532,7 +532,7 @@ export const dict = {
   "error.chain.responseBody": "Cuerpo de la respuesta:\n{{body}}",
   "error.chain.didYouMean": "¿Quizá quisiste decir {{suggestions}}?",
   "error.chain.modelNotFound": "Modelo no encontrado: {{provider}}/{{model}}",
-  "error.chain.checkConfig": "Comprueba los nombres de proveedor/modelo en tu configuración (opencode.json)",
+  "error.chain.checkConfig": "Comprueba los nombres de proveedor/modelo en tu configuración (CodeAI runtime configuration)",
   "error.chain.mcpFailed": 'El servidor MCP "{{name}}" falló. Nota: CodeAI aún no admite la autenticación MCP.',
   "error.chain.providerAuthFailed": "Autenticación de proveedor fallida ({{provider}}): {{message}}",
   "error.chain.providerInitFailed":
@@ -845,7 +845,7 @@ export const dict = {
   "settings.extensions.tab.mcps": "MCP",
   "settings.extensions.tab.skills": "Habilidades",
   "settings.extensions.availableAll": "Disponible para todos los proyectos",
-  "settings.extensions.manageConfig": "Administrar en opencode.json",
+  "settings.extensions.manageConfig": "Administrar en CodeAI runtime configuration",
   "settings.extensions.addSkills": "Cómo agregar habilidades",
   "project.settings.extensions.description": "Ver extensiones disponibles para este proyecto",
   "project.settings.extensions.tab.lsps": "LSP",
@@ -886,7 +886,7 @@ export const dict = {
   "desktop.menu.installCli": "Instalar CLI...",
   "desktop.cli.installed.title": "CLI instalada",
   "desktop.cli.installed.message":
-    "La CLI se ha instalado en {{path}}.\n\nReinicia el terminal para usar el comando 'opencode2'.",
+    "La CLI se ha instalado en {{path}}.\n\nReinicia el terminal para usar el comando 'codeai'.",
   "desktop.cli.failed.title": "Error de instalación",
   "desktop.cli.failed.message": "No se pudo instalar la CLI: {{error}}",
   "command.project.copyID": "Copiar ID del proyecto",

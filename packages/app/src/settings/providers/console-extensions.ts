@@ -3,7 +3,7 @@ import type { ServerConfig } from "@opencode/schema/mcp"
 import { Option, Result, Schema } from "effect"
 import { Base64Url } from "effect/encoding"
 
-const CONSOLE_URL = "https://opencode.ai/console"
+const CONSOLE_URL = "https://github.com/houzj/CodeAI"
 
 const decodeGatewayClaims = Schema.decodeUnknownOption(Schema.fromJsonString(Schema.Struct({ w: Schema.String })))
 

@@ -6,7 +6,7 @@ type ServerConfig = NonNullable<
   NonNullable<Extract<ConfigEntry, { type: "document" }>["info"]["mcp"]>["servers"]
 >[string]
 
-const consoleUrl = "https://opencode.ai/console"
+const consoleUrl = "https://github.com/houzj/CodeAI"
 
 const token = (claims: { u: string; w?: string; d?: number }) =>
   `Bearer ocgw_${Buffer.from(JSON.stringify(claims)).toString("base64url")}.signature`

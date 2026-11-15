@@ -24,9 +24,9 @@ export const dict = {
   "server.connect.failed":
     "Impossible de se connecter. Vérifiez l'adresse et le mot de passe du serveur, puis réessayez.",
   "server.connect.scan": "Scanner le code QR",
-  "server.connect.scan.description": "Pointez votre appareil photo vers le code QR affiché par opencode pair.",
+  "server.connect.scan.description": "Pointez votre appareil photo vers le code QR affiché par codeai pair.",
   "server.connect.scan.invalid":
-    "Il ne s'agit pas d'un code d'appairage CodeAI. Scannez le code affiché par opencode pair.",
+    "Il ne s'agit pas d'un code d'appairage CodeAI. Scannez le code affiché par codeai pair.",
   "server.connect.camera": "Caméra de couplage",
   "server.connect.camera.starting": "Ouverture de la caméra…",
   "server.connect.mixedContent":
@@ -156,7 +156,7 @@ export const dict = {
   "settings.about.otherContributor.other": "{{count}} autres",
   "settings.about.firstPublished": "Publié pour la première fois dans le Missouri, aux États-Unis",
   "settings.about.firstIllustrated": "Illustré pour la première fois à Londres, en Angleterre",
-  "settings.about.website": "www.opencode.ai",
+  "settings.about.website": "codeai.app",
   "settings.about.description": "CodeAI, l’agent de programmation open source",
   "settings.about.trademark": "CodeAI est une marque déposée d’Anomaly Innovations, Inc.",
   "settings.about.typeset": "Composé en Inter et IBM Plex Mono",
@@ -351,8 +351,8 @@ export const dict = {
   "dialog.provider.empty": "Aucun fournisseur trouvé",
   "dialog.provider.group.popular": "Populaires",
   "dialog.provider.tag.recommended": "Recommandé",
-  "dialog.provider.opencode.note": "Modèles sélectionnés incluant Claude, GPT, Gemini et plus",
-  "dialog.provider.opencode.tagline": "Modèles optimisés et fiables",
+  "dialog.provider.CodeAI.note": "Modèles sélectionnés incluant Claude, GPT, Gemini et plus",
+  "dialog.provider.CodeAI.tagline": "Modèles optimisés et fiables",
   "dialog.provider.opencodeGo.tagline": "Abonnement abordable pour tous",
   "dialog.provider.copilot.note": "Connectez-vous avec Copilot ou une clé API",
   "dialog.provider.openai.note": "Connectez-vous avec ChatGPT Pro/Plus ou une clé API",
@@ -504,7 +504,7 @@ export const dict = {
   "error.chain.responseBody": "Corps de la réponse :\n{{body}}",
   "error.chain.didYouMean": "Vouliez-vous dire : {{suggestions}}",
   "error.chain.modelNotFound": "Modèle introuvable : {{provider}}/{{model}}",
-  "error.chain.checkConfig": "Vérifiez les noms de fournisseur et de modèle dans votre configuration (opencode.json)",
+  "error.chain.checkConfig": "Vérifiez les noms de fournisseur et de modèle dans votre configuration (CodeAI runtime configuration)",
   "error.chain.mcpFailed":
     "Le serveur MCP \"{{name}}\" a échoué. Notez qu'CodeAI ne prend pas encore en charge l'authentification MCP.",
   "error.chain.providerAuthFailed": "Échec de l'authentification du fournisseur ({{provider}}) : {{message}}",
@@ -797,7 +797,7 @@ export const dict = {
   "settings.extensions.tab.mcps": "MCP",
   "settings.extensions.tab.skills": "Compétences",
   "settings.extensions.availableAll": "Disponible pour tous les projets",
-  "settings.extensions.manageConfig": "Gérer dans opencode.json",
+  "settings.extensions.manageConfig": "Gérer dans CodeAI runtime configuration",
   "settings.extensions.addSkills": "Comment ajouter des compétences",
   "project.settings.extensions.description": "Afficher les extensions disponibles pour ce projet",
   "project.settings.extensions.tab.lsps": "LSP",
@@ -838,7 +838,7 @@ export const dict = {
   "desktop.menu.installCli": "Installer la CLI...",
   "desktop.cli.installed.title": "CLI installée",
   "desktop.cli.installed.message":
-    "La CLI a été installée dans {{path}}.\n\nRedémarrez votre terminal pour utiliser la commande 'opencode2'.",
+    "La CLI a été installée dans {{path}}.\n\nRedémarrez votre terminal pour utiliser la commande 'codeai'.",
   "desktop.cli.failed.title": "Échec de l'installation",
   "desktop.cli.failed.message": "Échec de l'installation de la CLI : {{error}}",
   "command.project.copyID": "Copier l'ID du projet",

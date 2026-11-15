@@ -13,13 +13,18 @@ $files = @($Path | ForEach-Object {
 })
 
 $matches = @($files | Select-String -Pattern $Pattern -AllMatches | Where-Object {
+    $line = $_.Line
+    $value = $line -replace '^\s*["''][^"'']+["'']\s*:\s*', ''
     $_.Path -notmatch '\\(node_modules|dist|\.cache|components-lab|stories|tests?)\\' -and
     $_.Path -notmatch '\.(test|stories)\.(ts|tsx|js|jsx)$' -and
-    $_.Line -notmatch '^\s*import\s' -and
-    $_.Line -notmatch '^\s*//|^\s*\*' -and
-    $_.Line -notmatch 'OPENCODE_(CHANNEL|VERSION|TARGET|DESKTOP|INSTALLER|SERVER|MOUNTED)' -and
-    $_.Line -notmatch 'package(?:\.json)?|@opencode/|opencode-(?:theme|window|color|desktop)' -and
-    $_.Line -notmatch 'providerID|integrationID|worktree|directory|test|fixture|storybook|example'
+    $line -notmatch '^\s*import\s' -and
+    $line -notmatch '^\s*//|^\s*/\*|^\s*\*' -and
+    $line -notmatch 'OPENCODE_(CHANNEL|VERSION|TARGET|DESKTOP|INSTALLER|SERVER|MOUNTED)' -and
+    $line -notmatch 'package(?:\.json)?|@opencode/|opencode-(?:theme|window|color|desktop)' -and
+    $_.Path -notmatch 'resources[\\/]linux[\\/]opencode-desktop\.desktop$' -and
+    $line -notmatch 'providerID|integrationID|worktree|directory|test|fixture|storybook|example|provider\.id|provider\.integration|model\.provider|group\.category|featuredProviders|POPULAR|CONSOLE_(INTEGRATION|GROUP_KEY)|OpenCodeLogo|OpenCode[A-Za-z]+|OpenCode\.make|module\.OpenCode|sidecar\.module|opencode-go|opencodeMounted|VITE_OPENCODE|OPENCODE_TEST|OPENCODE_|localStorage|indexedDB|GLOBAL_STORAGE|WINDOW_STORAGE|LOCAL_PREFIX|BroadcastChannel|opencode\.(workspace|draft|persist|pwa|onboarding|debug|pierre|desktop|global|window)|opencode-(onboarding|debug|pierre)|opencode/desktop|opencode-cli|opencode\.settings|Context\.Service|["'']opencode["'']|opencode:' -and
+    $line -notmatch 'language\.t\([^)]*opencode|provider\.connect\.opencode|dialog\.provider\.opencode' -and
+    $value -match $Pattern
 })
 
 $matches | Select-Object -First 40 | ForEach-Object {
