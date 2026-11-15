@@ -1,4 +1,5 @@
 import { Schema } from "effect"
+import { HoverCard } from "@kobalte/core/hover-card"
 import { createEffect, createMemo, For, Show, onCleanup, untrack, type JSX } from "solid-js"
 import { Key } from "@solid-primitives/keyed"
 import { createStore } from "solid-js/store"
@@ -431,8 +432,10 @@ function ProjectRow(props: {
       class="relative shrink-0"
       classList={{ "bg-v2-background-base-hover": droppable.isDropTarget() }}
     >
-      <div
-        class="group/project relative flex h-7 min-w-0 shrink-0 items-center rounded-[6px] pe-1 hover:bg-v2-overlay-simple-overlay-hover has-[:focus-visible]:bg-v2-overlay-simple-overlay-hover"
+      <HoverCard openDelay={350} placement="right-start" gutter={6}>
+        <HoverCard.Trigger as="div">
+          <div
+            class="group/project relative flex h-7 min-w-0 shrink-0 items-center rounded-[6px] pe-1 hover:bg-v2-overlay-simple-overlay-hover has-[:focus-visible]:bg-v2-overlay-simple-overlay-hover"
         onContextMenu={(event) => {
           event.preventDefault()
           setMenu("open", true)
@@ -502,7 +505,17 @@ function ProjectRow(props: {
             onClick={() => props.actions.openNewSession(props.server, props.project.worktree)}
           />
         </span>
-      </div>
+          </div>
+        </HoverCard.Trigger>
+        <HoverCard.Portal>
+          <HoverCard.Content class="z-50 w-56 rounded-xl border border-v2-border-border-muted bg-v2-background-bg-base p-3 shadow-[var(--v2-elevation-floating)]">
+            <div class="text-[13px] font-medium text-v2-text-text-base">{displayName(props.project)}</div>
+            <div class="mt-1 text-[12px] text-v2-text-text-muted">{props.project.worktrees.length} 个工作树</div>
+            <div class="mt-1 truncate text-[12px] text-v2-text-text-faint" title={props.project.worktree}>{props.project.worktree}</div>
+            <div class="mt-2 border-t border-v2-border-border-muted pt-2 text-[12px] text-v2-text-text-muted">编辑项目</div>
+          </HoverCard.Content>
+        </HoverCard.Portal>
+      </HoverCard>
       <Show when={props.expanded}>
         <div data-project-action class="flex flex-col gap-[3px] pb-1">
           {props.children}

@@ -1,4 +1,5 @@
 import { createMemo, createSignal, onCleanup, Show, untrack } from "solid-js"
+import { HoverCard } from "@kobalte/core/hover-card"
 import { useQueryClient } from "@tanstack/solid-query"
 import type { SessionInfo } from "@opencode/client/promise"
 import { ActivityRing } from "@opencode/ui/activity-ring"
@@ -147,20 +148,22 @@ export function ProjectSessionRow(props: {
 
   return (
     <Menu.Context modal={false}>
-      <div ref={draggable.ref} classList={{ "opacity-50": draggable.isDragging() }}>
-        <Menu.Context.Trigger
-          as="button"
-          type="button"
-          data-titlebar-tab-action
-          data-state={props.active ? "pressed" : undefined}
-          class="relative flex h-7 w-full shrink-0 items-center gap-2 rounded-[6px] ps-8 pe-2 text-start text-[13px] leading-[var(--line-height-compact)] font-medium focus-visible:outline-none"
-          classList={{ "text-v2-text-text-base": props.active, "text-v2-text-text-faint": !props.active }}
-          aria-current={props.active ? "page" : undefined}
-          aria-grabbed={draggable.isDragging()}
-          title={sessionLabel(props.session)}
-          style={props.depth ? { "padding-inline-start": `calc(2rem + ${props.depth * 14}px)` } : undefined}
-          onClick={props.onOpen}
-        >
+      <div ref={draggable.ref} class="group/session relative" classList={{ "opacity-50": draggable.isDragging() }}>
+        <HoverCard openDelay={350} placement="right-start" gutter={6}>
+          <HoverCard.Trigger as="div">
+            <Menu.Context.Trigger
+              as="button"
+              type="button"
+              data-titlebar-tab-action
+              data-state={props.active ? "pressed" : undefined}
+              class="relative flex h-7 w-full shrink-0 items-center gap-2 rounded-[6px] ps-8 pe-2 text-start text-[13px] leading-[var(--line-height-compact)] font-medium focus-visible:outline-none"
+              classList={{ "text-v2-text-text-base": props.active, "text-v2-text-text-faint": !props.active }}
+              aria-current={props.active ? "page" : undefined}
+              aria-grabbed={draggable.isDragging()}
+              title={sessionLabel(props.session)}
+              style={props.depth ? { "padding-inline-start": `calc(2rem + ${props.depth * 14}px)` } : undefined}
+              onClick={props.onOpen}
+            >
         <Show when={props.project && !props.openTab ? props.project : undefined}>
           {(project) => (
             <span class="absolute start-2 top-1/2 flex size-4 -translate-y-1/2 items-center justify-center">
@@ -200,7 +203,16 @@ export function ProjectSessionRow(props: {
             <ActivityRing width={14} height={14} />
           </Show>
         </span>
-        </Menu.Context.Trigger>
+            </Menu.Context.Trigger>
+          </HoverCard.Trigger>
+          <HoverCard.Portal>
+            <HoverCard.Content class="z-50 w-56 rounded-xl border border-v2-border-border-muted bg-v2-background-bg-base p-3 shadow-[var(--v2-elevation-floating)]">
+              <div class="text-[13px] font-medium text-v2-text-text-base">{sessionLabel(props.session)}</div>
+              <div class="mt-1 text-[12px] text-v2-text-text-muted">刚刚更新</div>
+              <div class="mt-1 truncate text-[12px] text-v2-text-text-faint" title={props.session.location.directory}>{displayName(props.project ?? { worktree: props.session.location.directory })}</div>
+            </HoverCard.Content>
+          </HoverCard.Portal>
+        </HoverCard>
       </div>
       <Menu.Context.Portal>
         <Menu.Context.Content
