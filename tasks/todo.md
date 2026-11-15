@@ -2,6 +2,21 @@
 
 > 当前落地总计划见 [docs/codeai-agent-desktop-rea-rollout.md](../docs/codeai-agent-desktop-rea-rollout.md)。所有 UI 验收以 REA 结构证据、agent-desktop 行为截图和源码实现三者闭环为准，并包含品牌泄露扫描。
 
+## 当前目标驱动检查点
+
+**目标 G0/G1：** 完成品牌门禁，并让 Project → Worktree → Session 成为唯一工作区导航。
+
+**完成定义：** agent-desktop 从干净启动读取到项目导航，顶部没有旧会话 Tab，临时项目和会话可以建立，项目/会话悬停卡片能显示真实 Runtime 信息；REA 或发布包扫描没有用户可见的旧品牌泄露。
+
+**当前证据：** 已确认当前安装包项目导航存在，但仍有 3 个旧会话 Tab。该结果已由 `Invoke-CodeAIAgentDesktop.ps1 -Action Smoke` 实际读取窗口树得到。
+
+**下一步顺序：**
+
+1. 用最新源码构建桌面产物，禁止继续用旧安装目录做 UI 判断。
+2. 运行 agent-desktop 探针创建临时项目和两个会话，验证层级、切换和悬停卡片。
+3. 运行品牌扫描，修复用户可见的旧品牌命中并重新构建。
+4. 通过后再进入 G2 连续输入和 G3 权限/Git 闭环。
+
 > 产品级系统总设计见 [docs/product-architecture.md](../docs/product-architecture.md)。以下清单先完成基础模块和接口，再进入 UI。
 
 ## 当前目标

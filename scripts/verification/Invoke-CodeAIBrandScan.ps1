@@ -1,0 +1,37 @@
+[CmdletBinding()]
+param(
+    [string[]]$Path = @('packages/app/src','packages/desktop/src','packages/desktop/resources'),
+    [string]$Pattern = '(?i)(OpenCode|open code|opencode\.ai|opencode://|OpenCodeLogo|opencode-logo)'
+)
+
+$ErrorActionPreference = 'Stop'
+$files = @($Path | ForEach-Object {
+    if (Test-Path $_) {
+        Get-ChildItem -LiteralPath $_ -Recurse -File -ErrorAction SilentlyContinue |
+            Where-Object { $_.Extension -in @('.ts','.tsx','.js','.jsx','.json','.html','.css','.xml','.desktop','.yml','.yaml','.md') }
+    }
+})
+
+$matches = @($files | Select-String -Pattern $Pattern -AllMatches | Where-Object {
+    $_.Path -notmatch '\\(node_modules|dist|\.cache|components-lab|stories|tests?)\\' -and
+    $_.Path -notmatch '\.(test|stories)\.(ts|tsx|js|jsx)$' -and
+    $_.Line -notmatch '^\s*import\s' -and
+    $_.Line -notmatch '^\s*//|^\s*\*' -and
+    $_.Line -notmatch 'OPENCODE_(CHANNEL|VERSION|TARGET|DESKTOP|INSTALLER|SERVER|MOUNTED)' -and
+    $_.Line -notmatch 'package(?:\.json)?|@opencode/|opencode-(?:theme|window|color|desktop)' -and
+    $_.Line -notmatch 'providerID|integrationID|worktree|directory|test|fixture|storybook|example'
+})
+
+$matches | Select-Object -First 40 | ForEach-Object {
+    [pscustomobject]@{
+        path = $_.Path
+        line = $_.LineNumber
+        text = $_.Line.Trim()
+    }
+} | ConvertTo-Json -Depth 4
+
+if ($matches.Count -gt 0) {
+    throw "User-visible brand candidates found: $($matches.Count)"
+}
+
+Write-Output 'Brand scan passed.'
