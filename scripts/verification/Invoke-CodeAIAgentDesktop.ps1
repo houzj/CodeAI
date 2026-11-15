@@ -33,7 +33,7 @@ function Get-CodeAIWindow {
 function Start-CodeAI {
     if (-not (Test-Path $CodeAIExe)) { throw "CodeAI executable not found: $CodeAIExe" }
     Invoke-AgentDesktop @('launch',$CodeAIExe,'--activate') | Out-Null
-    Start-Sleep -Milliseconds 800
+    Invoke-AgentDesktop @('wait','--window','CodeAI','--timeout','30000') | Out-Null
     Get-CodeAIWindow
 }
 
