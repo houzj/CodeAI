@@ -10,3 +10,11 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verification/Invoke-
 ```
 
 `Smoke` is the regression gate for the Codex-style shell. It checks that project/session navigation is present and fails while legacy top-level session tabs are still exposed. Add future hover and project/session assertions to the same script so the test flow stays reproducible.
+
+The original Codex is deliberately isolated in `Invoke-CodexReferenceAgentDesktop.ps1`. Use it only when a UI semantic gap needs fresh reference evidence.
+
+```powershell
+powershell -File scripts/verification/Invoke-CodexReferenceAgentDesktop.ps1 -Action Start
+powershell -File scripts/verification/Invoke-CodexReferenceAgentDesktop.ps1 -Action Screenshot
+powershell -File scripts/verification/Invoke-CodexReferenceAgentDesktop.ps1 -Action Close
+```
