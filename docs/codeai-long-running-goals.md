@@ -46,3 +46,7 @@ Codex Cloud 的环境运行在 OpenAI 管理的计算机上，每个任务拥有
 - 中间时间线显示当前 Run 的连续事件，目标状态固定在顶部但不遮挡正文。
 - 右侧 Artifact/Changes 区独立显示文件和预览，最后一个 Tab 关闭后自动隐藏。
 - 任何阻塞（审批、权限、网络、失败、等待定时）都必须能从时间线跳到处理入口。
+
+## 当前 Runtime 证据
+
+OpenCode 的实验性 Schedule 契约已经接入 CodeAI Runtime。浏览器优先验证创建了一次性 `1 second` Schedule，服务返回 `active` 和 `nextDueAt`，到期后目标 Session 收到 `SCHEDULE_READY` 消息。验证完成后 Schedule 和临时 Session 均已删除。Goal、Plan、Checkpoint 和跨 Session 协作仍需要独立契约与 UI 投影。
