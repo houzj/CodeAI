@@ -8,14 +8,13 @@
 
 **完成定义：** agent-desktop 从干净启动读取到项目导航，顶部没有旧会话 Tab，临时项目和会话可以建立，项目/会话悬停卡片能显示真实 Runtime 信息；REA 或发布包扫描没有用户可见的旧品牌泄露。
 
-**当前证据：** 已确认当前安装包项目导航存在，但仍有 3 个旧会话 Tab。该结果已由 `Invoke-CodeAIAgentDesktop.ps1 -Action Smoke` 实际读取窗口树得到。
+**当前证据：** 网页端已由 agent-desktop 读取到 `Projects and sessions`、真实 CodeAI Project、Worktree 和 Session 层级，顶部 CodeAI 会话 Tab 已从源码布局中移除。项目悬停卡片已实际渲染，包含项目名、工作树数量、目录和编辑入口。Windows 安装包仍由用户手动验收。
 
 **下一步顺序：**
 
-1. 用最新源码构建桌面产物，禁止继续用旧安装目录做 UI 判断。
-2. 运行 agent-desktop 探针创建临时项目和两个会话，验证层级、切换和悬停卡片。
-3. 运行品牌扫描，修复用户可见的旧品牌命中并重新构建。
-4. 通过后再进入 G2 连续输入和 G3 权限/Git 闭环。
+1. 继续用网页端探针验证两个 Session 的切换、运行状态和 Artifact 生命周期。
+2. 运行品牌扫描并保持用户可见文本无旧品牌命中。
+3. 进入 G3 权限、沙盒边界和 Git Worker 闭环。
 
 > 产品级系统总设计见 [docs/product-architecture.md](../docs/product-architecture.md)。以下清单先完成基础模块和接口，再进入 UI。
 

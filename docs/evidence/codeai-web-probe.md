@@ -51,7 +51,7 @@ The browser-first verification was rerun against Vite `http://127.0.0.1:3001/` a
 - [Project hover card render](../../.cache/codeai-web-project-hover-final.png)
 - [Session hover render](../../.cache/codeai-web-session-hover.png)
 
-Agent Desktop evidence observed `Projects and sessions`, the `CodeAI` project row, nested worktree/session rows, and the portalled project hover card containing `CodeAI`, `1个工作树`, `E:\CodeAI`, and `编辑项目`. The session row is also rendered through the portalled hover-card implementation in `packages/app/src/shell/titlebar/project-session-row.tsx`.
+Agent Desktop evidence observed `Projects and sessions`, the `CodeAI` project row, nested worktree/session rows, and the portalled project hover card containing `CodeAI`, `1个工作树`, `E:\CodeAI`, and `编辑项目`. The session row is also rendered through the portalled hover-card implementation in `packages/app/src/shell/titlebar/project-session-row.tsx`; its status line now derives from `SessionInfo.time.busy/idle` and `time.updated`, and its directory comes from `SessionInfo.location.directory`.
 
 The desktop package was rebuilt with Electron fuses configured in source, but the packaged executable remains a manual release gate per the current workflow. REA fuse evidence `ev_5f503ee8bb28c075587f81b761e3bcd4d150b75766ca1426596b34eb4749ceec` reported RunAsNode, NodeOptions and NodeCliInspectArguments disabled, cookie encryption enabled, embedded ASAR integrity enabled, and app-ASAR-only loading enabled.
 

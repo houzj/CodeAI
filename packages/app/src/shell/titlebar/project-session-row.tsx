@@ -32,6 +32,7 @@ import type { Project } from "@/runtime/server/types"
 import { ProjectIcon } from "@/shell/layout/project-icon"
 import { displayName } from "@opencode/ui/project-avatar"
 import { useDraggable } from "@dnd-kit/solid"
+import { getRelativeTime } from "@/shell/time"
 import "./tab-nav.css"
 
 export function ProjectSessionRow(props: {
@@ -92,6 +93,12 @@ export function ProjectSessionRow(props: {
     () => true,
     () => props.session,
   )
+
+  const updatedTime = () => props.session.time.updated ?? props.session.time.created
+
+  const isRunning = () =>
+    props.session.time.busy !== undefined &&
+    (props.session.time.idle === undefined || props.session.time.busy > props.session.time.idle)
 
   function DeleteDialog() {
     const confirm = () => {
@@ -208,8 +215,11 @@ export function ProjectSessionRow(props: {
           <HoverCard.Portal>
             <HoverCard.Content class="z-50 w-56 rounded-xl border border-v2-border-border-muted bg-v2-background-bg-base p-3 shadow-[var(--v2-elevation-floating)]">
               <div class="text-[13px] font-medium text-v2-text-text-base">{sessionLabel(props.session)}</div>
-              <div class="mt-1 text-[12px] text-v2-text-text-muted">刚刚更新</div>
+              <div class="mt-1 text-[12px] text-v2-text-text-muted">
+                {isRunning() ? language.t("session.timeline.working") : getRelativeTime(new Date(updatedTime()).toISOString(), language.t, language.intl())}
+              </div>
               <div class="mt-1 truncate text-[12px] text-v2-text-text-faint" title={props.session.location.directory}>{displayName(props.project ?? { worktree: props.session.location.directory })}</div>
+              <div class="mt-1 truncate text-[12px] text-v2-text-text-faint" title={props.session.location.directory}>{props.session.location.directory}</div>
             </HoverCard.Content>
           </HoverCard.Portal>
         </HoverCard>
