@@ -86,3 +86,5 @@ The review toggle was then exercised through its production `aria-controls="revi
 A short real Run was also admitted through the Runtime with `Reply with READY only.`. The API returned an assistant `READY` message followed by an `idle/succeeded` terminal event, and the isolated page rendered the user prompt, assistant result and final Idle state without old-brand text. The capture is [here](../../.cache/codeai-web-run-validation.png). The temporary Run session was deleted after capture.
 
 The isolated UI also rendered a paused Goal in the Composer lane after a real Goal and Schedule lifecycle probe. The page showed the `Goal paused` pill, the objective's `READY` result, and the scheduled `OBJECTIVE_SCHEDULE_READY` wake message. The capture is [here](../../.cache/codeai-web-goal-pill.png). The validation Session was deleted after capture.
+
+Clicking the paused Goal pill opened the production popover with the objective, `Resume`, and `Clear` actions. The interaction capture is [here](../../.cache/codeai-web-goal-menu.png). The validation Session was deleted after capture.
