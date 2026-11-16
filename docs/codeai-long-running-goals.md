@@ -50,3 +50,5 @@ Codex Cloud 的环境运行在 OpenAI 管理的计算机上，每个任务拥有
 ## 当前 Runtime 证据
 
 OpenCode 的实验性 Schedule 契约已经接入 CodeAI Runtime。浏览器优先验证创建了一次性 `1 second` Schedule，服务返回 `active` 和 `nextDueAt`，到期后目标 Session 收到 `SCHEDULE_READY` 消息。验证完成后 Schedule 和临时 Session 均已删除。Goal、Plan、Checkpoint 和跨 Session 协作仍需要独立契约与 UI 投影。
+
+Goal 插件也已通过真实 Runtime RPC 验证。测试 Session 执行 `goal` 命令后，`opencode.goal/get` 返回 `active`、目标文本和 `rounds: 0`；随后执行 `goal pause`，状态变为 `paused`，原因是 `Paused by the user`。验证完成后测试 Session 已删除。Plan、Checkpoint 和跨 Session 协作仍是后续契约工作。
