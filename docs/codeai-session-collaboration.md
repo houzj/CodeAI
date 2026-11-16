@@ -49,3 +49,5 @@ OpenCode 已有 Session、`parentID`、事件流和执行协调器可以作为�
 ## 当前 Runtime 证据
 
 真实 Runtime 验证创建了 Coordinator Session 和带 `parentID` 的 Worker Session。子会话返回正确的父 ID，`session.list?parentID` 能列出 Worker，`experimental/job?sessionID=...&descendants=true` 能查询父树下的后台 Job。验证完成后删除 Coordinator，子会话随父树清理。持久化控制消息、跨 Worker Artifact/Change 引用和任务租约仍需后续契约。
+
+Session Inbox 也已完成最小消息验证。向测试 Session 写入 `task.assigned` synthetic 消息，metadata 包含 `goalID`、来源/目标 Session、`causationID` 和 payload，使用 `delivery: queue`、`resume: false` 后，Inbox 返回同一 metadata 和 delivery，且没有启动模型执行。测试 Session 已删除。
