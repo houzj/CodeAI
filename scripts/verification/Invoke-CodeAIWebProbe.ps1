@@ -53,15 +53,15 @@ $client.DefaultRequestHeaders.Authorization = [System.Net.Http.Headers.Authentic
     [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("opencode:$Password"))
 )
 $promptPath = "/api/session/$($session.id)/prompt"
-$promptTasks = @($PromptA, $PromptB) | ForEach-Object {
+$responses = @($PromptA, $PromptB) | ForEach-Object {
     $content = [System.Net.Http.StringContent]::new(
         (@{ text = $_; metadata = @{}; delivery = 'steer' } | ConvertTo-Json -Depth 8 -Compress),
         [Text.Encoding]::UTF8,
         'application/json'
     )
-    $client.PostAsync("$RuntimeUrl$promptPath", $content)
+    # Admission is sequential so the probe verifies durable ordering without waiting for model execution.
+    $client.PostAsync("$RuntimeUrl$promptPath", $content).GetAwaiter().GetResult()
 }
-$responses = [Threading.Tasks.Task]::WhenAll($promptTasks).GetAwaiter().GetResult()
 $admitted = @($responses | ForEach-Object {
         [ordered]@{
             status = [int]$_.StatusCode
