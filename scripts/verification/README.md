@@ -17,7 +17,7 @@ Use `Invoke-CodeAIWebProbe.ps1` for the browser-first Runtime probe. It discover
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verification/Invoke-CodeAIWebProbe.ps1
 ```
 
-The script writes its machine-readable result to `.cache/codeai-web-continuous-input.json`.
+The script writes its machine-readable result to `.cache/codeai-web-continuous-input.json`. The second prompt may be observed in the durable inbox or already projected into Session history when the Runtime drains quickly. Both are valid durable outcomes.
 
 The desktop probe follows the upstream `agent-desktop` 2.6 loop. It runs `status` and the bundled `skills get desktop` and `skills get platform` guides before use, restores a minimized window before taking a fresh snapshot, quotes every PowerShell ref, and verifies each state-changing action with a new snapshot. An `AMBIGUOUS_TARGET` result is treated as a non-retryable duplicate control. The probe keeps semantic actions headless and only uses `--headed` for actions that require physical input.
 

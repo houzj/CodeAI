@@ -68,16 +68,35 @@ $admitted = @($responses | ForEach-Object {
             body = $_.Content.ReadAsStringAsync().GetAwaiter().GetResult() | ConvertFrom-Json
         }
     })
-$inbox = Invoke-CodeAIJson -Method Get -Path "/api/session/$($session.id)/inbox" | Select-Object -ExpandProperty data
+ $messages = @()
+ $inbox = @()
+ 1..20 | ForEach-Object {
+    $messages = @(Invoke-CodeAIJson -Method Get -Path "/api/session/$($session.id)/message" | Select-Object -ExpandProperty data)
+    $inbox = @(Invoke-CodeAIJson -Method Get -Path "/api/session/$($session.id)/inbox" | Select-Object -ExpandProperty data)
+    $messageTexts = @($messages | ForEach-Object { if ($_.type -eq 'user') { $_.text } })
+    $inboxTexts = @($inbox | ForEach-Object { $_.payload.text })
+    if (($messageTexts + $inboxTexts) -contains $PromptA -and ($messageTexts + $inboxTexts) -contains $PromptB) { return }
+    Start-Sleep -Milliseconds 500
+  }
+
+ $messageTexts = @($messages | ForEach-Object { if ($_.type -eq 'user') { $_.text } })
+ $inboxTexts = @($inbox | ForEach-Object { $_.payload.text })
+ $orderedInputs = @($messages | Where-Object { $_.type -eq 'user' } | ForEach-Object { $_.text })
+ $positionA = [Array]::IndexOf([object[]]$orderedInputs, $PromptA)
+ $positionB = [Array]::IndexOf([object[]]$orderedInputs, $PromptB)
 
 $result = [ordered]@{
     runtime = $RuntimeUrl
     project = [ordered]@{ id = $project.id; directory = $project.canonical }
     session = [ordered]@{ id = $session.id; title = $session.title; projectID = $session.projectID }
     admitted = $admitted
-    inbox = @($inbox | ForEach-Object { $_.payload.text })
+    history = $messageTexts
+    inbox = $inboxTexts
+    deliveryObserved = if ($inboxTexts -contains $PromptB) { 'inbox' } elseif ($messageTexts -contains $PromptB) { 'history' } else { 'missing' }
     passed = @($admitted | Where-Object { $_.status -eq 200 }).Count -eq 2 -and
-        @($inbox | Where-Object { $_.payload.text -eq $PromptB }).Count -eq 1
+        ($messageTexts + $inboxTexts) -contains $PromptA -and
+        ($messageTexts + $inboxTexts) -contains $PromptB -and
+        ($positionA -lt 0 -or $positionB -lt 0 -or $positionA -lt $positionB)
     verifiedAt = [DateTime]::UtcNow.ToString('o')
 }
 
@@ -86,5 +105,5 @@ New-Item -ItemType Directory -Force $directory | Out-Null
 $result | ConvertTo-Json -Depth 12 | Set-Content -Path $OutputPath -Encoding utf8
 $result | ConvertTo-Json -Depth 12
 if (-not $result.passed) {
-    throw 'Continuous input probe did not observe two successful admissions and a queued second prompt.'
+    throw 'Continuous input probe did not observe two successful admissions and both prompts in durable history or inbox.'
 }

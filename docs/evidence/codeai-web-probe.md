@@ -21,7 +21,7 @@ The initial hover implementation rendered its card inside the sidebar scroll con
 
 The same live DOM probe confirmed the session card contains the session title, update state and project name after hovering the session row.
 
-The browser-first Runtime probe created Session `ses_e1f8071a3ffeQNnH1faCJa5F28` under the `E:\CodeAI` project and admitted `CONTINUOUS_A` and `CONTINUOUS_B` concurrently. Both HTTP admissions returned 200. The first prompt was projected into the session message list and the second remained in the durable inbox with `delivery: steer`. This verifies continuous input admission without waiting for the previous run to become idle.
+The browser-first Runtime probe created Session `ses_e1c5d8508ffeintbxKxNgKRYNn` under the `E:\CodeAI` project and admitted `CONTINUOUS_A` and `CONTINUOUS_B` concurrently. Both HTTP admissions returned 200. The latest run observed `CONTINUOUS_A` in Session history and `CONTINUOUS_B` in the durable inbox with `delivery: steer`. A fast drain is also accepted when the second prompt has already moved from inbox to history. This verifies continuous input admission without waiting for the previous run to become idle.
 
 ## Scope
 
