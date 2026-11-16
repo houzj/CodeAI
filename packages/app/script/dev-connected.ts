@@ -1,9 +1,18 @@
+import { existsSync } from "node:fs"
 import { join } from "node:path"
 
 const port = process.env.VITE_OPENCODE_SERVER_PORT ?? "4097"
-const cli = process.env.CODEAI_CLI ?? join(import.meta.dir, "../../desktop/dist/win-unpacked/resources/opencode-cli.exe")
+
+const unpackedCli = join(import.meta.dir, "../../desktop/dist/win-unpacked/resources/opencode-cli.exe")
+
+const packagedCli = join(import.meta.dir, "../../../dist/desktop/app/resources/opencode-cli.exe")
+
+const cli = process.env.CODEAI_CLI ?? (existsSync(unpackedCli) ? unpackedCli : packagedCli)
+
 const password = process.env.CODEAI_DEV_PASSWORD ?? "codeai-dev-local"
+
 const state = join(import.meta.dir, "../../../.cache/dev-runtime")
+
 await Promise.all([
   Bun.$`mkdir -p ${join(state, "config")} ${join(state, "data")} ${join(state, "cache")} ${join(state, "state")}`,
 ])
@@ -33,5 +42,7 @@ const vite = Bun.spawn([process.execPath, "run", "dev", "--", "--host", "127.0.0
 })
 
 const exit = await vite.exited
+
 runtime.kill()
+
 process.exit(exit)

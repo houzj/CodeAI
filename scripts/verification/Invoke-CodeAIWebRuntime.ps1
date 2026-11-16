@@ -14,12 +14,17 @@ $stdoutPath = Join-Path $StateDirectory 'runtime.out.log'
 $stderrPath = Join-Path $StateDirectory 'runtime.err.log'
 
 function Get-RuntimeStatus {
+    $previousErrorActionPreference = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
     $code = (& curl.exe -sS -o NUL -w "%{http_code}" "$RuntimeUrl/api/project" 2>$null).Trim()
+    $exitCode = $LASTEXITCODE
+    $ErrorActionPreference = $previousErrorActionPreference
+    if ($exitCode -ne 0 -or [string]::IsNullOrWhiteSpace($code)) { return '000' }
     return $code
 }
 
 function Wait-Runtime {
-    1..60 | ForEach-Object {
+    1..180 | ForEach-Object {
         $code = Get-RuntimeStatus
         if ($code -in @('200', '401', '403')) { return $code }
         Start-Sleep -Milliseconds 500

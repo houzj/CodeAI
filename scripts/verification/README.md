@@ -17,7 +17,7 @@ Use `Invoke-CodeAIWebProbe.ps1` for the browser-first Runtime probe. It discover
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verification/Invoke-CodeAIWebProbe.ps1
 ```
 
-Use `Invoke-CodeAIWebRuntime.ps1` to start or inspect the development Runtime without probing a non-existent health endpoint. It treats an authenticated API response of `401` as a live server, records only the PID it started, and refuses to stop a different executable.
+Use `Invoke-CodeAIWebRuntime.ps1` to start or inspect the development Runtime without probing a non-existent health endpoint. It treats an authenticated API response of `401` as a live server, tolerates an offline `curl` probe while starting, waits for a cold packaged CLI to boot, records only the PID it started, and refuses to stop a different executable. `packages/app/script/dev-connected.ts` resolves the unpacked CLI first and falls back to the current packaged CLI under `dist/desktop/app/resources`.
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verification/Invoke-CodeAIWebRuntime.ps1 -Action Start
