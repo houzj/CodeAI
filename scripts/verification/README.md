@@ -34,6 +34,12 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verification/Invoke-
 
 The workspace probe also deletes its temporary Session by default. Pass `-KeepSession` when inspecting its project or Artifact state in the browser.
 
+Use `Invoke-CodeAICollaborationProbe.ps1` to verify the parent/worker Session relationship and a durable `task.assigned` synthetic Inbox message. It deletes the parent and child Session tree by default. Pass `-KeepSessions` for manual inspection.
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verification/Invoke-CodeAICollaborationProbe.ps1
+```
+
 The desktop probe follows the upstream `agent-desktop` 2.6 loop. It runs `status` and the bundled `skills get desktop` and `skills get platform` guides before use, restores a minimized window before taking a fresh snapshot, quotes every PowerShell ref, and verifies each state-changing action with a new snapshot. An `AMBIGUOUS_TARGET` result is treated as a non-retryable duplicate control. The probe keeps semantic actions headless and only uses `--headed` for actions that require physical input.
 
 Reference implementation and command semantics are documented in the [agent-desktop repository](https://github.com/vercel-labs/agent-desktop).
