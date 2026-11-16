@@ -64,3 +64,15 @@ REA capability discovery also confirmed the Ghidra provider is available on this
 The refreshed portable directory audit returned Evidence ID `ev_032fc6284e23d12822ef9e626751f576a1a49c30659ba56a9365ffa6c3f32291` with directory digest `6d103508c4acb03df93adb65aa4de397c2b1dd3a16808e86db5211b9c6a3214a`. It observed only low-severity extractable package members and native PDB path strings. Source-map and credential checks remain bounded/unknown in this audit, so they are recorded as limitations rather than treated as clean results.
 
 Validation after the branding pass completed with app typecheck, desktop typecheck, and the production app build. The app build emitted existing CSS selector and chunk-size warnings, but completed successfully.
+
+## Current isolated Chromium render
+
+An isolated Edge/Chromium context loaded `http://127.0.0.1:3001/` with the local Runtime credential and opened the disposable `CodeAI UI validation` Session. The DOM and screenshot verified:
+
+- Page title `CodeAI` and no visible `OpenCode`/`opencode` text.
+- Sidebar hierarchy `CodeAI → CodeAI → CodeAI UI validation`.
+- Zero CodeAI horizontal session-tab close controls.
+- Project hover card with `CodeAI`, `1 个工作树`, `E:\CodeAI`, and `编辑项目`.
+- Session hover card with `CodeAI UI validation`, relative update time, project name, and `E:\CodeAI`.
+
+Current renders are [session route](../../.cache/codeai-web-validation-session.png), [project hover](../../.cache/codeai-web-project-hover-current.png), and [session hover](../../.cache/codeai-web-session-hover-current.png). Probe-only sessions were deleted after capture so the recent-session list remains usable. The single `CodeAI UI validation` session is retained for manual inspection.
