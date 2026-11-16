@@ -92,3 +92,12 @@
 - agent-desktop 能从干净启动完成一次完整探针流程。
 - REA 证据与截图可以回溯每个关键行为。
 - 安装包、窗口、菜单、错误页、连接页和 CLI 的用户可见文本没有品牌泄露。
+
+## 当前执行记录（2026-11-16）
+
+- G0 品牌扫描通过，网页端和源码用户可见文本未发现旧品牌命中。
+- G1 网页端已固定为 Project → Worktree → Session 侧栏导航，顶部 CodeAI 会话 Tab 已从生产布局中移除。项目和会话悬停卡片使用 Portal，项目卡片已由 agent-desktop 实际截图验证，会话卡片改为读取真实 `SessionInfo.time` 与 `SessionInfo.location.directory`。
+- G2 连续输入探针通过，两次并发 admission 均返回 200。第二条输入按 Runtime 速度在 durable inbox 或 Session history 中收敛，探针覆盖两种合法结果。
+- G3/G4 网页 Runtime 工作区探针通过。Git provider 为 `git`，当前分支为 `dev`，VCS status 和 branch API 可读。PermissionBroker 工作区 Shell 请求返回 `allow` 且无悬挂请求。Local Artifact 完成创建、读取 `index.html` 和删除清理。
+- G5 连接边界通过验证，未认证 `/api/project` 返回 401，带本地 Basic credential 返回 200。REA 已确认 Ghidra provider 可用，agent-desktop MCP 已按官方 observe → act → wait → verify 流程固化到脚本文档。
+- G6 Windows 打包和安装器视觉验收保留为用户手动门禁，当前不以旧安装目录或未重建产物作为网页验收依据。
