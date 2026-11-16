@@ -11,7 +11,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verification/Invoke-
 
 `Smoke` is the regression gate for the Codex-style shell. It checks that project/session navigation is present and fails while legacy top-level session tabs are still exposed. Add future hover and project/session assertions to the same script so the test flow stays reproducible.
 
-Use `Invoke-CodeAIWebProbe.ps1` for the browser-first Runtime probe. It discovers the real CodeAI project, creates a disposable Session through the HTTP API, admits two prompts concurrently, and verifies that both admissions return 200 while both prompts converge in durable inbox or Session history.
+Use `Invoke-CodeAIWebProbe.ps1` for the browser-first Runtime probe. It discovers the real CodeAI project, creates a disposable Session through the HTTP API, admits two prompts in immediate succession without waiting for model execution, and verifies that both admissions return 200 while both prompts converge in durable inbox or Session history.
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verification/Invoke-CodeAIWebProbe.ps1
