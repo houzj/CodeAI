@@ -45,3 +45,7 @@ task.cancelled
 ## Runtime 落地
 
 OpenCode 已有 Session、`parentID`、事件流和执行协调器可以作为底层。CodeAI 仍需要增加 durable inbox、消息投影、任务租约、子任务恢复和跨 Worker 的 Artifact/Change 引用。桌面端不能把多会话协作实现成前端信号或临时内存数组。
+
+## 当前 Runtime 证据
+
+真实 Runtime 验证创建了 Coordinator Session 和带 `parentID` 的 Worker Session。子会话返回正确的父 ID，`session.list?parentID` 能列出 Worker，`experimental/job?sessionID=...&descendants=true` 能查询父树下的后台 Job。验证完成后删除 Coordinator，子会话随父树清理。持久化控制消息、跨 Worker Artifact/Change 引用和任务租约仍需后续契约。
