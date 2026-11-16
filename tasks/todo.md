@@ -465,3 +465,10 @@
 - [x] 真实文件搜索打开 `packages/app/index.html`，Artifact 右侧区域显示文件 Tab；生产审查按钮完成隐藏/恢复，中心区随之扩展和还原。
 - [x] Web 探针默认清理临时 Session，`-KeepSession` 只用于人工截图验收。
 - [ ] Windows 安装包仍需用户手动验证重启恢复、审批/错误/取消状态和最终视觉效果。
+
+### 执行记录（2026-11-16，目标与协作 Runtime 闭环）
+
+- [x] `Invoke-CodeAIObjectiveProbe.ps1` 固化 Goal 创建/暂停和一次性 Schedule 唤醒验证，默认清理临时状态。
+- [x] `Invoke-CodeAICollaborationProbe.ps1` 固化 Coordinator/Worker 父子 Session、`parentID`、Job descendants 和 `task.assigned` durable Inbox 消息验证。
+- [x] Goal、Schedule、父子 Session 和 synthetic Inbox 的真实 Runtime 证据已写入对应设计文档。
+- [ ] Plan、Checkpoint、跨 Worker Artifact/Change 引用和任务租约仍需独立 Server/Protocol 契约。
