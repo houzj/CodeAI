@@ -108,6 +108,16 @@ const getBase = (appId: string): Configuration => {
         filter: ["opencode-cli", "opencode-cli.exe", "opencode-cli.version"],
       },
     ],
+    electronFuses: {
+      runAsNode: false,
+      enableCookieEncryption: true,
+      enableNodeOptionsEnvironmentVariable: false,
+      enableNodeCliInspectArguments: false,
+      enableEmbeddedAsarIntegrityValidation: true,
+      onlyLoadAppFromAsar: true,
+      loadBrowserProcessSpecificV8Snapshot: false,
+      grantFileProtocolExtraPrivileges: false,
+    },
     afterPack: async (context) => {
       const arch = Arch[context.arch]
 

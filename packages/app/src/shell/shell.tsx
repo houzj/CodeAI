@@ -59,12 +59,11 @@ export default function Layout(props: ParentProps) {
     tabsPanel: undefined,
   })
 
-  // Projects mode owns session switching in the Project → Worktree → Session tree.
-  // Keep that navigation available even when an older profile stored horizontal tabs.
-  const verticalTabs = () => !mobile() && (preferences.appearance.tabLayout() !== "horizontal" || preferences.general.sidebarOrganize() === "projects")
+  // CodeAI keeps session switching in the Project → Worktree → Session tree. The project sidebar is the single
+  // navigation surface, so a persisted horizontal-tab preference must not bring the legacy top session strip back.
+  const verticalTabs = () => !mobile()
 
-  const organizedSidebar = () =>
-    preferences.appearance.tabLayout() === "vertical" && preferences.general.sidebarOrganize() !== "list"
+  const organizedSidebar = () => preferences.general.sidebarOrganize() !== "list"
 
   const toggleSidebar = () => preferences.appearance.setSidebarOpen(!preferences.appearance.sidebarOpen())
 
