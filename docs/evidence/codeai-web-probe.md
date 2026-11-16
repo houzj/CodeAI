@@ -23,6 +23,8 @@ The same live DOM probe confirmed the session card contains the session title, u
 
 The browser-first Runtime probe created Session `ses_e1c5d8508ffeintbxKxNgKRYNn` under the `E:\CodeAI` project and admitted `CONTINUOUS_A` and `CONTINUOUS_B` concurrently. Both HTTP admissions returned 200. The latest run observed `CONTINUOUS_A` in Session history and `CONTINUOUS_B` in the durable inbox with `delivery: steer`. A fast drain is also accepted when the second prompt has already moved from inbox to history. This verifies continuous input admission without waiting for the previous run to become idle.
 
+The workspace probe `Invoke-CodeAIWebWorkspaceProbe.ps1` completed against the same Runtime. It observed Git provider `git`, current branch `dev`, 30 VCS status entries and 50 branch entries. Permission evaluation for the current worktree returned `allow` with zero pending requests. A Local Artifact was created for the probe Session, read back with `index.html`, and deleted successfully. The machine-readable result is `.cache/codeai-web-workspace.json`.
+
 ## Scope
 
 This is a Web evidence slice. Windows packaging remains a separate final-host gate.
