@@ -456,3 +456,12 @@
 - [x] `packages/app` 类型检查通过（2,397 files）；Desktop production build 通过。
 - [x] 重新生成 `packages/desktop/dist/codeai-desktop-win-x64.exe`，NSIS 打包退出码为 0；unpacked `CodeAI.exe` 启动冒烟保持运行 8 秒无立即退出。
 - [ ] 发布前仍需在 Web 开发服务器验证真实 Project → Worktree → Session、Composer 连续发送、Artifact Tab 显隐和悬停交互。
+
+### 执行记录（2026-11-16，网页目标闭环）
+
+- [x] 隔离 Chromium 实际验证 Project → Worktree → Session 层级、同一 Worktree 下两个 Session 切换和顶部会话 Tab 数量为 0。
+- [x] 项目与会话悬停卡片实际渲染，分别显示工作树数量、目录、编辑入口、会话更新时间和项目归属。
+- [x] 真实 Runtime Run 显示用户提示、助手结果 `READY` 和最终 Idle 状态。
+- [x] 真实文件搜索打开 `packages/app/index.html`，Artifact 右侧区域显示文件 Tab；生产审查按钮完成隐藏/恢复，中心区随之扩展和还原。
+- [x] Web 探针默认清理临时 Session，`-KeepSession` 只用于人工截图验收。
+- [ ] Windows 安装包仍需用户手动验证重启恢复、审批/错误/取消状态和最终视觉效果。
