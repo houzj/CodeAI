@@ -76,3 +76,5 @@ An isolated Edge/Chromium context loaded `http://127.0.0.1:3001/` with the local
 - Session hover card with `CodeAI UI validation`, relative update time, project name, and `E:\CodeAI`.
 
 Current renders are [session route](../../.cache/codeai-web-validation-session.png), [project hover](../../.cache/codeai-web-project-hover-current.png), and [session hover](../../.cache/codeai-web-session-hover-current.png). Probe-only sessions were deleted after capture so the recent-session list remains usable. The single `CodeAI UI validation` session is retained for manual inspection.
+
+The session-switch render then created `CodeAI UI validation secondary` under the same project and worktree. The isolated browser opened the first session, switched to the second through the sidebar, and observed distinct session URLs and titles with zero horizontal session-tab close controls. The final switch state is [here](../../.cache/codeai-web-session-switch.png). Both validation sessions are retained for manual inspection.
