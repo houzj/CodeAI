@@ -6,7 +6,8 @@ param(
     [string]$Title = 'CodeAI web continuous input probe',
     [string]$PromptA = 'CONTINUOUS_A',
     [string]$PromptB = 'CONTINUOUS_B',
-    [string]$OutputPath = 'E:\CodeAI\.cache\codeai-web-continuous-input.json'
+    [string]$OutputPath = 'E:\CodeAI\.cache\codeai-web-continuous-input.json',
+    [switch]$KeepSession
 )
 
 $ErrorActionPreference = 'Stop'
@@ -18,7 +19,7 @@ function Get-CodeAIHeaders {
 
 function Invoke-CodeAIJson {
     param(
-        [Parameter(Mandatory)][ValidateSet('Get', 'Post')][string]$Method,
+        [Parameter(Mandatory)][ValidateSet('Get', 'Post', 'Delete')][string]$Method,
         [Parameter(Mandatory)][string]$Path,
         [object]$Body
     )
@@ -98,12 +99,16 @@ $result = [ordered]@{
         ($messageTexts + $inboxTexts) -contains $PromptB -and
         ($positionA -lt 0 -or $positionB -lt 0 -or $positionA -lt $positionB)
     verifiedAt = [DateTime]::UtcNow.ToString('o')
+    sessionRetained = [bool]$KeepSession
 }
 
 $directory = Split-Path $OutputPath -Parent
 New-Item -ItemType Directory -Force $directory | Out-Null
 $result | ConvertTo-Json -Depth 12 | Set-Content -Path $OutputPath -Encoding utf8
 $result | ConvertTo-Json -Depth 12
+if (-not $KeepSession) {
+    Invoke-CodeAIJson -Method Delete -Path "/api/session/$($session.id)" | Out-Null
+}
 if (-not $result.passed) {
     throw 'Continuous input probe did not observe two successful admissions and both prompts in durable history or inbox.'
 }

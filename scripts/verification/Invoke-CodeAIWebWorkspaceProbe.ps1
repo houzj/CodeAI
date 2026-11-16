@@ -3,7 +3,8 @@ param(
     [string]$RuntimeUrl = 'http://127.0.0.1:4097',
     [string]$Password = $(if ($env:CODEAI_DEV_PASSWORD) { $env:CODEAI_DEV_PASSWORD } else { 'codeai-dev-local' }),
     [string]$Directory = 'E:\CodeAI',
-    [string]$OutputPath = 'E:\CodeAI\.cache\codeai-web-workspace.json'
+    [string]$OutputPath = 'E:\CodeAI\.cache\codeai-web-workspace.json',
+    [switch]$KeepSession
 )
 
 $ErrorActionPreference = 'Stop'
@@ -67,6 +68,7 @@ $result = [ordered]@{
     permission = [ordered]@{ effect = $permission.effect; pendingCount = $pendingPermissions.Count }
     artifact = [ordered]@{ id = $artifact.id; provider = $artifact.provider; files = @($artifactContent.files.PSObject.Properties.Name); deleted = $true }
     passed = $vcs.provider -eq 'git' -and $vcs.branch.current -eq 'dev' -and $permission.effect -in @('allow', 'deny', 'ask') -and $pendingPermissions.Count -eq 0 -and @($artifactContent.files.PSObject.Properties.Name) -contains 'index.html'
+    sessionRetained = [bool]$KeepSession
     verifiedAt = [DateTime]::UtcNow.ToString('o')
 }
 
@@ -74,4 +76,7 @@ $directoryPath = Split-Path $OutputPath -Parent
 New-Item -ItemType Directory -Force $directoryPath | Out-Null
 $result | ConvertTo-Json -Depth 12 | Set-Content -Path $OutputPath -Encoding utf8
 $result | ConvertTo-Json -Depth 12
+if (-not $KeepSession) {
+    Invoke-CodeAIJson -Method Delete -Path "/api/session/$($session.id)" | Out-Null
+}
 if (-not $result.passed) { throw 'Workspace probe did not complete the VCS, permission and artifact checks.' }
