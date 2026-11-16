@@ -61,4 +61,6 @@ The desktop package was rebuilt with Electron fuses configured in source, but th
 
 REA capability discovery also confirmed the Ghidra provider is available on this Windows host. It is selected by `open_binary` when a native target is opened, rather than exposed as a separate `mcp__ghidra__*` server.
 
+The refreshed portable directory audit returned Evidence ID `ev_032fc6284e23d12822ef9e626751f576a1a49c30659ba56a9365ffa6c3f32291` with directory digest `6d103508c4acb03df93adb65aa4de397c2b1dd3a16808e86db5211b9c6a3214a`. It observed only low-severity extractable package members and native PDB path strings. Source-map and credential checks remain bounded/unknown in this audit, so they are recorded as limitations rather than treated as clean results.
+
 Validation after the branding pass completed with app typecheck, desktop typecheck, and the production app build. The app build emitted existing CSS selector and chunk-size warnings, but completed successfully.
