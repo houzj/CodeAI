@@ -51,7 +51,6 @@ import { useServer } from "@/runtime/server/current"
 import { reviewGlyphFill, SessionReviewToggle } from "./header/session-header-actions"
 import { createTimelineCache } from "./timeline/cache"
 import { createPanelMotion, holdLandingWidth, panelOpacity, setPanelResizing } from "@/shell/panel-motion"
-import { CodexSessionContext } from "./codex-session-context"
 
 export function SessionScreenView(props: { session: SessionModel }) {
   // Link handling for the rest of the screen; each cached timeline provides its own for its session.
@@ -351,7 +350,6 @@ function SessionScreenContent(props: {
 
   const sessionPanelContent = () => (
     <>
-      <CodexSessionContext session={() => session.data.info()} />
       <ComposerDropzone
         active={composer.drop.active()}
         input={composer.drop.input()}

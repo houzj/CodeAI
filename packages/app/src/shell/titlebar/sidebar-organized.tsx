@@ -9,6 +9,7 @@ import { isSortable, useSortable } from "@dnd-kit/solid/sortable"
 import { Accessibility, Feedback, PointerActivationConstraints } from "@dnd-kit/dom"
 import { RestrictToVerticalAxis } from "@dnd-kit/abstract/modifiers"
 import { Button } from "@opencode/ui/button"
+import { useDialog } from "@opencode/ui/context/dialog"
 import { Icon } from "@opencode/ui/icon"
 import { IconButton } from "@opencode/ui/icon-button"
 import { Menu } from "@opencode/ui/menu"
@@ -17,7 +18,7 @@ import { displayName } from "@opencode/ui/project-avatar"
 import { getFilename } from "@opencode/util/path"
 import { homeSessionsQuery } from "@/home/sessions/queries"
 import { createProjectActions } from "@/home/projects/actions"
-import { addProjects } from "@/home/projects/add"
+import { CreateProjectDialog } from "@/home/projects/create-dialog"
 import { ProjectMenuItems } from "@/home/projects/menu"
 import { buildHomeSessionRecords, type HomeSessionRecord } from "@/home/sessions/records"
 import { arrayMove } from "@/runtime/array-move"
@@ -29,10 +30,9 @@ import { useGlobal, useServerCtx } from "@/runtime/server/runtime"
 import type { Project } from "@/runtime/server/types"
 import { ProjectIcon } from "@/shell/layout/project-icon"
 import { showToast } from "@/shell/notifications/toast"
-import { errorMessage, homeProjectDirectories } from "@/shell/layout/helpers"
+import { errorMessage } from "@/shell/layout/helpers"
 import { useLayout } from "@/shell/state/layout"
 import { createProjectSessionActions } from "@/shell/tabs/project-sessions"
-import { useDirectoryPicker } from "@/workspaces/selection/picker"
 import { useTabs, type Tab } from "@/shell/tabs/tabs"
 import { pathKey } from "@/workspaces/path-key"
 import "./tab-nav.css"
@@ -81,10 +81,9 @@ export function SidebarOrganized(props: {
 }) {
   const language = useLanguage()
   const tabs = useTabs()
-  const global = useGlobal()
+  const dialog = useDialog()
   const servers = useServers()
   const layout = useLayout()
-  const pickDirectory = useDirectoryPicker()
 
   createSidebarActivityListener()
 
@@ -107,20 +106,7 @@ export function SidebarOrganized(props: {
 
     if (!server) return
 
-    pickDirectory({
-      server,
-      title: language.t("command.project.open"),
-      multiple: true,
-      onSelect: (result) => {
-        if (!result) return
-
-        const ctx = global.serverCtx(ServerConnection.key(server))
-
-        if (!ctx) return
-
-        void addProjects(ctx, homeProjectDirectories(result))
-      },
-    })
+    dialog.show(() => <CreateProjectDialog server={server} />)
   }
 
   const isOpenTab = (server: ServerConnection.Key, sessionId: string) =>
