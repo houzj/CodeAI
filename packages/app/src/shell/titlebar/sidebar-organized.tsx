@@ -171,7 +171,7 @@ export function SidebarOrganized(props: {
                 <IconButton
                   variant="ghost-muted"
                   size="small"
-                  icon={<Icon name="folder-plus" size="small" />}
+                  icon={<Icon name="plus" size="small" />}
                   aria-label={language.t("home.project.add")}
                   title={language.t("home.project.add")}
                   onClick={addProject}
