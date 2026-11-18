@@ -17,6 +17,7 @@ import { displayName } from "@opencode/ui/project-avatar"
 import { getFilename } from "@opencode/util/path"
 import { homeSessionsQuery } from "@/home/sessions/queries"
 import { createProjectActions } from "@/home/projects/actions"
+import { addProjects } from "@/home/projects/add"
 import { ProjectMenuItems } from "@/home/projects/menu"
 import { buildHomeSessionRecords, type HomeSessionRecord } from "@/home/sessions/records"
 import { arrayMove } from "@/runtime/array-move"
@@ -28,9 +29,10 @@ import { useGlobal, useServerCtx } from "@/runtime/server/runtime"
 import type { Project } from "@/runtime/server/types"
 import { ProjectIcon } from "@/shell/layout/project-icon"
 import { showToast } from "@/shell/notifications/toast"
-import { errorMessage } from "@/shell/layout/helpers"
+import { errorMessage, homeProjectDirectories } from "@/shell/layout/helpers"
 import { useLayout } from "@/shell/state/layout"
 import { createProjectSessionActions } from "@/shell/tabs/project-sessions"
+import { useDirectoryPicker } from "@/workspaces/selection/picker"
 import { useTabs, type Tab } from "@/shell/tabs/tabs"
 import { pathKey } from "@/workspaces/path-key"
 import "./tab-nav.css"
@@ -79,6 +81,10 @@ export function SidebarOrganized(props: {
 }) {
   const language = useLanguage()
   const tabs = useTabs()
+  const global = useGlobal()
+  const servers = useServers()
+  const layout = useLayout()
+  const pickDirectory = useDirectoryPicker()
 
   createSidebarActivityListener()
 
@@ -92,6 +98,30 @@ export function SidebarOrganized(props: {
     expanded: {},
     order: {},
   })
+
+  const addProject = () => {
+    const server =
+      servers.visible.find((conn) => ServerConnection.key(conn) === props.currentTab?.server) ??
+      servers.visible.find((conn) => ServerConnection.key(conn) === layout.home.selection().server) ??
+      servers.visible[0]
+
+    if (!server) return
+
+    pickDirectory({
+      server,
+      title: language.t("command.project.open"),
+      multiple: true,
+      onSelect: (result) => {
+        if (!result) return
+
+        const ctx = global.serverCtx(ServerConnection.key(server))
+
+        if (!ctx) return
+
+        void addProjects(ctx, homeProjectDirectories(result))
+      },
+    })
+  }
 
   const isOpenTab = (server: ServerConnection.Key, sessionId: string) =>
     tabs.store.some((tab) => tab.type === "session" && tab.server === server && tab.sessionId === sessionId)
@@ -111,20 +141,43 @@ export function SidebarOrganized(props: {
       <ScrollView class="min-h-0 flex-1" thumbContainer={local.thumbTrack} thumbHoverTarget={local.hoverTarget}>
         <div class="flex flex-col gap-3">
           <section class="flex shrink-0 flex-col gap-2">
-            <button
-              type="button"
-              class="flex h-6 w-full shrink-0 items-center gap-1.5 rounded-[6px] px-2 text-start text-[13px] leading-4 font-medium text-v2-text-text-muted hover:text-v2-text-text-base focus-visible:outline-none focus-visible:bg-v2-overlay-simple-overlay-hover"
-              aria-expanded={!state.projectsCollapsed}
-              onClick={() => setState("projectsCollapsed", (value) => !value)}
-            >
-              <span class="min-w-0 truncate">{language.t("sidebar.organize.projects")}</span>
-              <Icon
-                name="fill-triangle-down"
-                size="small"
-                class="shrink-0 text-v2-icon-icon-muted transition-transform"
-                classList={{ "-rotate-90 rtl:rotate-90": state.projectsCollapsed }}
-              />
-            </button>
+            <div class="group/projects-header flex h-6 w-full shrink-0 items-center rounded-[6px] px-2 hover:bg-v2-overlay-simple-overlay-hover">
+              <button
+                type="button"
+                class="flex min-w-0 flex-1 items-center gap-1.5 text-start text-[13px] leading-4 font-medium text-v2-text-text-muted hover:text-v2-text-text-base focus-visible:outline-none"
+                aria-expanded={!state.projectsCollapsed}
+                onClick={() => setState("projectsCollapsed", (value) => !value)}
+              >
+                <span class="min-w-0 truncate">{language.t("sidebar.organize.projects")}</span>
+                <Icon
+                  name="fill-triangle-down"
+                  size="small"
+                  class="shrink-0 text-v2-icon-icon-muted transition-transform"
+                  classList={{ "-rotate-90 rtl:rotate-90": state.projectsCollapsed }}
+                />
+              </button>
+              <div
+                class="flex shrink-0 items-center gap-0.5 opacity-0 transition-opacity group-hover/projects-header:opacity-100 focus-within:opacity-100"
+                classList={{ "opacity-100": state.projectsCollapsed }}
+              >
+                <IconButton
+                  variant="ghost-muted"
+                  size="small"
+                  icon={<Icon name="outline-sliders" size="small" />}
+                  aria-label="项目视图设置"
+                  title="项目视图设置"
+                  onClick={() => setState("projectsCollapsed", (value) => !value)}
+                />
+                <IconButton
+                  variant="ghost-muted"
+                  size="small"
+                  icon={<Icon name="folder-plus" size="small" />}
+                  aria-label={language.t("home.project.add")}
+                  title={language.t("home.project.add")}
+                  onClick={addProject}
+                />
+              </div>
+            </div>
             <Show when={!state.projectsCollapsed}>
               <div class="flex min-w-0 flex-col gap-1">
                 <ProjectList
@@ -233,8 +286,6 @@ function ProjectList(props: {
     })
   })
 
-  const grouped = createMemo(() => Map.groupBy(records(), (record) => pathKey(record.project.worktree)))
-
   return (
     <>
       <Show when={connection()}>
@@ -293,7 +344,10 @@ function ProjectList(props: {
               {(project, index) => {
                 const key = () => `${server()}:${project().id}`
 
-                const projectSessions = () => grouped().get(pathKey(project().worktree)) ?? []
+                // A session belongs to the project resolved by the runtime, even when its working directory is a
+                // secondary worktree or sandbox. Grouping by the project id keeps those sessions nested under the
+                // project instead of making them appear as unrelated top-level rows.
+                const projectSessions = () => records().filter((record) => record.project.id === project().id)
 
                 const worktreeGroups = createMemo(() => {
                   const groups = new Map<string, HomeSessionRecord[]>()

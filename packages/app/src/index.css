@@ -84,10 +84,13 @@
 }
 
 @layer components {
-  [data-slot="session-chat-panel"][data-scrollbar-hidden="true"]
+  /* Keep the session timeline discoverable after the review panel is opened. The timeline has its own bottom inset,
+     so the thumb never sits behind the composer and remains usable while the transcript is long. */
+  [data-slot="session-chat-panel"]
     [data-slot="session-timeline-visible"]
     .scroll-view__thumb {
-    visibility: hidden;
+    visibility: visible;
+    opacity: 1;
   }
 
   /* The timeline scrolls on under the composer region, passing behind its floating pill, and fades out as it reaches
