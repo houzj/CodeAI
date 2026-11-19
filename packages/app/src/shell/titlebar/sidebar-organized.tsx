@@ -275,11 +275,14 @@ function ProjectList(props: {
     })
   })
 
+  const recentSessions = createMemo(() => records().slice(0, 5))
+
   return (
     <>
       <Show when={connection()}>
         {(conn) => (
-          <DragDropProvider
+          <>
+            <DragDropProvider
             sensors={[
               PointerSensor.configure({
                 activationConstraints: [new PointerActivationConstraints.Distance({ value: 4 })],
@@ -435,7 +438,33 @@ function ProjectList(props: {
                 )
               }}
             </Key>
-          </DragDropProvider>
+            </DragDropProvider>
+            <Show when={recentSessions().length > 0}>
+            <section class="mt-3 flex shrink-0 flex-col gap-1" aria-labelledby="sidebar-organized-recent">
+              <div id="sidebar-organized-recent" class="flex h-6 items-center px-2 text-[13px] leading-4 font-medium text-v2-text-text-muted">
+                {language.t("sidebar.recent.section.recent")}
+              </div>
+              <For each={recentSessions()}>
+                {(record) => (
+                  <ProjectSessionRow
+                    server={ServerConnection.key(conn())}
+                    session={record.session}
+                    openTab={props.isOpenTab(ServerConnection.key(conn()), record.session.id)}
+                    active={
+                      props.highlightActive &&
+                      props.currentTab?.type === "session" &&
+                      props.currentTab.server === ServerConnection.key(conn()) &&
+                      props.currentTab.sessionId === record.session.id
+                    }
+                    onOpen={() => {
+                      actions.openProjectSession(conn(), record.session.location.directory, record.session, { preview: true })
+                    }}
+                  />
+                )}
+              </For>
+            </section>
+            </Show>
+          </>
         )}
       </Show>
       <Show when={projects().length > 7}>

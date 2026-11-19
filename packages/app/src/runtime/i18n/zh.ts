@@ -881,6 +881,7 @@ export const dict = {
   "sidebar.organize.projects": "项目",
   "sidebar.organize.showMore": "显示更多",
   "sidebar.organize.showLess": "显示更少",
+  "sidebar.recent.section.recent": "最近",
   "session.question.title": "问题",
   "common.ok": "确定",
   "common.retry": "重试",
