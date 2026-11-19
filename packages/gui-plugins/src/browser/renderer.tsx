@@ -76,7 +76,6 @@ const setup: Plugin.Setup<typeof definition> = (ctx) => {
       id: "web",
       region: "side",
       width: "narrow",
-      transient: true,
       list: ({ session }) => (webPages()[session.key] ? [{ id: "web", title: "网页预览", icon: "globe" }] : []),
       render: ({ session }) => {
         const href = () => webPages()[session.key]
