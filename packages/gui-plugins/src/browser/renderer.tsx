@@ -12,7 +12,7 @@ import {
   untrack,
 } from "solid-js"
 import { Button } from "@opencode/ui/button"
-import { Command, createKeyed, LinkHandler, MenuItem, Style, type Plugin } from "@opencode/plugin/gui"
+import { Command, createKeyed, LinkHandler, MenuItem, Style, type Plugin, type SessionRef } from "@opencode/plugin/gui"
 import { BuiltinCommand, BuiltinPanel, onIdle, type BuiltinPanelTab } from "@opencode/plugin/gui/builtin"
 import { Browser } from "@opencode/plugin/gui/browser"
 import type definition from "./index"
@@ -56,8 +56,37 @@ const setup: Plugin.Setup<typeof definition> = (ctx) => {
     }
   })
 
-  // The native pane is a desktop feature.
-  if (ctx.app.platform !== "desktop") return
+  const webRuntime = typeof window !== "undefined" && /^(?:http:|https:)$/.test(window.location.protocol)
+
+  if (ctx.app.platform !== "desktop" || webRuntime) {
+    const [webPages, setWebPages] = createSignal<Record<string, string>>({})
+
+    ctx.add(LinkHandler, {
+      priority: 5,
+      match: (link) => !!link.session && /^https?:\/\//i.test(link.href),
+      open(link) {
+        if (!link.session) return
+
+        setWebPages((pages) => ({ ...pages, [link.session!.key]: link.href }))
+        ctx.layout.open("web", link.session, { tab: "open" })
+      },
+    })
+
+    ctx.add(BuiltinPanel, (): BuiltinPanel => ({
+      id: "web",
+      region: "side",
+      width: "narrow",
+      transient: true,
+      list: ({ session }) => (webPages()[session.key] ? [{ id: "web", title: "网页预览", icon: "globe" }] : []),
+      render: ({ session }) => {
+        const href = () => webPages()[session.key]
+
+        return <iframe class="size-full border-0 bg-white" src={href()} title="网页预览" referrerPolicy="no-referrer" />
+      },
+    }))
+
+    return
+  }
   // Tab trigger styles render with the strip, before the pane chunk loads.
   ctx.add(Style, tabStyles)
   ctx.add(Style, commentStyles)
@@ -71,6 +100,22 @@ const setup: Plugin.Setup<typeof definition> = (ctx) => {
 
     if (next.state !== untrack(modelState)) setModelState(() => next.state)
     next.effects.forEach((effect) => loadModel(effect.attempt))
+  }
+
+  const openURL = (session: SessionRef, url: string) => {
+    const retry = (attempt: number) => {
+      const value = model()
+
+      if (value?.attached(session)) {
+        value.openURL(session, url)
+
+        return
+      }
+
+      if (attempt < 50) setTimeout(() => retry(attempt + 1), 100)
+    }
+
+    retry(0)
   }
 
   // A chunk that fails or never loads, such as after an update replaced the app's files, ends in `failed`.
@@ -249,6 +294,25 @@ const setup: Plugin.Setup<typeof definition> = (ctx) => {
     match: (link) => link.origin === ctx.id && !!link.session,
     open(link) {
       if (link.session) model()?.reveal(link.session, link.href)
+    },
+  })
+
+  ctx.add(LinkHandler, {
+    priority: 5,
+    match: (link) => !!link.session && /^https?:\/\//i.test(link.href),
+    open(link) {
+      if (!link.session) return
+
+      const value = model()
+
+      if (value) {
+        openURL(link.session, link.href)
+
+        return
+      }
+
+      ctx.layout.open("main", link.session, { tab: "open" })
+      openURL(link.session, link.href)
     },
   })
 

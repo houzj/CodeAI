@@ -208,9 +208,9 @@ function ProjectList(props: {
 
   const projectActions = createProjectActions()
 
-  const [local, setLocal] = createStore<{ showAll: boolean; sessionLimits: Record<string, number> }>({
+  const [local, setLocal] = createStore<{ showAll: boolean; recentLimit: number }>({
     showAll: false,
-    sessionLimits: {},
+    recentLimit: 5,
   })
 
   const connection = createMemo(
@@ -229,7 +229,7 @@ function ProjectList(props: {
   }
 
   const projects = createMemo(() => {
-    const list = ctx()?.projects.used() ?? []
+    const list = ctx()?.projects.list() ?? []
 
     const order = props.state.order[server() ?? ""] ?? []
 
@@ -275,7 +275,7 @@ function ProjectList(props: {
     })
   })
 
-  const recentSessions = createMemo(() => records().slice(0, 5))
+  const recentSessions = createMemo(() => records().slice(0, local.recentLimit))
 
   return (
     <>
@@ -364,8 +364,6 @@ function ProjectList(props: {
                   worktreeGroups().length === 1 &&
                   getFilename(worktree.directory).toLocaleLowerCase() === displayName(project()).toLocaleLowerCase()
 
-                const limit = () => local.sessionLimits[key()] ?? 5
-
                 return (
                   <ProjectRow
                     project={project()}
@@ -376,7 +374,6 @@ function ProjectList(props: {
                     // value still wins so a user's collapse choice is respected on later launches.
                     expanded={props.state.expanded[key()] ?? projectSessions().length > 0}
                     onToggle={() => {
-                      if (props.state.expanded[key()]) setLocal("sessionLimits", key(), 5)
                       props.onExpand(key())
                     }}
                   >
@@ -396,7 +393,7 @@ function ProjectList(props: {
                             </div>
                           </Show>
                           <Key
-                            each={worktree.records.slice(0, limit())}
+                            each={worktree.records}
                             by={(record) => record.session.id}
                             fallback={
                               <div class="pe-2 py-1 text-11-regular text-v2-text-text-faint">
@@ -424,16 +421,6 @@ function ProjectList(props: {
                         </div>
                       )}
                     </For>
-                    <Show when={projectSessions().length > limit()}>
-                      <Button
-                        variant="ghost-muted"
-                        size="small"
-                        class="ms-[23px] self-start"
-                        onClick={() => setLocal("sessionLimits", key(), (value) => (value ?? 5) + 5)}
-                      >
-                        {language.t("sidebar.organize.showMore")}
-                      </Button>
-                    </Show>
                   </ProjectRow>
                 )
               }}
@@ -462,6 +449,16 @@ function ProjectList(props: {
                   />
                 )}
               </For>
+              <Show when={records().length > local.recentLimit}>
+                <Button
+                  variant="ghost-muted"
+                  size="small"
+                  class="w-full justify-start px-2"
+                  onClick={() => setLocal("recentLimit", (value) => value + 5)}
+                >
+                  {language.t("sidebar.organize.showMore")}
+                </Button>
+              </Show>
             </section>
             </Show>
           </>

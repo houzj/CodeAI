@@ -1283,7 +1283,22 @@ export function AssistantReasoningContent(props: {
   onContentRendered?: () => void
 }) {
   const i18n = useI18n()
+  const [manualOpen, setManualOpen] = createSignal<boolean>()
   const heading = createMemo(() => (props.streaming ? reasoningHeading(props.content.text) : ""))
+
+  createEffect(
+    on(
+      () => props.streaming,
+      (streaming, previous) => {
+        if (previous === undefined || streaming === previous) return
+
+        setManualOpen(undefined)
+
+        if (!streaming) props.onOpenChange?.(false)
+      },
+      { defer: true },
+    ),
+  )
 
   const duration = createMemo(() => {
     const time = props.content.time
@@ -1309,9 +1324,10 @@ export function AssistantReasoningContent(props: {
         hasContent
         allowOpenWhilePending
         hideDetails={!props.content.text.trim()}
-        open={props.open}
+        open={manualOpen() ?? props.open ?? props.streaming}
         defaultOpen={props.defaultOpen}
         onOpenChange={(value) => {
+          setManualOpen(value)
           props.onOpenChange?.(value)
           props.onContentRendered?.()
         }}

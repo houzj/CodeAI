@@ -7,6 +7,9 @@ export type ReadMarkdownImage = (path: string, signal: AbortSignal) => Promise<B
 /** Open a local file path linked from markdown. The path is decoded and may be relative or absolute. */
 export type OpenMarkdownLocalFile = (path: string) => void
 
+/** Open an external URL in the session's in-app browser. Returns false when no handler is available. */
+export type OpenMarkdownExternal = (url: string) => boolean
+
 /**
  * Whether an inline-code path names a file that exists. Inline code is styled as a file link only when this says yes;
  * without it, inline code stays plain.
@@ -58,6 +61,7 @@ export type MarkdownCodeBlocks = {
 const context = createContext<{
   readonly readImage?: ReadMarkdownImage
   readonly openLocalFile?: OpenMarkdownLocalFile
+  readonly openExternal?: OpenMarkdownExternal
   readonly localFileExists?: MarkdownLocalFileExists
   readonly openSession?: (sessionID: string) => void
   readonly sessionTitle?: (sessionID: string) => string | undefined
@@ -69,6 +73,7 @@ export function MarkdownProvider(
   props: ParentProps<{
     readImage?: ReadMarkdownImage
     openLocalFile?: OpenMarkdownLocalFile
+    openExternal?: OpenMarkdownExternal
     localFileExists?: MarkdownLocalFileExists
     openSession?: (id: string) => void
     sessionTitle?: (id: string) => string | undefined
@@ -87,6 +92,9 @@ export function MarkdownProvider(
         },
         get openLocalFile() {
           return props.openLocalFile
+        },
+        get openExternal() {
+          return props.openExternal ?? parent?.openExternal
         },
         get localFileExists() {
           return props.localFileExists ?? parent?.localFileExists

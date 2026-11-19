@@ -722,6 +722,11 @@
       }
     }
   }
+
+  > [data-component="collapsible"] > [data-slot="collapsible-content"] {
+    max-height: none;
+    overflow: visible;
+  }
 }
 
 @media (prefers-color-scheme: dark) {
