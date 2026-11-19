@@ -68,7 +68,7 @@ const setup: Plugin.Setup<typeof definition> = (ctx) => {
         if (!link.session) return
 
         setWebPages((pages) => ({ ...pages, [link.session!.key]: link.href }))
-        ctx.layout.open("web", link.session, { tab: "open" })
+        ctx.layout.open(`${ctx.id}:web`, link.session)
       },
     })
 
@@ -310,7 +310,7 @@ const setup: Plugin.Setup<typeof definition> = (ctx) => {
         return
       }
 
-      ctx.layout.open("main", link.session, { tab: "open" })
+      ctx.layout.open(`${ctx.id}:main`, link.session, { tab: "open" })
       openURL(link.session, link.href)
     },
   })

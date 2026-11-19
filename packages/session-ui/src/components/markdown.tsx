@@ -64,6 +64,7 @@ import {
   type MarkdownCodeBlockMatch,
   type MarkdownCodeBlocks,
   type OpenMarkdownLocalFile,
+  type OpenMarkdownExternal,
   type ReadMarkdownImage,
   type MarkdownLocalFileExists,
 } from "../context/markdown"
@@ -682,6 +683,42 @@ function setupLocalLinks(root: HTMLDivElement, open: () => OpenMarkdownLocalFile
   }
 }
 
+function setupExternalLinks(root: HTMLDivElement, open: () => OpenMarkdownExternal | undefined) {
+  const handleClick = (event: MouseEvent) => {
+    if (event.defaultPrevented || event.button !== 0) return
+
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+
+    if (!(event.target instanceof Element)) return
+
+    const link = event.target.closest<HTMLAnchorElement>("a.external-link[href]")
+    const handler = open()
+
+    if (!link || !handler) return
+
+    if (handler(link.href)) event.preventDefault()
+  }
+
+  const handleKeyDown = (event: KeyboardEvent) => {
+    if (event.defaultPrevented || event.key !== "Enter") return
+
+    if (!(event.target instanceof HTMLAnchorElement)) return
+    const handler = open()
+
+    if (!handler) return
+
+    if (handler(event.target.href)) event.preventDefault()
+  }
+
+  root.addEventListener("click", handleClick)
+  root.addEventListener("keydown", handleKeyDown)
+
+  return () => {
+    root.removeEventListener("click", handleClick)
+    root.removeEventListener("keydown", handleKeyDown)
+  }
+}
+
 // Each button owns its feedback, so a block replaced mid-feedback drops its reset timer with its host.
 function setupCodeCopy(root: HTMLDivElement) {
   const handleClick = (event: MouseEvent) => {
@@ -778,9 +815,18 @@ export function Markdown(
     deferUntilReady?: boolean
     class?: string
     classList?: Record<string, boolean>
+    openExternal?: OpenMarkdownExternal
   },
 ) {
-  const [local, others] = splitProps(props, ["text", "cacheKey", "streaming", "deferUntilReady", "class", "classList"])
+  const [local, others] = splitProps(props, [
+    "text",
+    "cacheKey",
+    "streaming",
+    "deferUntilReady",
+    "class",
+    "classList",
+    "openExternal",
+  ])
   const i18n = useI18n()
   const markdown = useMarkdown()
   const previewImages = createImagePreview()
@@ -1038,6 +1084,7 @@ export function Markdown(
 
   let copyCleanup: (() => void) | undefined
   let linkCleanup: (() => void) | undefined
+  let externalLinkCleanup: (() => void) | undefined
   let diagramCleanup: (() => void) | undefined
   let faviconCleanup: (() => void) | undefined
   let sessionLinkCleanup: (() => void) | undefined
@@ -1161,6 +1208,9 @@ export function Markdown(
 
     if (!linkCleanup) linkCleanup = setupLocalLinks(container, () => markdown?.openLocalFile)
 
+    if (!externalLinkCleanup)
+      externalLinkCleanup = setupExternalLinks(container, () => local.openExternal ?? markdown?.openExternal)
+
 
     if (!diagramCleanup) diagramCleanup = previewDiagrams(container)
 
@@ -1188,6 +1238,8 @@ export function Markdown(
     if (copyCleanup) copyCleanup()
 
     if (linkCleanup) linkCleanup()
+
+    if (externalLinkCleanup) externalLinkCleanup()
 
 
     if (diagramCleanup) diagramCleanup()

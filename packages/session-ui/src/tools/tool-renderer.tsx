@@ -1589,6 +1589,7 @@ ToolRegistry.register({
   name: "list",
   render(props) {
     const i18n = useI18n()
+    const markdown = useMarkdown()
 
     return (
       <BasicTool
@@ -1608,7 +1609,7 @@ ToolRegistry.register({
             role="region"
             aria-label={i18n.t("ui.scrollView.ariaLabel")}
           >
-            <Markdown text={props.output!} />
+            <Markdown text={props.output!} openExternal={markdown?.openExternal} />
           </div>
         </Show>
       </BasicTool>
@@ -1620,6 +1621,7 @@ ToolRegistry.register({
   name: "glob",
   render(props) {
     const i18n = useI18n()
+    const markdown = useMarkdown()
     const input = createMemo(() => toolInput(props.input))
 
     return (
@@ -1641,7 +1643,7 @@ ToolRegistry.register({
             role="region"
             aria-label={i18n.t("ui.scrollView.ariaLabel")}
           >
-            <Markdown text={props.output!} />
+            <Markdown text={props.output!} openExternal={markdown?.openExternal} />
           </div>
         </Show>
       </BasicTool>
@@ -1653,6 +1655,7 @@ ToolRegistry.register({
   name: "grep",
   render(props) {
     const i18n = useI18n()
+    const markdown = useMarkdown()
     const input = createMemo(() => toolInput(props.input))
 
     const args = () => [
@@ -1679,7 +1682,7 @@ ToolRegistry.register({
             role="region"
             aria-label={i18n.t("ui.scrollView.ariaLabel")}
           >
-            <Markdown text={props.output!} />
+            <Markdown text={props.output!} openExternal={markdown?.openExternal} />
           </div>
         </Show>
       </BasicTool>
