@@ -138,8 +138,11 @@ export function SidebarOrganized(props: {
                 <Icon
                   name="chevron-down"
                   size="small"
-                  class="size-3 shrink-0 text-v2-icon-icon-base opacity-100 transition-transform"
-                  classList={{ "-rotate-90 rtl:rotate-90": state.projectsCollapsed }}
+                  class="size-3 shrink-0 text-v2-icon-icon-base opacity-0 transition-[opacity,transform] group-hover/projects-header:opacity-100 group-focus-within/projects-header:opacity-100"
+                  classList={{
+                    "-rotate-90 rtl:rotate-90": state.projectsCollapsed,
+                    "opacity-100": state.projectsCollapsed,
+                  }}
                 />
               </button>
               <div
