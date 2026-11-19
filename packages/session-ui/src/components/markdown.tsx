@@ -682,23 +682,6 @@ function setupLocalLinks(root: HTMLDivElement, open: () => OpenMarkdownLocalFile
   }
 }
 
-function setupExternalLinks(root: HTMLDivElement, open: () => ((url: string) => boolean) | undefined) {
-  const handleClick = (event: MouseEvent) => {
-    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
-
-    if (!(event.target instanceof Element)) return
-    const link = event.target.closest<HTMLAnchorElement>("a.external-link[href]")
-    const handler = open()
-
-    if (!link || !handler || !handler(link.href)) return
-    event.preventDefault()
-  }
-
-  root.addEventListener("click", handleClick)
-
-  return () => root.removeEventListener("click", handleClick)
-}
-
 // Each button owns its feedback, so a block replaced mid-feedback drops its reset timer with its host.
 function setupCodeCopy(root: HTMLDivElement) {
   const handleClick = (event: MouseEvent) => {
@@ -1055,7 +1038,6 @@ export function Markdown(
 
   let copyCleanup: (() => void) | undefined
   let linkCleanup: (() => void) | undefined
-  let externalLinkCleanup: (() => void) | undefined
   let diagramCleanup: (() => void) | undefined
   let faviconCleanup: (() => void) | undefined
   let sessionLinkCleanup: (() => void) | undefined
@@ -1179,7 +1161,6 @@ export function Markdown(
 
     if (!linkCleanup) linkCleanup = setupLocalLinks(container, () => markdown?.openLocalFile)
 
-    if (!externalLinkCleanup) externalLinkCleanup = setupExternalLinks(container, () => markdown?.openExternal)
 
     if (!diagramCleanup) diagramCleanup = previewDiagrams(container)
 
@@ -1208,7 +1189,6 @@ export function Markdown(
 
     if (linkCleanup) linkCleanup()
 
-    if (externalLinkCleanup) externalLinkCleanup()
 
     if (diagramCleanup) diagramCleanup()
 
