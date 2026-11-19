@@ -382,7 +382,7 @@ function SessionScreenContent(props: {
           throw error()
         }}
       </Show>
-      <div class="relative isolate flex-1 min-h-0 overflow-hidden">
+      <div class="relative isolate flex min-h-0 flex-1 flex-col overflow-hidden">
         <Show when={!isDesktop() && session.identity.params.id}>
           <For each={cachedViews()}>
             {(entry) => (
@@ -613,7 +613,7 @@ function SessionScreenContent(props: {
  */
 function CodeAIRunCenter(props: ParentProps) {
   return (
-    <div data-component="codeai-run-center" class="relative flex min-h-0 flex-1 flex-col">
+    <div data-component="codeai-run-center" class="relative flex min-h-0 flex-1 flex-col overflow-hidden">
       {props.children}
     </div>
   )

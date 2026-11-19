@@ -309,6 +309,7 @@ export const defaultSettings: Settings = {
     showTurnDiffs: false,
     backgroundActivity: "left",
     timelineWidth: "comfortable",
+    newTimeline: true,
     newIcons: false,
     foldUserMessages: false,
     newQuestionUI: false,
