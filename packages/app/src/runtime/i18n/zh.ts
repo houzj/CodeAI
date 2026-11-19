@@ -879,6 +879,8 @@ export const dict = {
   "settings.search.empty.query": "“{{query}}”",
   "command.session.search": "搜索会话",
   "sidebar.organize.projects": "项目",
+  "sidebar.organize.showMore": "显示更多",
+  "sidebar.organize.showLess": "显示更少",
   "session.question.title": "问题",
   "common.ok": "确定",
   "common.retry": "重试",
