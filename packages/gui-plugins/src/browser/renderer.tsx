@@ -59,7 +59,13 @@ const setup: Plugin.Setup<typeof definition> = (ctx) => {
   const webRuntime = typeof window !== "undefined" && /^(?:http:|https:)$/.test(window.location.protocol)
 
   if (ctx.app.platform !== "desktop" || webRuntime) {
-    const [webPages, setWebPages] = createSignal<Record<string, string>>({})
+    const [webPages, setWebPages] = createSignal<Record<string, readonly string[]>>({})
+
+    const tabID = (url: string) => {
+      const hash = Array.from(url).reduce((value, character) => (value * 31 + character.charCodeAt(0)) >>> 0, 7)
+
+      return `web-${hash.toString(36)}`
+    }
 
     ctx.add(LinkHandler, {
       priority: 5,
@@ -67,8 +73,14 @@ const setup: Plugin.Setup<typeof definition> = (ctx) => {
       open(link) {
         if (!link.session) return
 
-        setWebPages((pages) => ({ ...pages, [link.session!.key]: link.href }))
-        ctx.layout.open(`${ctx.id}:web`, link.session)
+        const session = link.session.key
+        const id = tabID(link.href)
+
+        setWebPages((pages) => ({
+          ...pages,
+          [session]: [...new Set([...(pages[session] ?? []), link.href])],
+        }))
+        ctx.layout.open(`${ctx.id}:${id}`, link.session, { tab: "open" })
       },
     })
 
@@ -76,12 +88,22 @@ const setup: Plugin.Setup<typeof definition> = (ctx) => {
       id: "web",
       region: "side",
       width: "narrow",
-      list: ({ session }) => (webPages()[session.key] ? [{ id: "web", title: "网页预览", icon: "globe" }] : []),
-      render: ({ session }) => {
-        const href = () => webPages()[session.key]
+      list: ({ session }) =>
+        (webPages()[session.key] ?? []).map((url) => ({
+          id: tabID(url),
+          title: URL.canParse(url) ? new URL(url).hostname : url,
+          icon: "globe" as const,
+        })),
+      render: ({ session, tab }) => {
+        const href = () => (webPages()[session.key] ?? []).find((url) => tabID(url) === tab.id)
 
         return <iframe class="size-full border-0 bg-white" src={href()} title="网页预览" referrerPolicy="no-referrer" />
       },
+      close: ({ session, tab }) =>
+        setWebPages((pages) => ({
+          ...pages,
+          [session.key]: (pages[session.key] ?? []).filter((url) => tabID(url) !== tab.id),
+        })),
     }))
 
     return
