@@ -43,7 +43,7 @@ const chunks = Array.from({ length: Math.ceil(files.length / 100) }, (_, index) 
 const report: { diagnostics: Diagnostic[] } = { diagnostics: [] }
 
 for (const chunk of chunks) {
-  const output = JSON.parse(await $`bunx oxlint --threads=1 --format json ${chunk}`.nothrow().quiet().text()) as {
+  const output = JSON.parse(await $`${process.execPath} x oxlint --threads=1 --format json ${chunk}`.nothrow().quiet().text()) as {
     diagnostics: Diagnostic[]
   }
   report.diagnostics.push(...output.diagnostics)
@@ -94,7 +94,7 @@ function normalizePath(path: string) {
 
 async function resolveBase(explicit: string | undefined) {
   if (explicit) return (await $`git rev-parse ${explicit}`.text()).trim()
-  const refs = ["upstream/dev", "origin/dev", "dev"]
+  const refs = ["origin/dev", "upstream/dev", "dev"]
   const found = await Promise.all(
     refs.map(async (ref) => (await $`git rev-parse --verify --quiet ${ref}`.nothrow().quiet()).exitCode === 0),
   )
