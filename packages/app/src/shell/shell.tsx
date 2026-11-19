@@ -19,7 +19,7 @@ import { useGlobal } from "@/runtime/server/runtime"
 import { useServers } from "@/runtime/server/registry"
 import { useTabs } from "@/shell/tabs/tabs"
 import {
-  CollapsedSidebarToggle,
+  SidebarToggle,
   collapsedSidebarToggleEnd,
   measureSidebarToggles,
   paintCollapsedSlots,
@@ -248,7 +248,6 @@ export default function Layout(props: ParentProps) {
           <GlobalRail
             home={() => command.trigger("home.toggle")}
             search={() => command.trigger("sessions.search")}
-            toggleSidebar={toggleSidebar}
             settings={() => command.trigger("settings.open")}
           />
         </Show>
@@ -324,11 +323,15 @@ export default function Layout(props: ParentProps) {
               : "var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))",
           }}
         >
+          <Show when={!mobile() && verticalTabs()}>
+            <div class="flex w-full shrink-0 items-center justify-end border-b border-v2-border-border-muted px-3 py-1">
+              <SidebarToggle />
+            </div>
+          </Show>
           <PluginServerCover>
             <Suspense>{props.children}</Suspense>
           </PluginServerCover>
         </main>
-        <CollapsedSidebarToggle />
       </div>
       {/* On touch devices the active composer moves its actions here: the bottom edge, or the top of the keyboard.
           Last in order, so it stays below a bottom titlebar (also order-last, but earlier in the DOM). */}

@@ -1,24 +1,25 @@
 import { Icon } from "@opencode/ui/icon"
+import { useLanguage } from "@/runtime/i18n/language"
 
 export function GlobalRail(props: {
   home: () => void
   search: () => void
-  toggleSidebar: () => void
   settings: () => void
 }) {
+  const language = useLanguage()
+
   return (
     <nav
       data-slot="global-rail"
-      aria-label="Global navigation"
+      aria-label={language.t("command.category.view")}
       class="relative z-20 flex w-10 shrink-0 flex-col items-center border-e border-v2-border-border-muted bg-v2-background-bg-deep py-2"
     >
       <div class="flex w-full flex-col items-center gap-1">
-        <RailButton icon="grid-plus" label="Home" onClick={props.home} />
-        <RailButton icon="search" label="Search sessions" onClick={props.search} />
-        <RailButton icon="workspace" label="Projects and sessions" onClick={props.toggleSidebar} active />
+        <RailButton icon="grid-plus" label={language.t("home.title")} onClick={props.home} />
+        <RailButton icon="search" label={language.t("command.session.search")} onClick={props.search} />
       </div>
       <div class="mt-auto flex w-full flex-col items-center gap-1">
-        <RailButton icon="settings-gear" label="Settings" onClick={props.settings} />
+        <RailButton icon="settings-gear" label={language.t("command.settings.open")} onClick={props.settings} />
       </div>
     </nav>
   )
