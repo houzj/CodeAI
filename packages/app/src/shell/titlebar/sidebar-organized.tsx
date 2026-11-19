@@ -138,7 +138,7 @@ export function SidebarOrganized(props: {
                 <Icon
                   name="fill-triangle-down"
                   size="small"
-                  class="shrink-0 text-v2-icon-icon-muted transition-transform"
+                  class="size-3 shrink-0 text-v2-icon-icon-base opacity-100 transition-transform"
                   classList={{ "-rotate-90 rtl:rotate-90": state.projectsCollapsed }}
                 />
               </button>
