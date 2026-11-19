@@ -136,7 +136,7 @@ export function SidebarOrganized(props: {
               >
                 <span class="min-w-0 truncate">{language.t("sidebar.organize.projects")}</span>
                 <Icon
-                  name="fill-triangle-down"
+                  name="chevron-down"
                   size="small"
                   class="size-3 shrink-0 text-v2-icon-icon-base opacity-100 transition-transform"
                   classList={{ "-rotate-90 rtl:rotate-90": state.projectsCollapsed }}
