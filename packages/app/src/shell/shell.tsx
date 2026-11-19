@@ -324,7 +324,7 @@ export default function Layout(props: ParentProps) {
           }}
         >
           <Show when={!mobile() && verticalTabs()}>
-            <div class="flex w-full shrink-0 items-center justify-end border-b border-v2-border-border-muted px-3 py-1">
+            <div class="flex w-full shrink-0 items-center justify-start border-b border-v2-border-border-muted px-3 py-1">
               <SidebarToggle />
             </div>
           </Show>
