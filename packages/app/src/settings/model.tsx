@@ -312,7 +312,7 @@ export const defaultSettings: Settings = {
     newTimeline: true,
     newIcons: false,
     foldUserMessages: false,
-    newQuestionUI: false,
+    newQuestionUI: true,
     sidebarOrganize: "projects",
     mobileTitlebarPosition: "top",
     followUpBehavior: "steer",

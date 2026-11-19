@@ -59,9 +59,15 @@ export function createHomeProjectsController(home: HomeController) {
       health: home.server.health,
       label: home.server.label,
       projects: home.project.forServer,
-      collapsed: (conn: ServerConnection.Any) => state().collapsed[ServerConnection.key(conn)] ?? false,
+      collapsed: (conn: ServerConnection.Any) => {
+        const key = ServerConnection.key(conn)
+
+        return state().collapsed[`explicit:${key}`] ? (state().collapsed[key] ?? false) : false
+      },
       toggleCollapsed: (conn: ServerConnection.Any) => {
         const key = ServerConnection.key(conn)
+
+        setState("collapsed", `explicit:${key}`, true)
         setState("collapsed", key, !state().collapsed[key])
       },
       canRemove: (conn: ServerConnection.Any) => serverManagement.connection.canRemove(ServerConnection.key(conn)),
