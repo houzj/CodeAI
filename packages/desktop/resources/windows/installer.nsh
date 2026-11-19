@@ -36,6 +36,13 @@
 ; Removes this channel's files from the shared directory, and the directory with the files every
 ; channel shared once no other channel's uninstaller is left in it. A taskbar pin still starts the
 ; old executable, so it is pointed at the new one.
+!macro updateShortcutTarget LINK
+  ${If} ${FileExists} "${LINK}"
+    CreateShortCut "${LINK}" "$INSTDIR\${APP_EXECUTABLE_FILENAME}" "" "$INSTDIR\${APP_EXECUTABLE_FILENAME}" 0
+    WinShell::SetLnkAUMI "${LINK}" "${APP_ID}"
+  ${EndIf}
+!macroend
+
 !macro leaveSharedInstall
   ${If} $sharedInstallDir != ""
     Delete "$sharedInstallDir\${APP_EXECUTABLE_FILENAME}"
@@ -50,6 +57,8 @@
       CreateShortCut "$QUICKLAUNCH\User Pinned\TaskBar\${SHORTCUT_NAME}.lnk" "$INSTDIR\${APP_EXECUTABLE_FILENAME}" "" "$INSTDIR\${APP_EXECUTABLE_FILENAME}" 0
       WinShell::SetLnkAUMI "$QUICKLAUNCH\User Pinned\TaskBar\${SHORTCUT_NAME}.lnk" "${APP_ID}"
     ${EndIf}
+    !insertmacro updateShortcutTarget "$DESKTOP\${SHORTCUT_NAME}.lnk"
+    !insertmacro updateShortcutTarget "$SMPROGRAMS\${APP_FILENAME}\${SHORTCUT_NAME}.lnk"
   ${EndIf}
 !macroend
 
