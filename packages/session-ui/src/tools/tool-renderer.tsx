@@ -338,6 +338,14 @@ export function urls(text: string | undefined) {
   ]
 }
 
+export function openPreviewLink(event: MouseEvent, url: string, open: ((url: string) => boolean) | undefined) {
+  event.stopPropagation()
+
+  if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || !open) return
+
+  if (open(url)) event.preventDefault()
+}
+
 export function sessionLink(id: string | undefined, href?: (id: string) => string | undefined) {
   if (!id) return undefined
 
@@ -359,6 +367,7 @@ function taskSession(
 
 export function ExaOutput(props: { output?: string }) {
   const i18n = useI18n()
+  const markdown = useMarkdown()
   const [showAll, setShowAll] = createSignal(false)
   let firstRevealedRef: HTMLAnchorElement | undefined
   const links = createMemo(() => urls(props.output))
@@ -396,7 +405,7 @@ export function ExaOutput(props: { output?: string }) {
                 href={url}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={(event) => event.stopPropagation()}
+                onClick={(event) => openPreviewLink(event, url, markdown?.openExternal)}
               >
                 <span data-slot="webfetch-link-text">{url}</span>
                 <Icon name="outline-square-arrow" class="webfetch-link-icon" />
@@ -1682,6 +1691,7 @@ ToolRegistry.register({
   name: "webfetch",
   render(props) {
     const i18n = useI18n()
+    const markdown = useMarkdown()
     const pending = createMemo(() => props.status === "streaming" || props.status === "running")
 
     const url = createMemo(() => toolInput(props.input).url ?? "")
@@ -1704,7 +1714,7 @@ ToolRegistry.register({
                   href={url()}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={(event) => event.stopPropagation()}
+                  onClick={(event) => openPreviewLink(event, url(), markdown?.openExternal)}
                 >
                   <span data-slot="webfetch-link-text">{url()}</span>
                   <Icon name="outline-square-arrow" class="webfetch-link-icon" />

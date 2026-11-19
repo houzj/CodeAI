@@ -3,7 +3,8 @@ import { Icon } from "@opencode/ui/icon"
 import { TextShimmer } from "@opencode/ui/text-shimmer"
 import { createMemo, Show } from "solid-js"
 import { BasicTool } from "../../components/basic-tool"
-import { displayDirectory, ExaOutput, toolInput, urls, type ToolProps } from "../../tools/tool-renderer"
+import { displayDirectory, ExaOutput, openPreviewLink, toolInput, urls, type ToolProps } from "../../tools/tool-renderer"
+import { useMarkdown } from "../../context/markdown"
 
 /**
  * The New timeline's exploring tools. A search shows what was searched, never the raw list it returned, so it has
@@ -64,6 +65,7 @@ export function GrepTool(props: ToolProps) {
 
 export function WebFetchTool(props: ToolProps) {
   const i18n = useI18n()
+  const markdown = useMarkdown()
   const pending = createMemo(() => props.status === "streaming" || props.status === "running")
   const url = createMemo(() => toolInput(props.input).url ?? "")
 
@@ -85,7 +87,7 @@ export function WebFetchTool(props: ToolProps) {
                 href={url()}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={(event) => event.stopPropagation()}
+                  onClick={(event) => openPreviewLink(event, url(), markdown?.openExternal)}
               >
                 <span data-slot="webfetch-link-text">{url()}</span>
                 <Icon name="outline-square-arrow" class="webfetch-link-icon" />
