@@ -352,6 +352,12 @@ function ProjectList(props: {
                   }))
                 })
 
+                // The default worktree repeats the project name. Codex places sessions directly under that project,
+                // while retaining the worktree row when a project has multiple worktrees.
+                const hideDefaultWorktree = (worktree: { directory: string }) =>
+                  worktreeGroups().length === 1 &&
+                  getFilename(worktree.directory).toLocaleLowerCase() === displayName(project()).toLocaleLowerCase()
+
                 const limit = () => local.sessionLimits[key()] ?? 5
 
                 return (
@@ -370,12 +376,19 @@ function ProjectList(props: {
                   >
                     <For each={worktreeGroups()}>
                       {(worktree) => (
-                        <div class="ms-5 min-w-0 border-s border-v2-border-border-muted ps-2">
-                          <div class="flex h-6 min-w-0 items-center gap-1.5 text-11-medium text-v2-text-text-faint" title={worktree.directory}>
-                            <Icon name="branch" size="small" class="shrink-0 text-v2-icon-icon-muted" />
-                            <span class="min-w-0 truncate">{getFilename(worktree.directory) || worktree.directory}</span>
-                            <span class="ms-auto shrink-0 tabular-nums">{worktree.records.length || ""}</span>
-                          </div>
+                        <div
+                          class="min-w-0"
+                          classList={{
+                            "ms-5 border-s border-v2-border-border-muted ps-2": !hideDefaultWorktree(worktree),
+                          }}
+                        >
+                          <Show when={!hideDefaultWorktree(worktree)}>
+                            <div class="flex h-6 min-w-0 items-center gap-1.5 text-11-medium text-v2-text-text-faint" title={worktree.directory}>
+                              <Icon name="branch" size="small" class="shrink-0 text-v2-icon-icon-muted" />
+                              <span class="min-w-0 truncate">{getFilename(worktree.directory) || worktree.directory}</span>
+                              <span class="ms-auto shrink-0 tabular-nums">{worktree.records.length || ""}</span>
+                            </div>
+                          </Show>
                           <Key
                             each={worktree.records.slice(0, limit())}
                             by={(record) => record.session.id}
